@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: ./frontend
+    container_name: minecraft-panel-frontend
+    ports:
+      - "8081:80"
+    networks:
+      - minecraft-net
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    container_name: minecraft-panel-backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./backend-data:/usr/src/app/data
+      - minecraft-data:/minecraft-server-data 
+    networks:
+      - minecraft-net
+
+volumes:
+  minecraft-data:
+  backend-data:
+
+networks:
+  minecraft-net:
+    name: minecraft-panel_minecraft-net
+    driver: bridge

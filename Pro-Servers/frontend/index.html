@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Servers | Minecraft Panel</title>
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Poppins', sans-serif; 
+        }
+        body { 
+            background: #0a0a0a; 
+            color: white; 
+            overflow-x: hidden; 
+            overflow-y: scroll; 
+            min-height: 100vh; 
+        }
+        .hidden { 
+            display: none !important; 
+        }
+        .contenedor-principal { 
+            display: flex; 
+            height: 100vh; 
+            width: 100%; 
+        }
+        .mitad-video { 
+            width: 55%; 
+            position: relative; 
+            background: #000; 
+            overflow: hidden; 
+        }
+        .video-fondo { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            opacity: 0.7; 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+        }
+        .filtro-oscuro { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: linear-gradient(90deg, rgba(0,0,0,0) 60%, rgba(10,10,10,1) 100%); 
+            z-index: 1; 
+        }
+        .mitad-login { 
+            width: 45%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            background: #0a0a0a; 
+            padding: 40px; 
+            z-index: 2; 
+        }
+        .caja-login { 
+            width: 100%; 
+            max-width: 420px; 
+            z-index: 2; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+        .titulo-container { 
+            text-align: center; 
+            margin-bottom: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+        }
+        .titulo-pro { 
+            font-family: 'Press Start 2P', cursive; 
+            font-size: 24px; 
+            color: #4CAF50; 
+            display: block; 
+            margin-bottom: 8px;
+        }
+        .titulo-servers { 
+            font-family: 'Press Start 2P', cursive; 
+            font-size: 24px; 
+            color: white; 
+            display: block;
+        }
+        .contenedor-social { 
+            display: flex; 
+            justify-content: center; 
+            gap: 20px; 
+            margin: 25px 0; 
+            width: 100%; 
+        }
+        .btn-circular { 
+            width: 52px; 
+            height: 52px; 
+            border-radius: 50%; 
+            border: 1px solid #333; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            background: #161616; 
+        }
+        .btn-circular:hover { 
+            transform: translateY(-3px); 
+            border-color: #4CAF50; 
+            box-shadow: 0 5px 15px rgba(76,175,80,0.2); 
+        }
+        .btn-circular img { 
+            width: 26px; 
+            height: 26px; 
+            pointer-events: none;
+        }
+        .btn-circular img.invertir-blanco { 
+            filter: invert(1); 
+        }
+        .separador { 
+            text-align: center; 
+            margin: 20px 0; 
+            position: relative; 
+            width: 100%; 
+        }
+        .separador span { 
+            background: #0a0a0a; 
+            padding: 0 15px; 
+            color: #555; 
+            font-size: 11px; 
+            text-transform: uppercase; 
+            position: relative; 
+            z-index: 2; 
+        }
+        .separador::before { 
+            content: ""; 
+            position: absolute; 
+            top: 50%; 
+            left: 0; 
+            width: 100%; 
+            height: 1px; 
+            background: #222; 
+            z-index: 1; 
+        }
+        .grupo-input { 
+            margin-bottom: 15px; 
+            width: 100%; 
+        }
+        .grupo-input label { 
+            display: block; 
+            font-size: 12px; 
+            color: #888; 
+            margin-bottom: 5px; 
+            text-transform: uppercase; 
+        }
+        .grupo-input input, .grupo-input select { 
+            width: 100%; 
+            padding: 12px; 
+            background: #161616; 
+            border: 1px solid #222; 
+            border-radius: 8px; 
+            color: white; 
+            outline: none; 
+            transition: 0.3s;
+        }
+        .grupo-input input:focus, .grupo-input select:focus { 
+            border-color: #4CAF50; 
+            background: #1a1a1a;
+        }
+        .fila-doble { 
+            display: flex; 
+            gap: 10px; 
+            width: 100%; 
+        }
+        .btn-ingresar { 
+            width: 100%; 
+            padding: 14px; 
+            background: #4CAF50; 
+            border: none; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-top: 10px; 
+            text-transform: uppercase; 
+            color: white; 
+        }
+        .btn-ingresar:hover { 
+            background: #45a049; 
+            transform: scale(1.02); 
+        }
+        .enlace-interactivo { 
+            color: #4CAF50; 
+            cursor: pointer; 
+            font-weight: 600; 
+            text-decoration: none; 
+        }
+        .enlace-interactivo:hover { 
+            text-decoration: underline; 
+        }
+        .dashboard-body { 
+            position: relative; 
+            width: 100%; 
+            min-height: 100vh; 
+            background: url('./assets/img/dashboard-bg.jpeg') center/cover no-repeat fixed; 
+            display: flex; 
+            flex-direction: column; 
+            padding-bottom: 110px; 
+        }
+        .db-bg-overlay { 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.85); 
+            backdrop-filter: blur(8px); 
+            z-index: 0; 
+        }
+        .content-panel { 
+            background: rgba(20, 20, 20, 0.9); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 15px; 
+            padding: 25px; 
+            position: relative; 
+            z-index: 10; 
+        }
+        .amd-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            grid-gap: 20px; 
+            width: 100%; 
+        }
+        .amd-panel { 
+            background: rgba(15, 15, 15, 0.95); 
+            border: 1px solid #333; 
+            border-radius: 12px; 
+            padding: 20px; 
+            display: flex; 
+            flex-direction: column; 
+            position: relative; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
+        }
+        .amd-panel-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 1px solid #222; 
+            padding-bottom: 10px; 
+            margin-bottom: 15px; 
+        }
+        .amd-panel-title { 
+            font-size: 14px; 
+            font-weight: 600; 
+            color: #ddd; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+        .amd-panel-value { 
+            font-size: 28px; 
+            font-weight: bold; 
+            font-family: monospace; 
+        }
+        .chart-container { 
+            flex-grow: 1; 
+            position: relative; 
+            height: 150px; 
+            width: 100%; 
+        }
+        .btn-power { 
+            padding: 12px 15px; 
+            border-radius: 8px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            color: white; 
+            border: none; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            justify-content: center; 
+            width: 100%; 
+            font-size: 13px;
+        }
+        .btn-power:disabled { 
+            opacity: 0.3; 
+            cursor: not-allowed; 
+        }
+        .btn-start { background-color: #4CAF50; }
+        .btn-start:hover:not(:disabled) { background-color: #45a049; transform: scale(1.03); }
+        .btn-restart { background-color: #3b82f6; }
+        .btn-restart:hover:not(:disabled) { background-color: #2563eb; transform: scale(1.03); }
+        .btn-stop { background-color: #ef4444; }
+        .btn-stop:hover:not(:disabled) { background-color: #dc2626; transform: scale(1.03); }
+        .plan-badge { 
+            background-color: rgba(76, 175, 80, 0.2); 
+            color: #4CAF50; 
+            padding: 4px 10px; 
+            border-radius: 12px; 
+            font-size: 11px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            border: 1px solid rgba(76, 175, 80, 0.5); 
+            display: inline-block; 
+            margin-top: 5px;
+        }
+        .btn-planes { 
+            background: transparent; 
+            border: 1px solid #4CAF50; 
+            color: #4CAF50; 
+            padding: 6px 12px; 
+            border-radius: 6px; 
+            font-size: 11px; 
+            cursor: pointer; 
+            transition: 0.3s; 
+            margin-top: 8px; 
+            font-weight: bold; 
+            text-transform: uppercase;
+        }
+        .btn-planes:hover { background: #4CAF50; color: white; }
+        .navigation-container { 
+            position: fixed; 
+            bottom: 15px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            z-index: 1000; 
+            width: 90%; 
+            max-width: 1100px; 
+        }
+        .navigation { 
+            display: flex; 
+            justify-content: space-between; 
+            background: rgba(30, 30, 30, 0.95); 
+            backdrop-filter: blur(15px); 
+            border-radius: 20px; 
+            padding: 5px 15px; 
+            border: 1px solid rgba(255,255,255,0.1); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
+        }
+        .navigation a { 
+            padding: 12px 10px; 
+            color: #888; 
+            transition: 0.3s; 
+            cursor: pointer; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            text-align: center; 
+        }
+        .navigation a.active { color: #4CAF50; transform: translateY(-3px); }
+        .navigation a span.title { 
+            font-size: 9px; 
+            margin-top: 4px; 
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+        }
+        .navigation .btn-hub {
+            color: #3b82f6; 
+            border-left: 1px solid #333; 
+            padding-left: 20px; 
+            margin-left: 10px;
+        }
+        .navigation .btn-hub:hover { color: #60a5fa; transform: scale(1.05); }
+        .console-textarea, .file-editor { 
+            width:100%; 
+            height:400px; 
+            background-color:#000; 
+            border:1px solid #333; 
+            color:#0f0; 
+            font-family: monospace; 
+            font-size:13px; 
+            resize:none; 
+            border-radius:8px; 
+            padding: 10px; 
+        }
+        .player-card { 
+            background:rgba(31, 41, 55, 0.8); 
+            border:1px solid #374151; 
+            border-radius:1rem; 
+            padding:1rem; 
+            text-align:center; 
+        }
+        .player-avatar { 
+            width:80px; 
+            height:80px; 
+            border-radius:50%; 
+            margin:0 auto .5rem; 
+            border:3px solid #4CAF50; 
+        }
+        .file-tree { 
+            height: 400px; 
+            overflow-y: auto; 
+            background-color: #111; 
+            border-radius: 8px; 
+            padding: 10px; 
+            border: 1px solid #333; 
+        }
+        .file-tree-item { 
+            cursor: pointer; 
+            padding: 8px; 
+            border-radius: 4px; 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            transition: 0.2s;
+        }
+        .file-tree-item:hover { background-color: #222; }
+        .mod-pills-tab { 
+            display: flex; 
+            gap: 10px; 
+            border-bottom: 1px solid #333; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px; 
+            flex-wrap: wrap;
+        }
+        .mod-pill { 
+            padding: 8px 16px; 
+            border-radius: 20px; 
+            background: #222; 
+            border: 1px solid #444; 
+            color: #aaa; 
+            font-size: 12px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+            text-transform: uppercase;
+        }
+        .mod-pill.active { 
+            background: #4CAF50; 
+            color: white; 
+            border-color: #4CAF50; 
+            font-weight: bold; 
+        }
+        .search-mod-input { 
+            background: #1a1a1a; 
+            border: 1px solid #333; 
+            color: white; 
+            padding: 10px 15px; 
+            border-radius: 8px; 
+            width: 100%; 
+            font-size: 14px; 
+            outline: none; 
+        }
+        .search-mod-input:focus { border-color: #4CAF50; }
+        .mod-item { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            background: rgba(30,30,30,0.7); 
+            border: 1px solid #333; 
+            border-radius: 10px; 
+            padding: 15px; 
+            margin-bottom: 10px; 
+            transition: 0.2s;
+        }
+        .mod-item:hover { 
+            border-color: #4CAF50; 
+            background: rgba(40,40,40,0.9); 
+        }
+        .permissions-table { 
+            width: 100%; 
+            border-collapse: collapse; 
+            font-size: 12px; 
+            text-transform: uppercase; 
+            color: #ccc; 
+        }
+        .permissions-table th { 
+            padding: 12px 10px; 
+            border-bottom: 2px solid #333; 
+            color: #888; 
+            letter-spacing: 1px; 
+        }
+        .permissions-table td { 
+            padding: 12px 10px; 
+            border-bottom: 1px solid #222; 
+        }
+        .perm-check { 
+            appearance: none; 
+            width: 18px; 
+            height: 18px; 
+            background: #222; 
+            border: 2px solid #555; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            transition: 0.2s; 
+        }
+        .perm-check:checked { 
+            background: #4CAF50; 
+            border-color: #4CAF50; 
+        }
+        .variant-pill { 
+            border: 1px solid #555; 
+            background: #222; 
+            color: #ccc; 
+            border-radius: 5px; 
+            padding: 6px 12px; 
+            text-transform: uppercase; 
+            font-size: 11px; 
+            cursor: pointer; 
+            transition: 0.2s;
+        }
+        .variant-pill:hover { background: #333; }
+        .variant-pill.active { 
+            border-color: #4CAF50; 
+            background: #1a1a1a; 
+            color: white; 
+            font-weight: bold; 
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3); 
+        }
+        .cloud-badge { 
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+            background: #222; 
+            border: 1px solid #444; 
+            padding: 12px; 
+            border-radius: 8px; 
+            flex: 1;
+        }
+        .glowing-text { text-shadow: 0 0 15px rgba(76, 175, 80, 0.5); }
+        
+        @media (max-width: 768px) {
+            .contenedor-principal { flex-direction: column; position: relative; }
+            .mitad-video { position: absolute; width: 100%; height: 100%; z-index: 1; }
+            .mitad-login { width: 100%; height: 100%; background: transparent; z-index: 2; padding: 20px; }
+            .caja-login { background: rgba(10, 10, 10, 0.95); padding: 30px 20px; border-radius: 15px; border: 1px solid #333; }
+            .amd-grid { grid-template-columns: 1fr !important; }
+            .amd-panel { grid-column: span 1 !important; }
+            .header-panel { flex-direction: column; text-align: center; gap: 20px; }
+            .header-panel > div { flex-direction: column; border-right: none !important; padding-right: 0 !important; border-bottom: 1px solid #333; padding-bottom: 15px;}
+            .header-right { text-align: center !important; }
+            .header-right .flex { justify-content: center !important; }
+            .navigation-container { width: 95%; bottom: 10px; }
+            .navigation { overflow-x: auto; padding: 10px; justify-content: flex-start; gap: 10px; border-radius: 15px; -webkit-overflow-scrolling: touch;}
+            .navigation::-webkit-scrollbar { display: none; }
+            .navigation a { min-width: 70px; padding: 8px 5px; flex-shrink: 0;}
+            .navigation .btn-hub { border-left: none; margin-left: 0; padding-left: 5px; border-top: 1px solid #333; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="auth-container" class="contenedor-principal">
+        <div class="mitad-video">
+            <div class="filtro-oscuro"></div>
+            <video autoplay loop muted playsinline class="video-fondo">
+                <source src="./assets/videos/login-animation.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="mitad-login">
+            <div class="caja-login">
+                <div class="titulo-container">
+                    <div class="flex items-center justify-center gap-4 mb-5">
+                        <img src="./assets/img/favicon.ico" alt="Tu Logo" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)] transition-transform hover:scale-110" onerror="this.src='./assets/img/logo-minecraft.ico'">
+                        <i data-feather="x" class="text-gray-600 w-4 h-4"></i>
+                        <img src="./assets/img/logo-minecraft.ico" alt="Minecraft" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(255,255,255,0.2)] transition-transform hover:scale-110">
+                        <i data-feather="x" class="text-gray-600 w-4 h-4"></i>
+                        <img src="./assets/img/modrinth.ico" alt="Modrinth" class="w-10 h-10 rounded-xl object-contain drop-shadow-[0_0_12px_rgba(27,217,106,0.5)] transition-transform hover:scale-110" onerror="this.src='./assets/img/logo-minecraft.ico'">
+                    </div>
+                    <span class="titulo-pro">Professional</span>
+                    <span class="titulo-servers">Servers</span>
+                </div>
+                
+                <div id="checking-status" class="hidden text-center flex flex-col items-center gap-4 mt-6 mb-6">
+                    <i data-feather="loader" class="animate-spin text-green-500 w-10 h-10"></i>
+                    <p class="text-xs text-gray-500 uppercase tracking-widest font-bold glowing-text">Iniciando sesión y verificando...</p>
+                </div>
+
+                <div id="login-boxes-wrapper" class="w-full">
+                    <p style="text-align: center; color: #666; font-size: 13px; margin-bottom: 10px;">Gestión de infraestructura de alto rendimiento</p>
+
+                    <div class="contenedor-social">
+                        <div class="btn-circular" id="btn-google">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" alt="Google">
+                        </div>
+                        <div class="btn-circular" id="btn-github">
+                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/github/github-original.svg" alt="GitHub" class="invertir-blanco">
+                        </div>
+                        <div class="btn-circular" id="btn-ms">
+                            <img src="./assets/img/microsoft.ico" alt="Microsoft" style="width: 24px; height: 24px;">
+                        </div>
+                    </div>
+
+                    <div class="separador"><span>O usar credenciales directas</span></div>
+
+                    <div id="login-box" class="w-full">
+                        <form id="login-form">
+                            <div class="grupo-input">
+                                <label>Email / Teléfono</label>
+                                <input type="text" name="email" placeholder="correo@ejemplo.com o +549..." required>
+                            </div>
+                            <div class="grupo-input">
+                                <label>Contraseña</label>
+                                <input type="password" name="password" placeholder="••••••••" required>
+                            </div>
+                            <button type="submit" class="btn-ingresar">INGRESAR AL SISTEMA</button>
+                            <p style="text-align:center; font-size:12px; margin-top:15px; color:#888;">
+                                ¿Nuevo aquí? <a id="show-register" class="enlace-interactivo">Crear cuenta profesional</a>
+                            </p>
+                        </form>
+                    </div>
+
+                    <div id="register-box" class="hidden w-full">
+                        <form id="register-form">
+                            <div class="fila-doble">
+                                <div class="grupo-input" style="flex:1">
+                                    <label>Nombre</label>
+                                    <input type="text" name="nombre" placeholder="Nombre" required>
+                                </div>
+                                <div class="grupo-input" style="flex:1">
+                                    <label>Apellido</label>
+                                    <input type="text" name="apellido" placeholder="Apellido" required>
+                                </div>
+                            </div>
+                            <div class="fila-doble">
+                                <div class="grupo-input" style="flex:1">
+                                    <label>Nacimiento</label>
+                                    <input type="date" name="dob" required>
+                                </div>
+                                <div class="grupo-input" style="flex:1">
+                                    <label>País</label>
+                                    <select name="pais">
+                                        <option value="AR">Argentina</option>
+                                        <option value="CL">Chile</option>
+                                        <option value="MX">México</option>
+                                        <option value="ES">España</option>
+                                        <option value="US">USA</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grupo-input">
+                                <label>Teléfono (Opcional)</label>
+                                <input type="tel" name="phone" placeholder="+54 9 11 ...">
+                            </div>
+                            <div class="grupo-input">
+                                <label>Email / Teléfono</label>
+                                <input type="text" name="email" placeholder="correo@ejemplo.com o +549..." required>
+                            </div>
+                            <div class="grupo-input">
+                                <label>Contraseña Segura</label>
+                                <input type="password" name="password" placeholder="Mínimo 6 caracteres" required minlength="6">
+                            </div>
+                            <button type="submit" class="btn-ingresar">CREAR CUENTA PROFESIONAL</button>
+                            <p style="text-align:center; font-size:12px; margin-top:15px; color:#888;">
+                                ¿Ya tienes cuenta? <a id="show-login" class="enlace-interactivo">Iniciar Sesión</a>
+                            </p>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <p style="position: absolute; bottom: 20px; right: 20px; font-size: 10px; color: #333;">PROFESSIONAL SERVERS V2.6 BETA | @MAXPRO</p>
+        </div>
+    </div>
+
+    <div id="main-dashboard" class="dashboard-body hidden"></div>
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, OAuthProvider, signInWithPopup, updateProfile, onAuthStateChanged, signOut, linkWithPopup, unlink } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM",
+            authDomain: "proffesional-server.firebaseapp.com",
+            projectId: "proffesional-server",
+            storageBucket: "proffesional-server.firebasestorage.app",
+            messagingSenderId: "833822850667",
+            appId: "1:833822850667:web:3c03219c6822116edbfb2e",
+            measurementId: "G-8SZ528Y5NZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        const providerGoogle = new GoogleAuthProvider();
+        const providerGithub = new GithubAuthProvider();
+        const providerMicrosoft = new OAuthProvider('microsoft.com');
+
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+
+            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
+            
+            const authContainer = document.getElementById('auth-container');
+            const dashboard = document.getElementById('main-dashboard');
+            
+            const loginBoxesWrapper = document.getElementById('login-boxes-wrapper');
+            const checkingStatus = document.getElementById('checking-status');
+
+            document.getElementById('show-register')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('login-box').classList.add('hidden');
+                document.getElementById('register-box').classList.remove('hidden');
+            });
+            
+            document.getElementById('show-login')?.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.getElementById('register-box').classList.add('hidden');
+                document.getElementById('login-box').classList.remove('hidden');
+            });
+
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    loginBoxesWrapper.classList.add('hidden');
+                    checkingStatus.classList.remove('hidden');
+                    
+                    const selectedServer = sessionStorage.getItem('selectedServer');
+                    
+                    if (selectedServer) {
+                        entrarAlPanel(JSON.parse(selectedServer));
+                    } else {
+                        window.location.href = 'create.html';
+                    }
+                } else {
+                    authContainer.classList.remove('hidden');
+                    dashboard.classList.add('hidden');
+                    loginBoxesWrapper.classList.remove('hidden');
+                    checkingStatus.classList.add('hidden');
+                }
+            });
+
+            document.getElementById('btn-google').addEventListener('click', async () => {
+                try {
+                    await signInWithPopup(auth, providerGoogle);
+                } catch (e) {
+                    alert("Error al conectar con Google: " + e.message);
+                }
+            });
+            
+            document.getElementById('btn-github').addEventListener('click', async () => {
+                try {
+                    await signInWithPopup(auth, providerGithub);
+                } catch (e) {
+                    alert("Error al conectar con GitHub: " + e.message);
+                }
+            });
+            
+            document.getElementById('btn-ms').addEventListener('click', async () => {
+                try {
+                    await signInWithPopup(auth, providerMicrosoft);
+                } catch (e) {
+                    alert("Error al conectar con Microsoft: " + e.message);
+                }
+            });
+
+            document.getElementById('register-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                loginBoxesWrapper.classList.add('hidden');
+                checkingStatus.classList.remove('hidden');
+                
+                const f = e.target;
+                let idIngresado = f.email.value.trim();
+                if (!idIngresado.includes('@')) {
+                    idIngresado = idIngresado.replace(/[^0-9+]/g, '') + "@proservers.com";
+                }
+
+                try {
+                    const cred = await createUserWithEmailAndPassword(auth, idIngresado, f.password.value);
+                    await updateProfile(cred.user, { displayName: `${f.nombre.value} ${f.apellido.value}` });
+                } catch (err) { 
+                    loginBoxesWrapper.classList.remove('hidden');
+                    checkingStatus.classList.add('hidden');
+                    alert("Error al registrar: " + err.message); 
+                }
+            });
+
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                loginBoxesWrapper.classList.add('hidden');
+                checkingStatus.classList.remove('hidden');
+                
+                let idIngresado = e.target.email.value.trim();
+                if (!idIngresado.includes('@')) {
+                    idIngresado = idIngresado.replace(/[^0-9+]/g, '') + "@proservers.com";
+                }
+                try {
+                    await signInWithEmailAndPassword(auth, idIngresado, e.target.password.value);
+                } catch (err) { 
+                    loginBoxesWrapper.classList.remove('hidden');
+                    checkingStatus.classList.add('hidden');
+                    alert("Credenciales incorrectas. Verifica tu usuario y clave."); 
+                }
+            });
+
+            window.guardarIP = async () => {
+                const ip = document.getElementById('manual-ip-input').value.trim();
+                if (!ip) {
+                    alert('Por favor, pega la IP que te dio Playit.gg primero.');
+                    return;
+                }
+                try {
+                    await fetch(`${API_URL}/api/project/ip`, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify({
+                            uid: auth.currentUser.uid,
+                            serverId: JSON.parse(sessionStorage.getItem('selectedServer')).id,
+                            ip: ip
+                        }) 
+                    });
+                    alert('¡IP Guardada exitosamente!');
+                    
+                    let config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                    config.publicIp = ip;
+                    sessionStorage.setItem('selectedServer', JSON.stringify(config));
+                    window.showPanel('home-panel');
+                } catch (e) { 
+                    alert('Error al guardar: ' + e.message); 
+                }
+            };
+
+            function entrarAlPanel(config) {
+                authContainer.classList.add('hidden');
+                dashboard.classList.remove('hidden');
+                populateDashboard(dashboard, config);
+                
+                setTimeout(() => {
+                    const homeBtn = dashboard.querySelector('.navigation a[data-panel="home-panel"]');
+                    if (homeBtn) {
+                        homeBtn.click();
+                    } else {
+                        window.showPanel('home-panel');
+                    }
+                }, 150);
+            }
+
+            function populateDashboard(element, config) {
+                const nombreDelServer = config.projectName || "Servidor Local";
+                const versionServer = config.version || "Desconocida";
+                const softwareServer = config.software || "Vanilla";
+                const motdServer = config.motd || "Gestión de infraestructura";
+
+                const queryAuth = `?uid=${auth.currentUser.uid}&serverId=${config.id}`;
+                const bodyAuth = { uid: auth.currentUser.uid, serverId: config.id };
+
+                element.innerHTML = `
+                    <div class="db-bg-overlay"></div>
+                    <div class="p-8 relative z-10 w-full max-w-[1400px] mx-auto">
+                        
+                        <div class="flex justify-between items-center mb-8 bg-[#0f0f0f] p-6 rounded-xl border border-[#333] shadow-lg header-panel">
+                            <div class="flex items-center gap-6 header-left w-full md:w-auto">
+                                <div class="flex flex-col items-center justify-center text-center border-r border-[#333] pr-6">
+                                    <img src="./assets/img/favicon.ico" alt="Logo" class="w-12 h-12 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)] mb-2" onerror="this.src='./assets/img/logo-minecraft.ico'">
+                                    <span class="text-[10px] uppercase tracking-widest text-green-500 font-bold glowing-text">Professional</span>
+                                    <span class="text-[10px] uppercase tracking-widest text-white font-bold">Servers</span>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex items-center gap-3 mb-1 justify-center md:justify-start">
+                                        <h2 class="text-xs uppercase tracking-widest text-green-500 font-bold">Servidor Activo</h2>
+                                        <span class="bg-[#222] border border-[#444] text-[#ccc] text-[10px] px-2 py-1 rounded uppercase font-bold tracking-wider">
+                                            ${softwareServer} ${versionServer}
+                                        </span>
+                                    </div>
+                                    <h1 class="text-3xl font-bold font-['Cinzel'] tracking-wide text-white">${nombreDelServer}</h1>
+                                    <p class="text-xs text-gray-400 mt-1 font-mono">${motdServer}</p>
+                                </div>
+                            </div>
+
+                            <div class="text-right header-right w-full md:w-auto">
+                                <p class="text-xs text-gray-400 uppercase tracking-widest">Sesión Activa</p>
+                                <p class="font-bold text-xl text-white">${auth.currentUser ? auth.currentUser.displayName : 'Administrador'}</p>
+                                <div class="flex items-center justify-end gap-3 mt-2">
+                                    <span class="plan-badge">Plan Free</span>
+                                    <button class="btn-planes" onclick="window.location.href='planes.html'">Ver Planes</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <main class="w-full">
+                            <div id="home-panel" class="w-full hidden"></div>
+                            <div id="console-panel" class="content-panel hidden"></div>
+                            <div id="players-panel" class="content-panel hidden"></div>
+                            <div id="files-panel" class="content-panel hidden"></div>
+                            <div id="mods-panel" class="content-panel hidden"></div>
+                            <div id="nube-panel" class="content-panel hidden"></div>
+                            <div id="settings-panel" class="content-panel hidden"></div>
+                            <div id="compartidos-panel" class="content-panel hidden"></div>
+                        </main>
+                    </div>
+
+                    <div class="navigation-container">
+                        <nav class="navigation">
+                            <a data-panel="home-panel" class="active">
+                                <i data-feather="activity"></i><span class="title">Rendimiento</span>
+                            </a>
+                            <a data-panel="console-panel">
+                                <i data-feather="terminal"></i><span class="title">Consolas</span>
+                            </a>
+                            <a data-panel="players-panel">
+                                <i data-feather="users"></i><span class="title">Staff</span>
+                            </a>
+                            <a data-panel="files-panel">
+                                <i data-feather="folder"></i><span class="title">Archivos</span>
+                            </a>
+                            <a data-panel="mods-panel">
+                                <i data-feather="package"></i><span class="title">Mods & APIS</span>
+                            </a>
+                            <a data-panel="nube-panel">
+                                <i data-feather="cloud"></i><span class="title">Copias Nube</span>
+                            </a>
+                            <a data-panel="settings-panel">
+                                <i data-feather="settings"></i><span class="title">Ajustes</span>
+                            </a>
+                            <a onclick="sessionStorage.removeItem('selectedServer'); window.location.href='create.html';" class="btn-hub cursor-pointer">
+                                <i data-feather="list"></i><span class="title">Mis Servers</span>
+                            </a>
+                            <a id="logout-btn" class="cursor-pointer text-red-500 hover:text-red-400">
+                                <i data-feather="log-out"></i><span class="title">Salir</span>
+                            </a>
+                        </nav>
+                    </div>`;
+                
+                feather.replace();
+
+                document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => {
+                    sessionStorage.removeItem('selectedServer');
+                    window.location.reload();
+                });
+
+                element.querySelectorAll('.navigation a[data-panel]').forEach(link => {
+                    link.onclick = (e) => {
+                        element.querySelectorAll('.navigation a').forEach(i => i.classList.remove('active'));
+                        link.classList.add('active');
+                        window.showPanel(link.getAttribute('data-panel'));
+                    };
+                });
+
+                let socket = null, statusInterval = null, playerListInterval = null, currentEditingFile = null;
+                let cpuChart, ramChart;
+                let currentModType = 'mod';
+
+                window.showPanel = function(id) {
+                    document.querySelectorAll('main > div').forEach(p => p.classList.add('hidden'));
+                    
+                    if (statusInterval) clearInterval(statusInterval);
+                    if (playerListInterval) clearInterval(playerListInterval);
+                    if (socket) {
+                        socket.disconnect();
+                        socket = null;
+                    }
+
+                    const panel = document.getElementById(id);
+                    if (!panel) return;
+                    panel.classList.remove('hidden');
+                    
+                    const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                    const ipActualizada = config.publicIp;
+
+                    if (id === 'home-panel') {
+                        panel.innerHTML = `
+                            <div class="amd-grid">
+                                <div class="amd-panel" style="grid-column: span 1; background: rgba(30, 20, 60, 0.8); border-color: #6366f1;">
+                                    <div class="amd-panel-header border-b border-[#6366f1] pb-3">
+                                        <div class="amd-panel-title text-indigo-400">
+                                            <i data-feather="globe" class="w-5 h-5"></i> IP de Conexión Externa (Playit.gg)
+                                        </div>
+                                        <div class="text-xs bg-indigo-600 px-3 py-1 rounded-full text-white font-bold animate-pulse">TÚNEL DE RED</div>
+                                    </div>
+                                    <div class="flex justify-between items-center mt-2 w-full">
+                                        <div class="w-full">
+                                            ${ipActualizada ? 
+                                                `<p class="text-xs text-gray-400 uppercase tracking-widest mb-1">Comparte esta IP con tus amigos para que entren</p>
+                                                <div class="amd-panel-value text-white flex items-center gap-4 text-2xl mt-2 flex-wrap">
+                                                    <span class="text-green-400 font-bold break-all">${ipActualizada}</span>
+                                                    <button onclick="navigator.clipboard.writeText('${ipActualizada}'); alert('¡IP Copiada exitosamente!')" class="bg-[#111] hover:bg-[#222] border border-[#333] p-2 rounded-lg transition-colors cursor-pointer" title="Copiar IP">
+                                                        <i data-feather="copy" class="w-5 h-5 text-indigo-400"></i>
+                                                    </button>
+                                                </div>` 
+                                            : 
+                                                `<div class="flex flex-col gap-3 w-full">
+                                                    <p class="text-xs text-yellow-500 uppercase tracking-widest font-bold flex items-center gap-2" id="claim-wait-text">
+                                                        <i data-feather="loader" class="animate-spin w-3 h-3"></i> Esperando Link...
+                                                    </p>
+                                                    <a id="claim-link-btn" href="#" target="_blank" class="bg-indigo-600 hover:bg-indigo-500 transition-colors text-white text-xs px-4 py-3 rounded-lg font-bold text-center hidden tracking-wider shadow-lg">
+                                                        1. VINCULAR PLAYIT.GG
+                                                    </a>
+                                                    <div class="flex flex-col md:flex-row gap-2">
+                                                        <input type="text" id="manual-ip-input" placeholder="2. Pega tu IP aquí..." class="text-xs p-3 rounded-lg bg-[#111] border border-[#333] text-white flex-1 outline-none focus:border-green-500 transition-colors">
+                                                        <button onclick="window.guardarIP()" class="bg-green-600 hover:bg-green-500 px-4 py-3 md:py-0 rounded-lg text-xs font-bold transition-colors">GUARDAR IP</button>
+                                                    </div>
+                                                </div>`
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="amd-panel">
+                                    <div class="amd-panel-header">
+                                        <div class="amd-panel-title">
+                                            <i data-feather="power" class="text-gray-400 w-4 h-4"></i>Gestión de Energía
+                                        </div>
+                                        <div id="status-text" class="text-sm font-bold text-gray-500 uppercase tracking-widest">VERIFICANDO...</div>
+                                    </div>
+                                    <div class="flex-grow flex flex-col justify-center gap-3">
+                                        <button id="btn-start" class="btn-power btn-start" disabled onclick="window.actionServer('start')">
+                                            <i data-feather="play" class="w-4 h-4"></i> Iniciar Servidor
+                                        </button>
+                                        <div class="flex gap-3">
+                                            <button id="btn-restart" class="btn-power btn-restart" disabled onclick="window.actionServer('restart')">
+                                                <i data-feather="refresh-cw" class="w-4 h-4"></i> Reiniciar
+                                            </button>
+                                            <button id="btn-stop" class="btn-power btn-stop" disabled onclick="window.actionServer('stop')">
+                                                <i data-feather="square" class="w-4 h-4"></i> Detener
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="amd-panel">
+                                    <div class="amd-panel-header">
+                                        <div class="amd-panel-title">
+                                            <i data-feather="server" class="text-green-500 w-4 h-4"></i>Uso de Memoria (RAM)
+                                        </div>
+                                        <div id="stat-ram-value" class="amd-panel-value text-green-500">0.00 GB / 8.00 GB</div>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="ramChart"></canvas>
+                                    </div>
+                                </div>
+
+                                <div class="amd-panel">
+                                    <div class="amd-panel-header">
+                                        <div class="amd-panel-title">
+                                            <i data-feather="cpu" class="text-blue-500 w-4 h-4"></i>Uso de Procesador (CPU)
+                                        </div>
+                                        <div id="stat-cpu-value" class="amd-panel-value text-blue-500">0%</div>
+                                    </div>
+                                    <div class="chart-container">
+                                        <canvas id="cpuChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        feather.replace();
+                        initCharts();
+                        checkStatus();
+                        checkPlayitLogs();
+                        statusInterval = setInterval(() => {
+                            checkStatus();
+                            checkPlayitLogs();
+                        }, 3000);
+                    }
+                    
+                    if (id === 'console-panel') {
+                        panel.innerHTML = `
+                            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 w-full">
+                                <div class="content-panel flex flex-col h-[600px]">
+                                    <h3 class="text-xs uppercase font-bold mb-4 flex items-center gap-2 text-green-500">
+                                        <i data-feather="terminal" class="w-4 h-4"></i> Consola Servidor (Minecraft)
+                                    </h3>
+                                    <textarea id="console-out" readonly class="console-textarea flex-1 mb-4 border-[#333] focus:border-green-500"></textarea>
+                                    <form id="console-form" class="flex gap-2">
+                                        <input id="cmd-in" type="text" class="flex-1 bg-[#111] border border-[#333] p-3 rounded-lg text-white outline-none focus:border-green-500 transition-colors text-sm" placeholder="Comando (ej: op maxpro)...">
+                                        <button type="submit" class="bg-green-600 hover:bg-green-700 px-6 rounded-lg font-bold text-white text-sm">Enviar</button>
+                                    </form>
+                                </div>
+                                <div class="content-panel flex flex-col h-[600px]">
+                                    <h3 class="text-xs uppercase font-bold mb-4 flex items-center gap-2 text-indigo-400">
+                                        <i data-feather="globe" class="w-4 h-4"></i> Consola de Red (Playit.gg)
+                                    </h3>
+                                    <textarea id="playit-out" readonly class="console-textarea flex-1 text-indigo-300 border-[#333] bg-[#0a0a0f] text-xs font-mono"></textarea>
+                                </div>
+                            </div>`;
+                        feather.replace();
+                        
+                        document.getElementById('console-form').onsubmit = (e) => {
+                            e.preventDefault();
+                            const input = document.getElementById('cmd-in');
+                            if (input && input.value) {
+                                fetch(`${API_URL}/api/server/command`, {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json'},
+                                    body: JSON.stringify({...bodyAuth, command: input.value})
+                                });
+                                input.value = '';
+                            }
+                        };
+
+                        const out = document.getElementById('console-out');
+                        if(out) {
+                            socket = io(API_URL, { query: { uid: auth.currentUser.uid, serverId: config.id } });
+                            socket.on('log', (data) => {
+                                out.value += data.replace(/\u001b\[[0-9;]*m/g, '');
+                                out.scrollTop = out.scrollHeight;
+                            });
+                        }
+
+                        checkPlayitLogs();
+                        statusInterval = setInterval(() => { 
+                            checkPlayitLogs(); 
+                        }, 3000);
+                    }
+
+                    if (id === 'players-panel') {
+                        panel.innerHTML = `
+                            <div class="content-panel">
+                                <h3 class="text-xl mb-4 font-bold text-green-500">Jugadores Conectados</h3>
+                                <div id="player-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
+                            </div>`;
+                        
+                        async function fetchPlayers() {
+                            const list = document.getElementById('player-list');
+                            if (!list) return;
+                            try {
+                                const res = await fetch(`${API_URL}/api/server/players${queryAuth}`);
+                                const data = await res.json();
+                                list.innerHTML = '';
+                                if (data.error) {
+                                    list.innerHTML = `<p class="col-span-full text-center text-red-500">${data.error}</p>`;
+                                    return;
+                                }
+                                if (data.players && data.players.length > 0) {
+                                    data.players.forEach(p => {
+                                        list.innerHTML += `
+                                            <div class="player-card">
+                                                <img src="${p.avatar}" class="player-avatar">
+                                                <p class="font-bold text-white">${p.name}</p>
+                                                <div class="mt-4 flex justify-center gap-2">
+                                                    <button onclick="window.managePlayer('kick', '${p.name}')" class="bg-yellow-600 px-3 py-1 rounded text-xs font-bold text-white">Kick</button>
+                                                    <button onclick="window.managePlayer('ban', '${p.name}')" class="bg-red-600 px-3 py-1 rounded text-xs font-bold text-white">Ban</button>
+                                                </div>
+                                            </div>`;
+                                    });
+                                } else {
+                                    list.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay jugadores conectados.</p>';
+                                }
+                            } catch(e) {
+                                list.innerHTML = '<p class="col-span-full text-center text-red-500">Error al cargar jugadores.</p>';
+                            }
+                        }
+
+                        window.managePlayer = async (action, name) => {
+                            if (!confirm(`¿Seguro que quieres aplicar ${action} a ${name}?`)) return;
+                            try {
+                                const res = await fetch(`${API_URL}/api/server/${action}`, {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json'},
+                                    body: JSON.stringify({...bodyAuth, player: name})
+                                });
+                                const data = await res.json();
+                                if(data.success) {
+                                    alert(`${name} ha sido procesado.`);
+                                }
+                                fetchPlayers();
+                            } catch(e) {
+                                alert("Error al ejecutar la acción.");
+                            }
+                        };
+
+                        fetchPlayers();
+                        playerListInterval = setInterval(fetchPlayers, 10000);
+                    }
+
+                    if (id === 'files-panel') {
+                        panel.innerHTML = `
+                            <div class="content-panel">
+                                <h3 class="text-xl mb-4 font-bold text-green-500">Archivos del Servidor</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="md:col-span-1 file-tree" id="file-tree"></div>
+                                    <div class="md:col-span-2">
+                                        <textarea id="file-editor" class="file-editor outline-none focus:border-green-500 transition-colors"></textarea>
+                                        <button id="save-file-btn" class="mt-4 w-full md:w-auto bg-green-600 hover:bg-green-700 transition-colors px-6 py-3 rounded-lg font-bold text-white uppercase text-sm">Guardar Cambios</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                        
+                        window.loadFiles = async (dir) => {
+                            const tree = document.getElementById('file-tree');
+                            if (!tree) return;
+                            tree.innerHTML = '<p class="text-gray-500">Cargando...</p>';
+                            try {
+                                const res = await fetch(`${API_URL}/api/files/list${queryAuth}&path=${encodeURIComponent(dir)}`);
+                                const files = await res.json();
+                                tree.innerHTML = '';
+                                if (dir !== '/') {
+                                    const pDir = dir.substring(0, dir.lastIndexOf('/')) || '/';
+                                    tree.innerHTML += `
+                                        <div class="file-tree-item" onclick="window.loadFiles(atob('${btoa(pDir)}'))">
+                                            <i data-feather="corner-up-left" class="w-4 h-4 text-gray-400"></i>
+                                            <span class="text-sm text-gray-400">Volver</span>
+                                        </div>`;
+                                }
+                                files.sort((a,b) => a.isDir ? -1 : 1).forEach(f => {
+                                    const icon = f.isDir ? 'folder' : 'file';
+                                    const color = f.isDir ? 'text-green-500' : 'text-gray-300';
+                                    const action = f.isDir ? `window.loadFiles(atob('${btoa(f.path)}'))` : `window.openFile(atob('${btoa(f.path)}'))`;
+                                    tree.innerHTML += `
+                                        <div class="file-tree-item" onclick="${action}">
+                                            <i data-feather="${icon}" class="w-4 h-4 ${color}"></i>
+                                            <span class="text-sm text-white">${f.name}</span>
+                                        </div>`;
+                                });
+                                feather.replace();
+                            } catch(e) {
+                                tree.innerHTML = '<p class="text-red-500">Error al cargar archivos.</p>';
+                            }
+                        };
+
+                        window.openFile = async (path) => {
+                            currentEditingFile = path;
+                            const editor = document.getElementById('file-editor');
+                            try {
+                                const res = await fetch(`${API_URL}/api/files/content${queryAuth}&path=${encodeURIComponent(path)}`);
+                                const data = await res.json();
+                                editor.value = data.content;
+                            } catch(e) {
+                                editor.value = "Error al abrir el archivo.";
+                            }
+                        };
+
+                        document.getElementById('save-file-btn').onclick = async () => {
+                            if (!currentEditingFile) return;
+                            const editor = document.getElementById('file-editor');
+                            await fetch(`${API_URL}/api/files/save`, {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({...bodyAuth, path: currentEditingFile, content: editor.value })
+                            });
+                            alert('Archivo guardado.');
+                        };
+
+                        window.loadFiles('/');
+                    }
+
+                    if (id === 'mods-panel') {
+                        panel.innerHTML = `
+                            <div class="content-panel">
+                                <h3 class="text-xl font-bold text-green-500 mb-6">Buscador Oficial (Modrinth API)</h3>
+                                <div class="mod-pills-tab flex-wrap">
+                                    <div class="mod-pill active" data-type="mod">Mods</div>
+                                    <div class="mod-pill" data-type="modpack">Modpacks</div>
+                                    <div class="mod-pill" data-type="plugin">Bukkit Plugins</div>
+                                    <div class="mod-pill" data-type="datapack">Data Packs</div>
+                                </div>
+                                <form id="mod-search-form" class="flex flex-col md:flex-row gap-2 mb-6">
+                                    <input type="text" id="mod-search-input" class="search-mod-input" placeholder="Buscar por nombre...">
+                                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 md:py-0 rounded-lg font-bold text-white text-xs uppercase">Buscar</button>
+                                </form>
+                                <div id="mod-results-list" class="flex flex-col gap-4">
+                                    <p class="text-gray-500 text-sm">Realiza una búsqueda...</p>
+                                </div>
+                            </div>`;
+                            
+                        const pills = panel.querySelectorAll('.mod-pill');
+                        pills.forEach(pill => {
+                            pill.addEventListener('click', () => {
+                                pills.forEach(p => p.classList.remove('active'));
+                                pill.classList.add('active');
+                                currentModType = pill.getAttribute('data-type');
+                                if(document.getElementById('mod-search-input').value) {
+                                    document.getElementById('mod-search-form').dispatchEvent(new Event('submit'));
+                                }
+                            });
+                        });
+                        
+                        window.installMod = (slug, title) => {
+                            alert(`Preparando instalación de "${title}"...\n\nNota: La descarga directa al servidor estará disponible en la versión v2.7.`);
+                        };
+
+                        document.getElementById('mod-search-form').addEventListener('submit', async (e) => {
+                            e.preventDefault();
+                            const query = document.getElementById('mod-search-input').value;
+                            const list = document.getElementById('mod-results-list');
+                            list.innerHTML = '<p class="text-green-500 text-sm">Buscando...</p>';
+                            
+                            try {
+                                let facets = `[["project_type:${currentModType}"]]`;
+                                if (currentModType === 'plugin' || currentModType === 'datapack') {
+                                    facets = `[["project_type:mod"],["categories:${currentModType === 'plugin' ? 'bukkit' : currentModType}"]]`;
+                                }
+                                
+                                const res = await fetch(`https://api.modrinth.com/v2/search?query=${query}&facets=${facets}`);
+                                const data = await res.json();
+                                
+                                if(data.hits && data.hits.length > 0) {
+                                    list.innerHTML = data.hits.map(hit => `
+                                        <div class="mod-item flex-col md:flex-row text-center md:text-left">
+                                            <div class="flex flex-col md:flex-row items-center gap-4 mb-3 md:mb-0">
+                                                <img src="${hit.icon_url || './assets/img/logo-minecraft.ico'}" class="w-12 h-12 rounded object-cover border border-[#444]">
+                                                <div>
+                                                    <p class="font-bold text-white">${hit.title}</p>
+                                                    <p class="text-xs text-gray-400">Autor: ${hit.author}</p>
+                                                </div>
+                                            </div>
+                                            <button onclick="window.installMod('${hit.slug}', '${hit.title.replace(/'/g, "\\'")}')" class="bg-green-600 px-4 py-2 rounded font-bold text-white text-xs uppercase w-full md:w-auto">Instalar</button>
+                                        </div>`).join('');
+                                } else {
+                                    list.innerHTML = '<p class="text-gray-500 text-sm">No se encontraron resultados.</p>';
+                                }
+                            } catch(err) {
+                                list.innerHTML = '<p class="text-red-500 text-sm">Error de conexión.</p>';
+                            }
+                        });
+                        feather.replace();
+                    }
+
+                    if (id === 'nube-panel') {
+                        panel.innerHTML = `
+                            <div class="content-panel">
+                                <h3 class="text-xl mb-6 font-bold text-green-500">Copias de Seguridad (Cloud Backup)</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                                    <div class="cloud-badge">
+                                        <img src="./assets/img/gdrive.ico" class="w-8 h-8" onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg'">
+                                        <div class="flex flex-col ml-2">
+                                            <p class="text-sm font-bold text-white">Google Drive</p>
+                                            <button id="btn-gdrive" class="text-xs text-gray-500 text-left">Cargando...</button>
+                                        </div>
+                                    </div>
+                                    <div class="cloud-badge">
+                                        <img src="./assets/img/onedrive.ico" class="w-8 h-8" onerror="this.src='./assets/img/microsoft.ico'">
+                                        <div class="flex flex-col ml-2">
+                                            <p class="text-sm font-bold text-white">OneDrive</p>
+                                            <button id="btn-onedrive" class="text-xs text-gray-500 text-left">Cargando...</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col md:flex-row justify-between items-center mb-4 border-b border-[#222] pb-4 gap-4">
+                                    <h4 class="text-sm uppercase text-gray-400 font-bold w-full md:w-auto text-center md:text-left">Tus Respaldos</h4>
+                                    <div class="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
+                                        <button onclick="window.createBackup('gdrive')" class="w-full md:w-auto bg-green-600 hover:bg-green-700 px-4 py-3 md:py-2 rounded text-xs font-bold text-white uppercase transition-colors shadow-lg">Respaldar GDrive</button>
+                                        <button onclick="window.createBackup('onedrive')" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 px-4 py-3 md:py-2 rounded text-xs font-bold text-white uppercase transition-colors shadow-lg">Respaldar OneDrive</button>
+                                    </div>
+                                </div>
+                                <div id="backup-list" class="flex flex-col gap-4"></div>
+                            </div>`;
+                        feather.replace();
+                        updateProviderUI();
+                        window.loadSavedBackups(); 
+                    }
+
+                    if (id === 'settings-panel') {
+                        panel.innerHTML = `<div class="content-panel"><h3 class="text-xl mb-6 font-bold text-green-500">Configuración Avanzada</h3><p class="text-gray-400">Próximamente en V2.7 opciones para este servidor...</p></div>`;
+                    }
+                    if (id === 'compartidos-panel') {
+                        panel.innerHTML = `<div class="content-panel"><h3 class="text-xl mb-6 font-bold text-green-500">Acceso Compartido</h3><p class="text-gray-400">Próximamente en V2.7...</p></div>`;
+                    }
+                } // FIN showPanel
+
+                async function checkPlayitLogs() {
+                    try {
+                        const res = await fetch(`${API_URL}/api/server/playitlogs${queryAuth}`);
+                        const data = await res.json();
+                        const pOut = document.getElementById('playit-out');
+                        if (pOut) {
+                            pOut.value = data.logs;
+                            pOut.scrollTop = pOut.scrollHeight;
+                        }
+                        const claimBtn = document.getElementById('claim-link-btn');
+                        const waitText = document.getElementById('claim-wait-text');
+                        if (claimBtn && data.logs) {
+                            const match = data.logs.match(/(https:\/\/playit\.gg\/claim\/[a-zA-Z0-9]+)/);
+                            if (match) {
+                                claimBtn.href = match[1];
+                                claimBtn.classList.remove('hidden');
+                                if (waitText) waitText.classList.add('hidden');
+                            }
+                        }
+                    } catch(e) {}
+                }
+
+                async function checkStatus() {
+                    try {
+                        const res = await fetch(`${API_URL}/api/server/status${queryAuth}`);
+                        const data = await res.json();
+                        const isOn = data.status === 'on';
+                        
+                        const sText = document.getElementById('status-text');
+                        if (sText) {
+                            sText.innerText = isOn ? 'ONLINE' : 'OFFLINE';
+                            sText.className = isOn ? 'text-sm font-bold text-green-500 uppercase tracking-widest' : 'text-sm font-bold text-red-500 uppercase tracking-widest';
+                        }
+                        if (document.getElementById('btn-start')) document.getElementById('btn-start').disabled = isOn;         
+                        if (document.getElementById('btn-restart')) document.getElementById('btn-restart').disabled = !isOn;    
+                        if (document.getElementById('btn-stop')) document.getElementById('btn-stop').disabled = !isOn;          
+
+                        if (isOn) {
+                            const statRes = await fetch(`${API_URL}/api/server/stats${queryAuth}`);
+                            const statData = await statRes.json();
+                            if (document.getElementById('stat-cpu-value')) document.getElementById('stat-cpu-value').innerText = statData.cpu;
+                            if (document.getElementById('stat-ram-value')) document.getElementById('stat-ram-value').innerText = `${(parseFloat(statData.ram) / 1024).toFixed(2)} GB / 8.00 GB`;
+                            if(ramChart && cpuChart) {
+                                ramChart.data.datasets[0].data.shift();
+                                ramChart.data.datasets[0].data.push(parseFloat(statData.ram));
+                                ramChart.update();
+                                cpuChart.data.datasets[0].data.shift();
+                                cpuChart.data.datasets[0].data.push(parseFloat(statData.cpu));
+                                cpuChart.update();
+                            }
+                        } else {
+                            if (document.getElementById('stat-cpu-value')) document.getElementById('stat-cpu-value').innerText = '0%';
+                            if (document.getElementById('stat-ram-value')) document.getElementById('stat-ram-value').innerText = '0.00 GB / 8.00 GB';
+                            if(ramChart && cpuChart) {
+                                ramChart.data.datasets[0].data.shift();
+                                ramChart.data.datasets[0].data.push(0);
+                                ramChart.update();
+                                cpuChart.data.datasets[0].data.shift();
+                                cpuChart.data.datasets[0].data.push(0);
+                                cpuChart.update();
+                            }
+                        }
+                    } catch(e){}
+                }
+
+                window.actionServer = async (action) => {
+                    document.getElementById('btn-start').disabled = true;
+                    document.getElementById('btn-restart').disabled = true;
+                    document.getElementById('btn-stop').disabled = true;
+                    document.getElementById('status-text').innerText = 'PROCESANDO...';
+                    document.getElementById('status-text').className = 'text-sm font-bold text-yellow-500 uppercase tracking-widest';
+                    await fetch(`${API_URL}/api/server/${action}`, {
+                        method: 'POST',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify(bodyAuth)
+                    });
+                    setTimeout(checkStatus, 3000);
+                };
+
+                function initCharts() {
+                    if (ramChart) ramChart.destroy();
+                    if (cpuChart) cpuChart.destroy();
+                    const ramCtx = document.getElementById('ramChart');
+                    const cpuCtx = document.getElementById('cpuChart');
+                    if(!ramCtx || !cpuCtx) return;
+                    const cOpt = {
+                        responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
+                        elements: { point: { radius: 0 } },
+                        scales: { x: { display: false }, y: { display: true, min: 0, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#666', font: {size: 10} } } },
+                        plugins: { legend: { display: false } }
+                    };
+                    ramChart = new Chart(ramCtx, {
+                        type: 'line',
+                        data: { labels: Array(15).fill(''), datasets: [{ data: Array(15).fill(0), borderColor: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.2)', borderWidth: 2, fill: true, tension: 0.4 }] },
+                        options: cOpt
+                    });
+                    cpuChart = new Chart(cpuCtx, {
+                        type: 'line',
+                        data: { labels: Array(15).fill(''), datasets: [{ data: Array(15).fill(0), borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', borderWidth: 2, fill: true, tension: 0.4 }] },
+                        options: { ...cOpt, scales: { y: { ...cOpt.scales.y, max: 100 } } }
+                    });
+                }
+
+                // ================== FUNCIONES CLOUD BACKUPS ================== //
+                function updateProviderUI() {
+                    const user = auth.currentUser;
+                    if(!user) return;
+                    const l = user.providerData.map(p => p.providerId);
+                    
+                    const bG = document.getElementById('btn-gdrive');
+                    if (bG) {
+                        if (l.includes('google.com')) {
+                            bG.innerText = 'Desvincular';
+                            bG.className = 'text-xs text-red-500 font-bold hover:underline';
+                            bG.onclick = () => unlinkProvider('google.com');
+                        } else {
+                            bG.innerText = 'Vincular y Dar Permiso';
+                            bG.className = 'text-xs text-green-400 hover:underline';
+                            bG.onclick = async () => {
+                                const p = new GoogleAuthProvider();
+                                p.addScope('https://www.googleapis.com/auth/drive.file');
+                                await linkProvider(p, 'Google Drive');
+                            };
+                        }
+                    }
+                    
+                    const bO = document.getElementById('btn-onedrive');
+                    if (bO) {
+                        if (l.includes('microsoft.com')) {
+                            bO.innerText = 'Desvincular';
+                            bO.className = 'text-xs text-red-500 font-bold hover:underline';
+                            bO.onclick = () => unlinkProvider('microsoft.com');
+                        } else {
+                            bO.innerText = 'Vincular y Dar Permiso';
+                            bO.className = 'text-xs text-green-400 hover:underline';
+                            bO.onclick = async () => {
+                                const p = new OAuthProvider('microsoft.com');
+                                p.addScope('Files.ReadWrite');
+                                await linkProvider(p, 'OneDrive');
+                            };
+                        }
+                    }
+                }
+
+                async function linkProvider(p, n) {
+                    try {
+                        const r = await linkWithPopup(auth.currentUser, p);
+                        const c = p.providerId === 'google.com' ? GoogleAuthProvider.credentialFromResult(r) : OAuthProvider.credentialFromResult(r);
+                        if (c && c.accessToken) localStorage.setItem(p.providerId + '_token', c.accessToken);
+                        alert(`¡${n} vinculado correctamente!`);
+                        updateProviderUI();
+                    } catch (e) {
+                        alert('Error al vincular: ' + e.message);
+                    }
+                }
+
+                async function unlinkProvider(id) {
+                    if(!confirm(`¿Desvincular?`)) return;
+                    try {
+                        await unlink(auth.currentUser, id);
+                        localStorage.removeItem(id + '_token');
+                        updateProviderUI();
+                    } catch(e) {
+                        alert('Error al desvincular.');
+                    }
+                }
+
+                window.loadSavedBackups = () => { 
+                    const list = document.getElementById('backup-list');
+                    if (!list) return;
+                    
+                    const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                    const storageKey = `backups_${config.id}`;
+                    const saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+                    
+                    if (saved.length === 0) {
+                        list.innerHTML = '<div class="text-center text-gray-600 text-sm py-4">No hay copias de seguridad creadas aún.</div>';
+                        return;
+                    }
+                    
+                    list.innerHTML = ''; 
+                    saved.forEach(b => { 
+                        const div = document.createElement('div');
+                        div.className = "backup-item flex flex-col bg-[#1a1a1a] p-4 rounded-lg border border-[#333] shadow-md mb-2"; 
+                        div.innerHTML = `
+                            <div class="flex justify-between items-start w-full">
+                                <div class="flex items-center gap-3">
+                                    <i data-feather="check-circle" class="text-green-500 w-6 h-6"></i>
+                                    <div>
+                                        <p class="text-sm text-white font-bold">${b.name}</p>
+                                        <p class="text-xs text-green-400 mt-1">Subido a ${b.provider} - ${b.time}</p>
+                                    </div>
+                                </div>
+                                <button onclick="this.closest('.backup-item').remove(); window.removeBackup('${b.id}')" class="text-red-500 hover:text-red-400 p-2">
+                                    <i data-feather="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>`; 
+                        list.appendChild(div); 
+                    }); 
+                    feather.replace(); 
+                };
+
+                window.removeBackup = (id) => { 
+                    const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                    const storageKey = `backups_${config.id}`;
+                    let saved = JSON.parse(localStorage.getItem(storageKey) || '[]'); 
+                    saved = saved.filter(b => b.id !== id); 
+                    localStorage.setItem(storageKey, JSON.stringify(saved)); 
+                    
+                    if(saved.length === 0) {
+                        document.getElementById('backup-list').innerHTML = '<div class="text-center text-gray-600 text-sm py-4">No hay copias de seguridad creadas aún.</div>';
+                    }
+                };
+
+                window.createBackup = async (pName) => {
+                    const isG = pName === 'gdrive';
+                    const tKey = isG ? 'google.com_token' : 'microsoft.com_token';
+                    const token = localStorage.getItem(tKey);
+                    const pText = isG ? 'Google Drive' : 'OneDrive';
+                    
+                    if (!token) {
+                        alert(`Por favor, vincula tu cuenta de ${pText} primero.`);
+                        return;
+                    }
+                    
+                    const list = document.getElementById('backup-list');
+                    if(list.innerText.includes('No hay copias')) list.innerHTML = '';
+                    
+                    const bId = Date.now().toString();
+                    const div = document.createElement('div');
+                    div.id = `backup-card-${bId}`;
+                    div.className = "backup-item flex flex-col bg-[#1a1a1a] p-4 rounded-lg border border-[#333] shadow-md mb-2";
+                    
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start w-full">
+                            <div class="flex items-center gap-3">
+                                <i data-feather="loader" id="icon-${bId}" class="text-indigo-400 w-6 h-6 animate-spin"></i>
+                                <div>
+                                    <p class="text-sm text-white font-bold" id="title-${bId}">Preparando copia en ${pText}...</p>
+                                    <p class="text-xs text-yellow-400 mt-1" id="status-${bId}">Comprimiendo y conectando...</p>
+                                </div>
+                            </div>
+                            <button onclick="this.closest('.backup-item').remove()" class="text-red-500 hover:text-red-400 p-2 hidden">
+                                <i data-feather="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div id="progress-container-${bId}" class="w-full mt-4">
+                            <div class="flex justify-between text-xs text-gray-400 mb-1">
+                                <span>Progreso de subida</span><span id="pct-${bId}">0%</span>
+                            </div>
+                            <div class="w-full bg-[#222] rounded-full h-2">
+                                <div id="bar-${bId}" class="bg-indigo-500 h-2 rounded-full transition-all duration-300" style="width: 0%"></div>
+                            </div>
+                        </div>`;
+                        
+                    list.prepend(div);
+                    feather.replace();
+                    
+                    let pct = 0;
+                    const interval = setInterval(() => {
+                        if (pct < 90) {
+                            pct += Math.floor(Math.random() * 8) + 1;
+                            if(pct > 90) pct = 90;
+                            document.getElementById(`bar-${bId}`).style.width = pct + '%';
+                            document.getElementById(`pct-${bId}`).innerText = pct + '%';
+                        }
+                    }, 1500);
+
+                    try {
+                        const endpoint = isG ? '/api/backup/gdrive' : '/api/backup/onedrive';
+                        const res = await fetch(`${API_URL}${endpoint}`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ token })
+                        });
+                        const data = await res.json();
+                        
+                        clearInterval(interval);
+                        
+                        if (data.success) {
+                            document.getElementById(`bar-${bId}`).style.width = '100%';
+                            document.getElementById(`pct-${bId}`).innerText = '100%';
+                            document.getElementById(`bar-${bId}`).classList.replace('bg-indigo-500', 'bg-green-500');
+                            
+                            const tStr = new Date().toLocaleTimeString();
+                            document.getElementById(`icon-${bId}`).outerHTML = `<i data-feather="check-circle" class="text-green-500 w-6 h-6"></i>`;
+                            document.getElementById(`title-${bId}`).innerText = data.name;
+                            document.getElementById(`status-${bId}`).innerText = `Subido a ${pText} - ${tStr}`;
+                            document.getElementById(`status-${bId}`).classList.replace('text-yellow-400', 'text-green-400');
+                            
+                            setTimeout(() => {
+                                document.getElementById(`progress-container-${bId}`).style.display = 'none';
+                                document.querySelector(`#backup-card-${bId} button`).classList.remove('hidden');
+                            }, 2000);
+                            feather.replace();
+                            
+                            const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                            const storageKey = `backups_${config.id}`;
+                            const saved = JSON.parse(localStorage.getItem(storageKey) || '[]'); 
+                            saved.unshift({ id: bId, name: data.name, provider: pText, time: tStr }); 
+                            localStorage.setItem(storageKey, JSON.stringify(saved));
+                        } else {
+                            throw new Error(data.error);
+                        }
+                    } catch(e) {
+                        clearInterval(interval);
+                        document.getElementById(`progress-container-${bId}`).style.display = 'none';
+                        document.getElementById(`icon-${bId}`).outerHTML = `<i data-feather="alert-triangle" class="text-red-500 w-6 h-6"></i>`;
+                        document.getElementById(`title-${bId}`).innerText = 'Error al crear la copia';
+                        document.getElementById(`status-${bId}`).innerText = e.message;
+                        document.getElementById(`status-${bId}`).classList.replace('text-yellow-400', 'text-red-500');
+                        feather.replace();
+                    }
+                };
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Desplegar Servidor | Professional Servers V2.6</title>
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #0a0a0a; color: white; min-height: 100vh; overflow-x: hidden; }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a3a1a 0%, #0a0a0a 100%); z-index: -1; }
+        .glass { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
+        .input-pro { background: #161616; border: 1px solid #333; border-radius: 10px; color: white; padding: 12px; outline: none; transition: 0.3s; width: 100%; font-size: 14px; }
+        .input-pro:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.2); background: #1a1a1a; }
+        .btn-crear { background: #4CAF50; color: white; font-weight: bold; padding: 15px; border-radius: 12px; transition: 0.3s; text-transform: uppercase; cursor: pointer; border: none; width: 100%; }
+        .btn-crear:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76,175,80,0.3); }
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); z-index: 100; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
+        .spinner-ring { width: 100px; height: 100px; border: 4px solid rgba(76, 175, 80, 0.1); border-top-color: #4CAF50; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #version-section { transition: all 0.3s ease; }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="max-w-5xl mx-auto p-6 pt-12">
+        <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
+            <div class="flex items-center gap-4">
+                <img src="./assets/img/favicon.ico" class="w-14 h-14 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)]">
+                <div>
+                    <h1 class="text-3xl font-bold font-['Cinzel'] tracking-wider text-white uppercase">Nuevo Proyecto</h1>
+                    <p class="text-xs text-green-500 font-bold uppercase tracking-widest">Infraestructura V2.6 Pro</p>
+                </div>
+            </div>
+            <button onclick="window.location.href='index.html'" class="text-xs text-gray-400 hover:text-white transition-colors uppercase font-bold flex items-center gap-2 bg-[#111] px-4 py-2 rounded-lg border border-[#333]">
+                <i data-feather="arrow-left" class="w-4 h-4"></i> Volver al Panel
+            </button>
+        </div>
+
+        <div id="servers-list-container" class="mb-8"></div>
+
+        <form id="view-create" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass p-8 space-y-6">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-[#333] pb-3">Identidad</h3>
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-500 uppercase font-bold">Nombre</label>
+                    <input type="text" id="custom-name" class="input-pro" placeholder="Mi Mundo" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-500 uppercase font-bold">Edición</label>
+                    <select id="server-edition" class="input-pro">
+                        <option value="java">Java Edition (PC)</option>
+                        <option value="bedrock">Bedrock (Consola/Mobile)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="glass p-8 space-y-6 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-[#333] pb-3">Configuración</h3>
+                    
+                    <div class="space-y-2 mb-6">
+                        <label class="text-xs text-gray-500 uppercase font-bold">Software / Motor</label>
+                        <select id="software-select" class="input-pro">
+                            </select>
+                    </div>
+
+                    <div id="version-section" class="space-y-2">
+                        <label class="text-xs text-gray-500 uppercase font-bold">Versión</label>
+                        <select id="mc-version-select" class="input-pro">
+                            <option value="LATEST">Última versión disponible (LATEST)</option>
+                            <option value="26.1.2">26.1.2</option>
+                            <option value="26.1.1">26.1.1</option>
+                            <option value="26.1">26.1</option>
+                            <option value="1.21.11">1.21.11</option>
+                            <option value="1.21.10">1.21.10</option>
+                            <option value="1.21.9">1.21.9</option>
+                            <option value="1.21.8">1.21.8</option>
+                            <option value="1.21.7">1.21.7</option>
+                            <option value="1.21.6">1.21.6</option>
+                            <option value="1.21.5">1.21.5</option>
+                            <option value="1.21.4">1.21.4</option>
+                            <option value="1.21.3">1.21.3</option>
+                            <option value="1.21.1">1.21.1</option>
+                            <option value="1.21">1.21</option>
+                            <option value="1.20.6">1.20.6</option>
+                            <option value="1.20.4">1.20.4</option>
+                            <option value="1.20.3">1.20.3</option>
+                            <option value="1.20.2">1.20.2</option>
+                            <option value="1.20.1">1.20.1</option>
+                            <option value="1.20">1.20</option>
+                            <option value="1.19.4">1.19.4</option>
+                            <option value="1.19.3">1.19.3</option>
+                            <option value="1.19.2">1.19.2</option>
+                            <option value="1.19.1">1.19.1</option>
+                            <option value="1.19">1.19</option>
+                            <option value="1.18.2">1.18.2</option>
+                            <option value="1.18.1">1.18.1</option>
+                            <option value="1.18">1.18</option>
+                            <option value="1.17.1">1.17.1</option>
+                            <option value="1.16.5">1.16.5</option>
+                            <option value="1.16.4">1.16.4</option>
+                            <option value="1.16.3">1.16.3</option>
+                            <option value="1.16.2">1.16.2</option>
+                            <option value="1.16.1">1.16.1</option>
+                            <option value="1.15.2">1.15.2</option>
+                            <option value="1.15.1">1.15.1</option>
+                            <option value="1.15">1.15</option>
+                            <option value="1.14.4">1.14.4</option>
+                            <option value="1.14.3">1.14.3</option>
+                            <option value="1.14.2">1.14.2</option>
+                            <option value="1.13.2">1.13.2</option>
+                            <option value="1.12.2">1.12.2</option>
+                            <option value="1.12.1">1.12.1</option>
+                            <option value="1.12">1.12</option>
+                            <option value="1.11.2">1.11.2</option>
+                            <option value="1.11">1.11</option>
+                            <option value="1.10.2">1.10.2</option>
+                            <option value="1.10">1.10</option>
+                            <option value="1.9.4">1.9.4</option>
+                            <option value="1.9">1.9</option>
+                            <option value="1.8.9">1.8.9</option>
+                            <option value="1.8.8">1.8.8</option>
+                            <option value="1.8">1.8</option>
+                            <option value="1.7.10">1.7.10</option>
+                            <option value="1.7.10_pre4">1.7.10_pre4</option>
+                            <option value="1.7.2">1.7.2</option>
+                            <option value="1.6.4">1.6.4</option>
+                            <option value="1.6.3">1.6.3</option>
+                            <option value="1.6.2">1.6.2</option>
+                            <option value="1.6.1">1.6.1</option>
+                            <option value="1.5.2">1.5.2</option>
+                            <option value="1.5.1">1.5.1</option>
+                            <option value="1.5">1.5</option>
+                            <option value="1.4.7">1.4.7</option>
+                            <option value="1.4.6">1.4.6</option>
+                            <option value="1.4.5">1.4.5</option>
+                            <option value="1.4.4">1.4.4</option>
+                            <option value="1.4.3">1.4.3</option>
+                            <option value="1.4.2">1.4.2</option>
+                            <option value="1.4.1">1.4.1</option>
+                            <option value="1.4.0">1.4.0</option>
+                            <option value="1.3.2">1.3.2</option>
+                            <option value="1.2.5">1.2.5</option>
+                            <option value="1.2.4">1.2.4</option>
+                            <option value="1.2.3">1.2.3</option>
+                            <option value="1.1">1.1</option>
+                        </select>
+                    </div>
+
+                    <div id="bedrock-msg" class="hidden p-4 bg-green-900/20 border border-green-500 rounded-xl">
+                        <p class="text-xs text-green-400 font-bold uppercase tracking-wider text-center flex flex-col gap-2">
+                            <i data-feather="check-circle" class="w-6 h-6 mx-auto"></i>
+                            Bedrock Edition. El núcleo seleccionado se configurará y actualizará automáticamente.
+                        </p>
+                    </div>
+                </div>
+                <div class="pt-6 mt-6 border-t border-[#333]">
+                    <button type="submit" class="btn-crear">Desplegar Servidor (8GB RAM)</button>
+                </div>
+            </div>
+        </form>
+
+        <div id="loading-overlay" class="loading-overlay">
+            <div class="spinner-ring"></div>
+            <h2 class="mt-8 text-2xl font-bold font-['Cinzel'] text-white">CONFIGURANDO NODO</h2>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM",
+            authDomain: "proffesional-server.firebaseapp.com",
+            projectId: "proffesional-server",
+            storageBucket: "proffesional-server.firebasestorage.app",
+            messagingSenderId: "833822850667",
+            appId: "1:833822850667:web:3c03219c6822116edbfb2e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
+
+        // 🔥 LISTAS DINÁMICAS DE MOTORES 🔥
+        const javaSoftwares = `
+            <optgroup label="Vanilla">
+                <option value="vanilla">Vanilla</option>
+                <option value="snapshot">Snapshot</option>
+            </optgroup>
+            <optgroup label="Para Plugins">
+                <option value="paper">Paper/Bukkit</option>
+                <option value="spigot">Spigot/Bukkit</option>
+                <option value="purpur">Purpur/Bukkit</option>
+                <option value="glowstone">Glowstone</option>
+            </optgroup>
+            <optgroup label="Para Mods y más">
+                <option value="fabric">Fabric</option>
+                <option value="quilt">Quilt</option>
+                <option value="neoforge">NeoForge</option>
+                <option value="forge">Forge</option>
+            </optgroup>
+            <optgroup label="Para ambas (Plugins/Mods)">
+                <option value="arclight">Arclight</option>
+            </optgroup>
+        `;
+
+        const bedrockSoftwares = `
+            <optgroup label="Vanilla">
+                <option value="bedrock">Bedrock Oficial</option>
+                <option value="preview">Bedrock Preview</option>
+            </optgroup>
+            <optgroup label="Para Plugins">
+                <option value="pocketmine">PocketMine</option>
+            </optgroup>
+        `;
+
+        const softwareSelect = document.getElementById('software-select');
+        softwareSelect.innerHTML = javaSoftwares; // Carga inicial Java
+
+        document.getElementById('server-edition').addEventListener('change', (e) => {
+            const isBedrock = e.target.value === 'bedrock';
+            softwareSelect.innerHTML = isBedrock ? bedrockSoftwares : javaSoftwares;
+            document.getElementById('version-section').style.display = isBedrock ? 'none' : 'block';
+            document.getElementById('bedrock-msg').style.display = isBedrock ? 'block' : 'none';
+        });
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) window.location.href = 'index.html';
+            else loadUserServers(user.uid);
+        });
+
+        async function loadUserServers(uid) {
+            try {
+                const res = await fetch(`${API_URL}/api/project/check?uid=${uid}`);
+                const data = await res.json();
+                const list = document.getElementById('servers-list-container');
+                if (data.exists && data.servers.length > 0) {
+                    let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
+                    data.servers.forEach(s => {
+                        const versionLabel = s.edition === 'bedrock' ? s.software.toUpperCase() : s.version;
+                        html += `
+                        <div class="glass p-5 flex flex-col justify-between">
+                            <div>
+                                <h4 class="font-bold text-white text-lg">${s.projectName}</h4>
+                                <p class="text-xs text-gray-400 mb-4">${s.edition.toUpperCase()} - ${versionLabel}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="window.enterServer('${encodeURIComponent(JSON.stringify(s))}')" class="bg-green-600 hover:bg-green-500 transition-colors px-4 py-2 rounded text-xs font-bold text-white flex-1">ENTRAR</button>
+                                <button onclick="window.deleteServer('${s.id}')" class="bg-[#222] border border-[#333] hover:bg-red-600 transition-colors px-3 py-2 rounded text-xs text-white" title="Borrar Servidor"><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>`;
+                    });
+                    list.innerHTML = html + '</div><hr class="border-[#333] my-8">';
+                }
+                feather.replace();
+            } catch (e) { console.error(e); }
+        }
+
+        window.enterServer = (s) => { 
+            sessionStorage.setItem('selectedServer', decodeURIComponent(s)); 
+            window.location.href = 'index.html'; 
+        };
+
+        window.deleteServer = async (id) => {
+            if (!confirm('¿Eliminar servidor permanentemente?')) return;
+            await fetch(`${API_URL}/api/project/delete`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ uid: auth.currentUser.uid, serverId: id }) });
+            window.location.reload();
+        };
+
+        document.getElementById('view-create').onsubmit = async (e) => {
+            e.preventDefault();
+            document.getElementById('loading-overlay').classList.add('active');
+            
+            const edition = document.getElementById('server-edition').value;
+            const payload = {
+                uid: auth.currentUser.uid,
+                projectName: document.getElementById('custom-name').value,
+                motd: "Professional Server",
+                edition: edition,
+                software: document.getElementById('software-select').value,
+                version: edition === 'java' ? document.getElementById('mc-version-select').value : 'LATEST'
+            };
+
+            await fetch(`${API_URL}/api/project/create`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            setTimeout(() => window.location.reload(), 3000);
+        };
+        feather.replace();
+    </script>
+</body>
+</html>
