@@ -11,6 +11,8 @@ const multer = require('multer');
 const AdmZip = require('adm-zip');
 const { execSync } = require('child_process');
 const { pipeline } = require('stream/promises');
+const mongoose = require('mongoose');
+require('dotenv').config(); // Mongoose URI
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +20,39 @@ const io = new Server(server, { cors: { origin: '*' } });
 const docker = new Docker();
 
 app.use(cors());
+
+// ==========================================
+// CONEXIÓN A MONGODB (AZURE)
+// ==========================================
+mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('\x1b[34m[MongoDB] Conectado a Azure Cosmos DB exitosamente.\x1b[0m'))
+    .catch(err => console.error('\x1b[31m[MongoDB ERROR]\x1b[0m', err));
+
+const serverSchema = new mongoose.Schema({
+    id: String,
+    edition: String,
+    projectName: String,
+    motd: String,
+    software: String,
+    version: String,
+    publicIp: String,
+    sharedWith: [String]
+});
+
+const userSchema = new mongoose.Schema({
+    uid: { type: String, required: true, unique: true },
+    role: { type: String, default: 'admin' },
+    plan: { type: String, default: 'redstone' },
+    servers: [serverSchema]
+});
+
+const ipSchema = new mongoose.Schema({
+    ip: { type: String, required: true, unique: true },
+    uids: [String]
+});
+
+const User = mongoose.model('User', userSchema);
+const IpInfo = mongoose.model('IpInfo', ipSchema);
 
 // ==========================================
 // DICCIONARIO DE PLANES Y PERMISOS (PAYWALL)
@@ -43,7 +78,6 @@ if (process.env.CURSEFORGE_API_KEY) {
 }
 console.log("=========================================");
 
-// Límites expandidos para subida masiva (10GB)
 app.use(express.json({ limit: '10000mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10000mb' }));
 
@@ -53,9 +87,7 @@ app.use(express.urlencoded({ extended: true, limit: '10000mb' }));
 let serviceAccount;
 try {
     serviceAccount = require('./firebase-adminsdk.json');
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
+    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
     console.log("[SEGURIDAD] Firebase Admin inicializado correctamente.");
 } catch (e) {
     console.warn("\x1b[31m[ALERTA CRÍTICA] No se encontró firebase-adminsdk.json.\x1b[0m");
@@ -74,91 +106,56 @@ const verifyToken = async (req, res, next) => {
     }
 };
 
-const dbPath = path.join(__dirname, 'data', 'database.json');
-
-// BLINDAJE 1: Estructura Dinámica con Planes e IPs
-function loadDB() {
-    const dataDir = path.join(__dirname, 'data');
-    if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-    
-    if (!fs.existsSync(dbPath) || fs.statSync(dbPath).size === 0) {
-        fs.writeFileSync(dbPath, JSON.stringify({ users: {}, roles: {}, plans: {}, ips: {} }, null, 2), 'utf8');
-    }
-    try {
-        const fileContent = fs.readFileSync(dbPath, 'utf8');
-        if (!fileContent.trim()) return { users: {}, roles: {}, plans: {}, ips: {} };
-        let db = JSON.parse(fileContent);
-        if (!db.roles) db.roles = {};
-        if (!db.plans) db.plans = {};
-        if (!db.ips) db.ips = {}; // Control Anti-Fraude
-        return db;
-    } catch (e) {
-        console.error("[DB ERROR] Base de datos corrupta, reiniciando estructura:", e.message);
-        const safeDefault = { users: {}, roles: {}, plans: {}, ips: {} };
-        fs.writeFileSync(dbPath, JSON.stringify(safeDefault, null, 2), 'utf8');
-        return safeDefault;
-    }
-}
-
-function saveDB(data) { 
-    try {
-        fs.writeFileSync(dbPath, JSON.stringify(data, null, 2), 'utf8');
-    } catch(e) {
-        console.error("[DB ERROR] Fallo al guardar:", e);
-    }
-}
-
-function findServer(serverId) {
-    const db = loadDB();
-    for (const uid in db.users) {
-        const srv = db.users[uid].find(s => s.id === serverId);
-        if (srv) return { ownerUid: uid, server: srv };
-    }
-    return null;
-}
-
 // ==========================================
-// MIDDLEWARES DE ACCESO Y RESTRICCIÓN DE PLANES
+// MIDDLEWARES DE ACCESO (MIGRADOS A MONGO)
 // ==========================================
-
-// Reemplaza a "requireOwnership" permitiendo también a los Sub-usuarios
-const requireAccess = (req, res, next) => {
+const requireAccess = async (req, res, next) => {
     const uid = req.user.uid;
     const email = req.user.email; 
     const serverId = req.body.serverId || req.query.serverId;
     
     if (!serverId) return res.status(400).json({ error: "Falta serverId." });
     
-    const found = findServer(serverId);
-    if (!found) return res.status(404).json({ error: "Servidor no encontrado." });
-    
-    const isOwner = found.ownerUid === uid;
-    const isShared = found.server.sharedWith && found.server.sharedWith.includes(email);
-    
-    if (!isOwner && !isShared) {
-        return res.status(403).json({ error: "Seguridad: No tienes acceso a este servidor (No eres el dueño ni estás invitado)." });
+    try {
+        const userWithServer = await User.findOne({ "servers.id": serverId });
+        if (!userWithServer) return res.status(404).json({ error: "Servidor no encontrado." });
+        
+        const srv = userWithServer.servers.find(s => s.id === serverId);
+        const isOwner = userWithServer.uid === uid;
+        const isShared = srv.sharedWith && srv.sharedWith.includes(email);
+        
+        if (!isOwner && !isShared) {
+            return res.status(403).json({ error: "Seguridad: No tienes acceso a este servidor (No eres el dueño ni estás invitado)." });
+        }
+        
+        req.serverOwnerUid = userWithServer.uid; 
+        next();
+    } catch (e) {
+        res.status(500).json({ error: "Error interno de validación." });
     }
-    
-    req.serverOwnerUid = found.ownerUid; // Pasamos el UID del dueño para verificar su plan
-    next();
 };
 
-// Muro de Pago de Servidor (Verifica si el plan del dueño tiene esta función)
 const requireFeature = (feature) => {
-    return (req, res, next) => {
-        const db = loadDB();
-        // Si el usuario es invitado, hereda el poder del plan del DUEÑO del servidor
-        const targetUid = req.serverOwnerUid || req.user.uid; 
-        const planKey = db.plans[targetUid] || 'redstone';
-        const pDetails = PLAN_LIMITS[planKey] || PLAN_LIMITS['redstone'];
-        
-        if (!pDetails[feature]) {
-            return res.status(403).json({ error: `ACCESO BLOQUEADO: El plan del servidor (${pDetails.name}) no incluye la función avanzada: ${feature}.` });
+    return async (req, res, next) => {
+        try {
+            const targetUid = req.serverOwnerUid || req.user.uid; 
+            const user = await User.findOne({ uid: targetUid });
+            const planKey = user ? user.plan : 'redstone';
+            const pDetails = PLAN_LIMITS[planKey] || PLAN_LIMITS['redstone'];
+            
+            if (!pDetails[feature]) {
+                return res.status(403).json({ error: `ACCESO BLOQUEADO: El plan del servidor (${pDetails.name}) no incluye la función avanzada: ${feature}.` });
+            }
+            next();
+        } catch(e) {
+            res.status(500).json({ error: "Error validando características." });
         }
-        next();
     };
 };
 
+// ==========================================
+// UTILIDADES
+// ==========================================
 function pullImageAsync(imageName) {
     return new Promise((resolve) => {
         docker.pull(imageName, (err, stream) => {
@@ -180,12 +177,9 @@ function getSafePath(serverId, reqPath) {
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         const serverId = req.body.serverId || req.query.serverId;
-        const targetDir = getSafePath(serverId, '/');
-        cb(null, targetDir);
+        cb(null, getSafePath(serverId, '/'));
     },
-    filename: (req, file, cb) => {
-        cb(null, file.originalname);
-    }
+    filename: (req, file, cb) => cb(null, file.originalname)
 });
 const upload = multer({ storage, limits: { fileSize: 10 * 1024 * 1024 * 1024 } });
 
@@ -219,9 +213,7 @@ function extraerIdDeDrive(url) {
 async function descargarDeGoogleDrive(fileId) {
     const baseUrl = `https://drive.google.com/uc?export=download&id=${fileId}`;
     const options = {
-        headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
-        }
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36' }
     };
 
     const c1 = new AbortController();
@@ -238,11 +230,8 @@ async function descargarDeGoogleDrive(fileId) {
         const confirmMatch = html.match(/confirm=([0-9A-Za-z_-]+)/);
         const cookieMatch = cookies.match(/download_warning_([0-9A-Za-z_-]+)/);
         
-        if (confirmMatch) {
-            confirmToken = confirmMatch[1];
-        } else if (cookieMatch) {
-            confirmToken = cookieMatch[1];
-        }
+        if (confirmMatch) confirmToken = confirmMatch[1];
+        else if (cookieMatch) confirmToken = cookieMatch[1];
 
         const c2 = new AbortController();
         const t2 = setTimeout(() => c2.abort(), 180000);
@@ -264,9 +253,7 @@ async function descargarDeMediafire(url) {
     const html = await response.text();
     const match = html.match(/href="([^"]+)"\s+id="downloadButton"/i);
     
-    if (!match || !match[1]) {
-        throw new Error('No se pudo encontrar el link directo de MediaFire. Verificá que el enlace sea correcto y público.');
-    }
+    if (!match || !match[1]) throw new Error('No se pudo encontrar el link directo de MediaFire. Verificá que el enlace sea correcto y público.');
 
     const directLink = match[1];
     const c2 = new AbortController();
@@ -278,9 +265,7 @@ async function descargarDeMediafire(url) {
 }
 
 async function fetchDescarga(url) {
-    if (url.includes('mediafire.com')) {
-        return descargarDeMediafire(url);
-    }
+    if (url.includes('mediafire.com')) return descargarDeMediafire(url);
     const driveId = extraerIdDeDrive(url);
     if (driveId) return descargarDeGoogleDrive(driveId);
 
@@ -293,93 +278,92 @@ async function fetchDescarga(url) {
 
 const deployProgress = {};
 
-app.get('/api/user/status', verifyToken, (req, res) => { 
-    const db = loadDB();
-    const userPlanKey = db.plans[req.user.uid] || 'redstone'; // Redstone por defecto
-    const pDetails = PLAN_LIMITS[userPlanKey] || PLAN_LIMITS['redstone'];
-    
-    res.json({ 
-        status: 'active', 
-        plan: {
-            id: userPlanKey,
-            name: pDetails.name,
-            ram: pDetails.ram,
-            ramNum: parseInt(pDetails.ram.replace('G','')),
-            maxServers: pDetails.maxServers === -1 ? 'ilimitado' : pDetails.maxServers,
-            slots: pDetails.slots === -1 ? 'ilimitado' : pDetails.slots,
-            fileManager: pDetails.fileManager // Le dice al front si debe o no renderizar cosas
-        }
-    }); 
-});
-
-app.get('/api/user/role', verifyToken, (req, res) => {
-    const db = loadDB();
-    res.json({ role: db.roles[req.user.uid] || 'user' });
-});
-
-// AHORA DEVUELVE SERVIDORES PROPIOS Y COMPARTIDOS
-app.get('/api/project/check', verifyToken, (req, res) => {
-    const db = loadDB();
-    const uid = req.user.uid;
-    const email = req.user.email;
-    
-    let ownServers = db.users[uid] || [];
-    let sharedServers = [];
-    
-    // Busca en todos los usuarios si alguno te compartió su servidor
-    for (const ownerId in db.users) {
-        if (ownerId === uid) continue;
-        const ownerServers = db.users[ownerId];
-        ownerServers.forEach(s => {
-            if (s.sharedWith && s.sharedWith.includes(email)) {
-                sharedServers.push({...s, isShared: true, ownerId: ownerId});
+// ==========================================
+// RUTAS CON MONGODB ASÍNCRONAS
+// ==========================================
+app.get('/api/user/status', verifyToken, async (req, res) => { 
+    try {
+        let user = await User.findOne({ uid: req.user.uid });
+        if (!user) user = await User.create({ uid: req.user.uid }); // Crea si no existe en BD
+        
+        const pDetails = PLAN_LIMITS[user.plan] || PLAN_LIMITS['redstone'];
+        res.json({ 
+            status: 'active', 
+            plan: {
+                id: user.plan,
+                name: pDetails.name,
+                ram: pDetails.ram,
+                ramNum: parseInt(pDetails.ram.replace('G','')),
+                maxServers: pDetails.maxServers === -1 ? 'ilimitado' : pDetails.maxServers,
+                slots: pDetails.slots === -1 ? 'ilimitado' : pDetails.slots,
+                fileManager: pDetails.fileManager
             }
-        });
-    }
-    
-    // Combinamos todos los servidores a los que tiene acceso en un solo array
-    const allAccessibleServers = [...ownServers, ...sharedServers];
-
-    res.json({ 
-        exists: allAccessibleServers.length > 0, 
-        servers: allAccessibleServers
-    });
+        }); 
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
 });
 
-// ==========================================
-// NUEVO: COMPARTIR SERVIDOR (PANEL COMPARTIDO)
-// ==========================================
-app.post('/api/project/share', verifyToken, requireAccess, (req, res) => {
+app.get('/api/user/role', verifyToken, async (req, res) => {
+    try {
+        const user = await User.findOne({ uid: req.user.uid });
+        res.json({ role: user ? user.role : 'user' });
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
+});
+
+app.get('/api/project/check', verifyToken, async (req, res) => {
+    try {
+        const uid = req.user.uid;
+        const email = req.user.email;
+        
+        const user = await User.findOne({ uid });
+        const ownServers = user ? user.servers : [];
+        
+        // Busca servidores compartidos
+        const usersWithShared = await User.find({ "servers.sharedWith": email });
+        let sharedServers = [];
+        
+        usersWithShared.forEach(owner => {
+            owner.servers.forEach(s => {
+                if (s.sharedWith && s.sharedWith.includes(email)) {
+                    sharedServers.push({...s.toObject(), isShared: true, ownerId: owner.uid});
+                }
+            });
+        });
+        
+        const allAccessibleServers = [...ownServers, ...sharedServers];
+        res.json({ exists: allAccessibleServers.length > 0, servers: allAccessibleServers });
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
+});
+
+app.post('/api/project/share', verifyToken, requireAccess, async (req, res) => {
     if (req.user.uid !== req.serverOwnerUid) return res.status(403).json({error: "Solo el creador original puede invitar a otros."});
-    
     const { emailToShare } = req.body;
     if (!emailToShare) return res.status(400).json({error: "Debes ingresar un email."});
     
-    const db = loadDB();
-    const srv = db.users[req.serverOwnerUid].find(s => s.id === req.body.serverId);
-    
-    if (!srv.sharedWith) srv.sharedWith = [];
-    if (!srv.sharedWith.includes(emailToShare)) {
-        srv.sharedWith.push(emailToShare);
-        saveDB(db);
-    }
-    res.json({ success: true, sharedWith: srv.sharedWith, message: `Servidor compartido con ${emailToShare}` });
+    try {
+        const user = await User.findOne({ uid: req.serverOwnerUid });
+        const srv = user.servers.find(s => s.id === req.body.serverId);
+        
+        if (!srv.sharedWith.includes(emailToShare)) {
+            srv.sharedWith.push(emailToShare);
+            await user.save();
+        }
+        res.json({ success: true, sharedWith: srv.sharedWith, message: `Servidor compartido con ${emailToShare}` });
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
 });
 
-app.post('/api/project/unshare', verifyToken, requireAccess, (req, res) => {
+app.post('/api/project/unshare', verifyToken, requireAccess, async (req, res) => {
     if (req.user.uid !== req.serverOwnerUid) return res.status(403).json({error: "Solo el dueño puede revocar accesos."});
-    
     const { emailToUnshare } = req.body;
-    const db = loadDB();
-    const srv = db.users[req.serverOwnerUid].find(s => s.id === req.body.serverId);
     
-    if (srv.sharedWith) {
+    try {
+        const user = await User.findOne({ uid: req.serverOwnerUid });
+        const srv = user.servers.find(s => s.id === req.body.serverId);
+        
         srv.sharedWith = srv.sharedWith.filter(e => e !== emailToUnshare);
-        saveDB(db);
-    }
-    res.json({ success: true, sharedWith: srv.sharedWith });
+        await user.save();
+        res.json({ success: true, sharedWith: srv.sharedWith });
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
 });
-
 
 app.get('/api/project/deploy-status', verifyToken, (req, res) => {
     const status = deployProgress[req.query.serverId];
@@ -394,230 +378,214 @@ app.post('/api/project/create', verifyToken, async (req, res) => {
     const uid = req.user.uid;
     const clientIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress || 'unknown';
     
-    const db = loadDB();
-    const userPlanKey = db.plans[uid] || 'redstone';
-    const pDetails = PLAN_LIMITS[userPlanKey] || PLAN_LIMITS['redstone'];
+    try {
+        let user = await User.findOne({ uid });
+        if (!user) user = new User({ uid, role: 'admin', plan: 'redstone', servers: [] });
+        
+        const pDetails = PLAN_LIMITS[user.plan] || PLAN_LIMITS['redstone'];
 
-    // BLINDAJE ANTI-ABUSO (SISTEMA DE IP PARA PLANES GRATIS)
-    if (userPlanKey === 'redstone' && clientIp !== 'unknown') {
-        if (!db.ips[clientIp]) db.ips[clientIp] = [];
-        if (db.ips[clientIp].length > 0 && !db.ips[clientIp].includes(uid)) {
-            return res.status(403).json({ success: false, message: "Seguridad Anti-Fraude: Ya se ha reclamado una prueba gratuita desde tu red de Internet (IP). Mejora tu plan para continuar." });
+        // BLINDAJE ANTI-ABUSO EN MONGODB
+        if (user.plan === 'redstone' && clientIp !== 'unknown') {
+            let ipRecord = await IpInfo.findOne({ ip: clientIp });
+            if (!ipRecord) ipRecord = new IpInfo({ ip: clientIp, uids: [] });
+
+            if (ipRecord.uids.length > 0 && !ipRecord.uids.includes(uid)) {
+                return res.status(403).json({ success: false, message: "Seguridad Anti-Fraude: Ya se ha reclamado una prueba gratuita desde tu red de Internet (IP). Mejora tu plan para continuar." });
+            }
+            if (!ipRecord.uids.includes(uid)) {
+                ipRecord.uids.push(uid);
+                await ipRecord.save();
+            }
         }
-        if (!db.ips[clientIp].includes(uid)) db.ips[clientIp].push(uid);
-    }
-    
-    const isModpack = !!(modpackUrl || curseforgeModpackId);
-    const esVersionBloqueada = (version.startsWith('26.') || version === 'LATEST');
-    const esMotorDeMods = ['forge', 'fabric', 'quilt', 'neoforge', 'arclight'].includes(software);
-    if (!isModpack && esVersionBloqueada && esMotorDeMods) {
-        return res.status(403).json({ success: false, message: "Seguridad Backend: Esta versión no soporta mods." });
-    }
-
-    if (!db.users[uid]) { db.users[uid] = []; db.roles[uid] = 'admin'; }
-    
-    // CONTROL ESTRICTO DE RANURAS (SERVIDORES)
-    if (pDetails.maxServers !== -1 && db.users[uid].length >= pDetails.maxServers) {
-        return res.status(403).json({ success: false, message: `Límite de servidores alcanzado. Tu ${pDetails.name} permite un máximo de ${pDetails.maxServers} servidor(es).` });
-    }
-
-    const serverId = Date.now().toString();
-    const newServer = { id: serverId, edition, projectName, motd, software: software, version: version, publicIp: null, sharedWith: [] };
-
-    db.users[uid].push(newServer);
-    saveDB(db);
-
-    const serverPath = path.join(__dirname, 'servers', serverId);
-    if (!fs.existsSync(serverPath)) fs.mkdirSync(serverPath, { recursive: true });
-
-    let mcImage = 'itzg/minecraft-server';
-    
-    // ASIGNACIÓN DINÁMICA DE RAM Y SLOTS
-    let envVars = [
-        'EULA=TRUE', 
-        `MOTD=${motd}`, 
-        `MEMORY=${pDetails.ram}`, 
-        'ENABLE_RCON=TRUE', 
-        'JAVA_TOOL_OPTIONS=-Dnetty.transport=epoll'
-    ];
-
-    if (pDetails.slots !== -1) {
-        envVars.push(`MAX_PLAYERS=${pDetails.slots}`);
-    }
-
-    if (edition === 'bedrock') {
-        if (software === 'pocketmine') mcImage = 'pmmp/pocketmine-mp:latest';
-        else { mcImage = 'itzg/minecraft-bedrock-server'; envVars.push(software === 'preview' ? 'VERSION=PREVIEW' : 'VERSION=LATEST'); }
-    } else {
-        if (!isModpack) {
-            envVars.push(`VERSION=${version}`);
-            envVars.push(`TYPE=${software === 'snapshot' ? 'VANILLA' : software.toUpperCase()}`);
+        
+        const isModpack = !!(modpackUrl || curseforgeModpackId);
+        const esVersionBloqueada = (version.startsWith('26.') || version === 'LATEST');
+        const esMotorDeMods = ['forge', 'fabric', 'quilt', 'neoforge', 'arclight'].includes(software);
+        if (!isModpack && esVersionBloqueada && esMotorDeMods) {
+            return res.status(403).json({ success: false, message: "Seguridad Backend: Esta versión no soporta mods." });
         }
-    }
+        
+        if (pDetails.maxServers !== -1 && user.servers.length >= pDetails.maxServers) {
+            return res.status(403).json({ success: false, message: `Límite de servidores alcanzado. Tu ${pDetails.name} permite un máximo de ${pDetails.maxServers} servidor(es).` });
+        }
 
-    deployProgress[serverId] = { step: "Iniciando conexión con el nodo...", pct: 5, done: false, error: null };
-    res.json({ success: true, message: "Iniciando despliegue...", server: newServer });
+        const serverId = Date.now().toString();
+        const newServer = { id: serverId, edition, projectName, motd, software, version, publicIp: null, sharedWith: [] };
 
-    setImmediate(async () => {
-        try {
-            let finalModpackUrl = modpackUrl;
+        user.servers.push(newServer);
+        await user.save();
 
-            // BLINDAJE 2: CurseForge Fetch (JSON Parsing Seguro)
-            if (curseforgeModpackId && curseforgeFileId) {
-                deployProgress[serverId] = { step: "Contactando CurseForge (Buscando enlace directo)...", pct: 15, done: false, error: null };
-                
-                const cfApiUrl = `https://api.curseforge.com/v1/mods/${curseforgeModpackId}/files/${curseforgeFileId}`;
-                const cfRes = await fetch(cfApiUrl, {
-                    headers: { 'Accept': 'application/json', 'x-api-key': process.env.CURSEFORGE_API_KEY }
-                });
-                
-                const responseText = await cfRes.text();
-                let cfData;
-                try {
-                    cfData = JSON.parse(responseText);
-                } catch (parseErr) {
-                    throw new Error("CurseForge no devolvió un JSON válido (Posible bloqueo de API o clave inválida).");
+        const serverPath = path.join(__dirname, 'servers', serverId);
+        if (!fs.existsSync(serverPath)) fs.mkdirSync(serverPath, { recursive: true });
+
+        let mcImage = 'itzg/minecraft-server';
+        let envVars = [
+            'EULA=TRUE', `MOTD=${motd}`, `MEMORY=${pDetails.ram}`, 
+            'ENABLE_RCON=TRUE', 'JAVA_TOOL_OPTIONS=-Dnetty.transport=epoll'
+        ];
+
+        if (pDetails.slots !== -1) envVars.push(`MAX_PLAYERS=${pDetails.slots}`);
+
+        if (edition === 'bedrock') {
+            if (software === 'pocketmine') mcImage = 'pmmp/pocketmine-mp:latest';
+            else { mcImage = 'itzg/minecraft-bedrock-server'; envVars.push(software === 'preview' ? 'VERSION=PREVIEW' : 'VERSION=LATEST'); }
+        } else {
+            if (!isModpack) {
+                envVars.push(`VERSION=${version}`);
+                envVars.push(`TYPE=${software === 'snapshot' ? 'VANILLA' : software.toUpperCase()}`);
+            }
+        }
+
+        deployProgress[serverId] = { step: "Iniciando conexión con el nodo...", pct: 5, done: false, error: null };
+        res.json({ success: true, message: "Iniciando despliegue...", server: newServer });
+
+        setImmediate(async () => {
+            try {
+                let finalModpackUrl = modpackUrl;
+
+                if (curseforgeModpackId && curseforgeFileId) {
+                    deployProgress[serverId] = { step: "Contactando CurseForge (Buscando enlace directo)...", pct: 15, done: false, error: null };
+                    
+                    const cfApiUrl = `https://api.curseforge.com/v1/mods/${curseforgeModpackId}/files/${curseforgeFileId}`;
+                    const cfRes = await fetch(cfApiUrl, { headers: { 'Accept': 'application/json', 'x-api-key': process.env.CURSEFORGE_API_KEY } });
+                    const responseText = await cfRes.text();
+                    let cfData;
+                    try { cfData = JSON.parse(responseText); } 
+                    catch (parseErr) { throw new Error("CurseForge no devolvió un JSON válido (Posible bloqueo de API o clave inválida)."); }
+                    
+                    if (!cfRes.ok) throw new Error("Fallo al comunicarse con CurseForge API.");
+                    if (cfData.data && cfData.data.downloadUrl) finalModpackUrl = cfData.data.downloadUrl;
+                    else throw new Error("El autor bloqueó las descargas automáticas para este Modpack. Instálalo manualmente importando URL.");
                 }
+
+                if (finalModpackUrl) {
+                    deployProgress[serverId] = { step: "Descargando Server Pack al servidor (Puede tardar varios minutos)...", pct: 30, done: false, error: null };
+                    const response = await fetchDescarga(finalModpackUrl);
+                    const contentType = response.headers.get('content-type') || '';
+                    
+                    if (!response.ok || contentType.includes('text/html')) throw new Error(`La plataforma bloqueó la descarga (El enlace no es un archivo válido).`);
+
+                    deployProgress[serverId] = { step: "Guardando archivo ZIP en el disco...", pct: 50, done: false, error: null };
+                    const tempZipPath = path.join(serverPath, 'temp_pack.zip');
+                    const fileStream = fs.createWriteStream(tempZipPath);
+                    await pipeline(response.body, fileStream);
+
+                    deployProgress[serverId] = { step: "Descomprimiendo y analizando archivos del Modpack...", pct: 65, done: false, error: null };
+                    const extracted = extractZipSafely(tempZipPath, serverPath);
+                    if (!extracted) throw new Error("El archivo ZIP está corrupto o no se pudo extraer.");
+                    if (fs.existsSync(tempZipPath)) fs.unlinkSync(tempZipPath);
+
+                    const visibleFiles = fs.readdirSync(serverPath).filter(f => !f.startsWith('.'));
+                    if (visibleFiles.length === 1) {
+                        const singleItem = path.join(serverPath, visibleFiles[0]);
+                        if (fs.statSync(singleItem).isDirectory()) {
+                            const subfiles = fs.readdirSync(singleItem);
+                            subfiles.forEach(f => fs.renameSync(path.join(singleItem, f), path.join(serverPath, f)));
+                            fs.rmdirSync(singleItem);
+                        }
+                    }
+
+                    deployProgress[serverId] = { step: "Instalando motor y limpiando scripts conflictivos...", pct: 75, done: false, error: null };
+
+                    let engineToUse = software;
+                    if (software === 'Server Pack' || software === 'Server Pack Oficial') {
+                        const allFilesString = fs.readdirSync(serverPath).join(' ').toLowerCase();
+                        engineToUse = 'forge'; 
+                        if (allFilesString.includes('fabric')) engineToUse = 'fabric';
+                        else if (allFilesString.includes('neoforge')) engineToUse = 'neoforge';
+                        else if (allFilesString.includes('quilt')) engineToUse = 'quilt';
+
+                        const userUpdate = await User.findOne({ uid });
+                        const srvIndex = userUpdate.servers.findIndex(s => s.id === serverId);
+                        if (srvIndex !== -1) {
+                            userUpdate.servers[srvIndex].software = engineToUse;
+                            await userUpdate.save();
+                        }
+                    }
+
+                    const scriptsToRemove = ['start.bat', 'start.sh', 'run.bat', 'run.sh', 'start-server.bat', 'start-server.sh', 'user_jvm_args.txt'];
+                    scriptsToRemove.forEach(scr => {
+                        const p = path.join(serverPath, scr);
+                        if (fs.existsSync(p)) fs.unlinkSync(p);
+                    });
+
+                    envVars = envVars.filter(e => !e.startsWith('TYPE=') && !e.startsWith('VERSION='));
+                    envVars.push(`TYPE=${engineToUse.toUpperCase()}`);
+                    if (version && version !== 'Auto' && version !== 'LATEST') envVars.push(`VERSION=${version}`);
+                }
+
+                deployProgress[serverId] = { step: "Verificando imágenes de Docker...", pct: 85, done: false, error: null };
+                await pullImageAsync(mcImage);
+                await pullImageAsync('pepaondrugs/playitgg-docker:latest');
+
+                deployProgress[serverId] = { step: "Levantando contenedor Minecraft...", pct: 95, done: false, error: null };
                 
-                if (!cfRes.ok) throw new Error("Fallo al comunicarse con CurseForge API.");
+                const mcContainer = await docker.createContainer({
+                    Image: mcImage,
+                    name: `mc-${serverId}`,
+                    Env: envVars,
+                    HostConfig: {
+                        Memory: pDetails.ramBytes, 
+                        MemorySwap: pDetails.ramBytes,
+                        Binds: [`/home/maxpro/Proservers/servers/${serverId}:/data`],
+                        Dns: ['8.8.8.8', '8.8.4.4'] 
+                    }
+                });
+                await mcContainer.start();
+
+                const playitContainer = await docker.createContainer({
+                    Image: 'pepaondrugs/playitgg-docker:latest',
+                    name: `playit-${serverId}`,
+                    HostConfig: { NetworkMode: `container:mc-${serverId}` }
+                });
+                await playitContainer.start();
+
+                deployProgress[serverId] = { step: "¡Todo Listo!", pct: 100, done: true, error: null };
+
+            } catch (err) {
+                console.error(`[ERROR DESPLIEGUE]`, err);
+                deployProgress[serverId] = { step: "Despliegue Abortado", pct: 0, done: true, error: err.message };
                 
-                if (cfData.data && cfData.data.downloadUrl) {
-                    finalModpackUrl = cfData.data.downloadUrl;
-                } else {
-                    throw new Error("El autor bloqueó las descargas automáticas para este Modpack. Instálalo manualmente importando URL.");
+                const userError = await User.findOne({ uid });
+                if (userError) {
+                    userError.servers = userError.servers.filter(s => s.id !== serverId);
+                    await userError.save();
                 }
             }
-
-            // DESCARGA Y EXTRACCIÓN OBLIGATORIA
-            if (finalModpackUrl) {
-                deployProgress[serverId] = { step: "Descargando Server Pack al servidor (Puede tardar varios minutos)...", pct: 30, done: false, error: null };
-                const response = await fetchDescarga(finalModpackUrl);
-                const contentType = response.headers.get('content-type') || '';
-                
-                if (!response.ok || contentType.includes('text/html')) {
-                    throw new Error(`La plataforma bloqueó la descarga (El enlace no es un archivo válido).`);
-                }
-
-                deployProgress[serverId] = { step: "Guardando archivo ZIP en el disco...", pct: 50, done: false, error: null };
-                const tempZipPath = path.join(serverPath, 'temp_pack.zip');
-                const fileStream = fs.createWriteStream(tempZipPath);
-                await pipeline(response.body, fileStream);
-
-                deployProgress[serverId] = { step: "Descomprimiendo y analizando archivos del Modpack...", pct: 65, done: false, error: null };
-                const extracted = extractZipSafely(tempZipPath, serverPath);
-                
-                if (!extracted) {
-                    throw new Error("El archivo ZIP está corrupto o no se pudo extraer.");
-                }
-                
-                if (fs.existsSync(tempZipPath)) fs.unlinkSync(tempZipPath);
-
-                const visibleFiles = fs.readdirSync(serverPath).filter(f => !f.startsWith('.'));
-                if (visibleFiles.length === 1) {
-                    const singleItem = path.join(serverPath, visibleFiles[0]);
-                    if (fs.statSync(singleItem).isDirectory()) {
-                        const subfiles = fs.readdirSync(singleItem);
-                        subfiles.forEach(f => {
-                            fs.renameSync(path.join(singleItem, f), path.join(serverPath, f));
-                        });
-                        fs.rmdirSync(singleItem);
-                    }
-                }
-
-                deployProgress[serverId] = { step: "Instalando motor y limpiando scripts conflictivos...", pct: 75, done: false, error: null };
-
-                let engineToUse = software;
-                if (software === 'Server Pack' || software === 'Server Pack Oficial') {
-                    const allFilesString = fs.readdirSync(serverPath).join(' ').toLowerCase();
-                    engineToUse = 'forge'; 
-                    if (allFilesString.includes('fabric')) engineToUse = 'fabric';
-                    else if (allFilesString.includes('neoforge')) engineToUse = 'neoforge';
-                    else if (allFilesString.includes('quilt')) engineToUse = 'quilt';
-
-                    const dbUpdate = loadDB();
-                    const srvIndex = dbUpdate.users[uid].findIndex(s => s.id === serverId);
-                    if (srvIndex !== -1) {
-                        dbUpdate.users[uid][srvIndex].software = engineToUse;
-                        saveDB(dbUpdate);
-                    }
-                }
-
-                const scriptsToRemove = ['start.bat', 'start.sh', 'run.bat', 'run.sh', 'start-server.bat', 'start-server.sh', 'user_jvm_args.txt'];
-                scriptsToRemove.forEach(scr => {
-                    const p = path.join(serverPath, scr);
-                    if (fs.existsSync(p)) fs.unlinkSync(p);
-                });
-
-                envVars = envVars.filter(e => !e.startsWith('TYPE=') && !e.startsWith('VERSION='));
-                envVars.push(`TYPE=${engineToUse.toUpperCase()}`);
-                if (version && version !== 'Auto' && version !== 'LATEST') {
-                    envVars.push(`VERSION=${version}`);
-                }
-            }
-
-            deployProgress[serverId] = { step: "Verificando imágenes de Docker...", pct: 85, done: false, error: null };
-            await pullImageAsync(mcImage);
-            await pullImageAsync('pepaondrugs/playitgg-docker:latest');
-
-            deployProgress[serverId] = { step: "Levantando contenedor Minecraft...", pct: 95, done: false, error: null };
-            
-            // CONFIGURACIÓN DINÁMICA DE RECURSOS DOCKER
-            const mcContainer = await docker.createContainer({
-                Image: mcImage,
-                name: `mc-${serverId}`,
-                Env: envVars,
-                HostConfig: {
-                    Memory: pDetails.ramBytes, 
-                    MemorySwap: pDetails.ramBytes,
-                    Binds: [`/home/maxpro/Proservers/servers/${serverId}:/data`],
-                    Dns: ['8.8.8.8', '8.8.4.4'] 
-                }
-            });
-            await mcContainer.start();
-
-            const playitContainer = await docker.createContainer({
-                Image: 'pepaondrugs/playitgg-docker:latest',
-                name: `playit-${serverId}`,
-                HostConfig: { NetworkMode: `container:mc-${serverId}` }
-            });
-            await playitContainer.start();
-
-            deployProgress[serverId] = { step: "¡Todo Listo!", pct: 100, done: true, error: null };
-
-        } catch (err) {
-            console.error(`[ERROR DESPLIEGUE]`, err);
-            deployProgress[serverId] = { step: "Despliegue Abortado", pct: 0, done: true, error: err.message };
-            
-            const dbError = loadDB();
-            dbError.users[uid] = dbError.users[uid].filter(s => s.id !== serverId);
-            saveDB(dbError);
-        }
-    });
+        });
+    } catch(e) { res.status(500).json({ error: "Error interno DB" }); }
 });
 
 app.post('/api/project/delete', verifyToken, requireAccess, async (req, res) => {
     if (req.user.uid !== req.serverOwnerUid) return res.status(403).json({error: "Solo el dueño original puede eliminar el servidor por completo."});
     
-    const { serverId } = req.body;
-    const db = loadDB();
-    db.users[req.serverOwnerUid] = db.users[req.serverOwnerUid].filter(s => s.id !== serverId);
-    saveDB(db);
     try {
-        const mc = docker.getContainer(`mc-${serverId}`);
-        await mc.stop().catch(() => {}); await mc.remove({ force: true, v: true }).catch(() => {});
-        const playit = docker.getContainer(`playit-${serverId}`);
-        await playit.stop().catch(() => {}); await playit.remove({ force: true, v: true }).catch(() => {});
-        const sPath = path.join(__dirname, 'servers', serverId);
-        if (fs.existsSync(sPath)) fs.rmSync(sPath, { recursive: true, force: true });
-    } catch (e) {}
-    res.json({ success: true });
+        const user = await User.findOne({ uid: req.serverOwnerUid });
+        user.servers = user.servers.filter(s => s.id !== req.body.serverId);
+        await user.save();
+        
+        try {
+            const mc = docker.getContainer(`mc-${req.body.serverId}`);
+            await mc.stop().catch(() => {}); await mc.remove({ force: true, v: true }).catch(() => {});
+            const playit = docker.getContainer(`playit-${req.body.serverId}`);
+            await playit.stop().catch(() => {}); await playit.remove({ force: true, v: true }).catch(() => {});
+            const sPath = path.join(__dirname, 'servers', req.body.serverId);
+            if (fs.existsSync(sPath)) fs.rmSync(sPath, { recursive: true, force: true });
+        } catch (e) {}
+        res.json({ success: true });
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
 });
 
-app.post('/api/project/ip', verifyToken, requireAccess, (req, res) => {
-    const db = loadDB();
-    const server = db.users[req.serverOwnerUid].find(s => s.id === req.body.serverId);
-    if (server) { server.publicIp = req.body.ip; saveDB(db); }
-    res.json({ success: true });
+app.post('/api/project/ip', verifyToken, requireAccess, async (req, res) => {
+    try {
+        const user = await User.findOne({ uid: req.serverOwnerUid });
+        const server = user.servers.find(s => s.id === req.body.serverId);
+        if (server) { 
+            server.publicIp = req.body.ip; 
+            await user.save(); 
+        }
+        res.json({ success: true });
+    } catch(e) { res.status(500).json({ error: "Error DB" }); }
 });
 
 app.get('/api/server/status', verifyToken, requireAccess, async (req, res) => {
@@ -712,15 +680,18 @@ app.get('/api/server/playitlogs', verifyToken, requireAccess, async (req, res) =
 app.post('/api/server/reset-network', verifyToken, requireAccess, async (req, res) => {
     if (req.user.uid !== req.serverOwnerUid) return res.status(403).json({error: "Solo el dueño puede resetear la red."});
     
-    const db = loadDB();
-    const server = db.users[req.serverOwnerUid].find(s => s.id === req.body.serverId);
     try {
+        const user = await User.findOne({ uid: req.serverOwnerUid });
+        const server = user.servers.find(s => s.id === req.body.serverId);
+        
         const pName = `playit-${req.body.serverId}`;
         await docker.getContainer(pName).stop().catch(() => {});
         await docker.getContainer(pName).remove({ force: true, v: true }).catch(() => {});
         const newPlayit = await docker.createContainer({ Image: 'pepaondrugs/playitgg-docker:latest', name: pName, HostConfig: { NetworkMode: `container:mc-${req.body.serverId}` } });
         await newPlayit.start();
-        server.publicIp = null; saveDB(db);
+        
+        server.publicIp = null; 
+        await user.save();
         res.json({ success: true, message: "Red reseteada." });
     } catch (e) { res.status(500).json({ error: "Fallo al resetear." }); }
 });
@@ -830,7 +801,9 @@ app.get('/api/curseforge/files', verifyToken, async (req, res) => {
     } catch (e) { res.status(500).json({ error: "Error obteniendo archivos." }); }
 });
 
-// APLICAMOS REQUIRE_FEATURE('fileManager') A TODO EL SISTEMA DE ARCHIVOS
+// ==========================================
+// FILE MANAGER
+// ==========================================
 app.post('/api/files/upload', verifyToken, upload.single('file'), requireAccess, requireFeature('fileManager'), (req, res) => {
     try {
         const serverPath = getSafePath(req.body.serverId, '/');
@@ -911,34 +884,39 @@ app.post('/api/server/installmod', verifyToken, requireAccess, requireFeature('f
     } catch (e) { res.status(500).json({ error: "Error" }); }
 });
 
+// ==========================================
+// SOCKETS
+// ==========================================
 io.use(async (socket, next) => {
     if (!socket.handshake.query.token) return next(new Error('Sin token'));
     try { socket.user = await admin.auth().verifyIdToken(socket.handshake.query.token); next(); } 
     catch (err) { next(new Error('Invalido')); }
 });
 
-io.on('connection', (socket) => {
+io.on('connection', async (socket) => {
     const serverId = socket.handshake.query.serverId;
     if (!serverId) return socket.disconnect();
     
-    // Verificación de acceso para Sockets también
-    const found = findServer(serverId);
-    if (!found) return socket.disconnect();
-    
-    const isOwner = found.ownerUid === socket.user.uid;
-    const isShared = found.server.sharedWith && found.server.sharedWith.includes(socket.user.email);
-    if (!isOwner && !isShared) return socket.disconnect();
-    
-    const container = docker.getContainer(`mc-${serverId}`);
-    let logStream = null;
-    container.inspect(async (err, data) => {
-        if (err || !data.State.Running) return;
-        try {
-            logStream = await container.logs({ follow: true, stdout: true, stderr: true, tail: 100 });
-            logStream.on('data', chunk => socket.emit('log', chunk.toString('utf8')));
-        } catch (e) {}
-    });
-    socket.on('disconnect', () => { if (logStream) logStream.destroy(); });
+    try {
+        const userWithServer = await User.findOne({ "servers.id": serverId });
+        if (!userWithServer) return socket.disconnect();
+        
+        const srv = userWithServer.servers.find(s => s.id === serverId);
+        const isOwner = userWithServer.uid === socket.user.uid;
+        const isShared = srv.sharedWith && srv.sharedWith.includes(socket.user.email);
+        if (!isOwner && !isShared) return socket.disconnect();
+        
+        const container = docker.getContainer(`mc-${serverId}`);
+        let logStream = null;
+        container.inspect(async (err, data) => {
+            if (err || !data.State.Running) return;
+            try {
+                logStream = await container.logs({ follow: true, stdout: true, stderr: true, tail: 100 });
+                logStream.on('data', chunk => socket.emit('log', chunk.toString('utf8')));
+            } catch (e) {}
+        });
+        socket.on('disconnect', () => { if (logStream) logStream.destroy(); });
+    } catch(e) { socket.disconnect(); }
 });
 
-server.listen(3000, () => console.log('Backend FINAL Listo - Módulos de Plan Asegurados'));
+server.listen(3000, () => console.log('\x1b[32mBackend FINAL Listo - Conectado a MongoDB Full\x1b[0m'));
