@@ -1,5 +1,5 @@
 node_modules/
-<<<<<<< HEAD
+backend/node_modules/
 npm-debug.log
 yarn-error.log
 
@@ -8,18 +8,15 @@ yarn-error.log
 *.env
 firebase-adminsdk.json
 backend/firebase-adminsdk.json
+backend/services/mine_analizer.py
 
-# Directorios de compilación o temporales
+# Directorios de compilación, temporales y bases de datos locales
 dist/
 build/
 .DS_Store
+data/database.json
+*.sqlite
 
-# Logs de Laravel y Node
+# Logs
 storage/*.key
 storage/logs/*.log
-*.sqlite
-=======
-backend/node_modules/
-database.json
-.env
->>>>>>> b9a1980e2f726cb179e7e2e9ba183cf99040e849
