@@ -5,527 +5,124 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Professional Servers | Minecraft Panel</title>
     <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&family=MedievalSharp&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     
     <style>
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Poppins', sans-serif; 
-        }
-        body { 
-            background: #0a0a0a; 
-            color: white; 
-            overflow-x: hidden; 
-            overflow-y: scroll; 
-            min-height: 100vh; 
-        }
-        .hidden { 
-            display: none !important; 
-        }
-        .contenedor-principal { 
-            display: flex; 
-            height: 100vh; 
-            width: 100%; 
-        }
-        .mitad-video { 
-            width: 55%; 
-            position: relative; 
-            background: #000; 
-            overflow: hidden; 
-        }
-        .video-fondo { 
-            width: 100%; 
-            height: 100%; 
-            object-fit: cover; 
-            opacity: 0.7; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-        }
-        .filtro-oscuro { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: linear-gradient(90deg, rgba(0,0,0,0) 60%, rgba(10,10,10,1) 100%); 
-            z-index: 1; 
-        }
-        .mitad-login { 
-            width: 45%; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            background: #0a0a0a; 
-            padding: 40px; 
-            z-index: 2; 
-        }
-        .caja-login { 
-            width: 100%; 
-            max-width: 420px; 
-            z-index: 2; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-        }
-        .titulo-container { 
-            text-align: center; 
-            margin-bottom: 10px; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center;
-        }
-        .titulo-pro { 
-            font-family: 'Press Start 2P', cursive; 
-            font-size: 24px; 
-            color: #4CAF50; 
-            display: block; 
-            margin-bottom: 8px;
-        }
-        .titulo-servers { 
-            font-family: 'Press Start 2P', cursive; 
-            font-size: 24px; 
-            color: white; 
-            display: block;
-        }
-        .contenedor-social { 
-            display: flex; 
-            justify-content: center; 
-            gap: 20px; 
-            margin: 25px 0; 
-            width: 100%; 
-        }
-        .btn-circular { 
-            width: 52px; 
-            height: 52px; 
-            border-radius: 50%; 
-            border: 1px solid #333; 
-            display: flex; 
-            justify-content: center; 
-            align-items: center; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            background: #161616; 
-        }
-        .btn-circular:hover { 
-            transform: translateY(-3px); 
-            border-color: #4CAF50; 
-            box-shadow: 0 5px 15px rgba(76,175,80,0.2); 
-        }
-        .btn-circular img { 
-            width: 26px; 
-            height: 26px; 
-            pointer-events: none;
-        }
-        .btn-circular img.invertir-blanco { 
-            filter: invert(1); 
-        }
-        .separador { 
-            text-align: center; 
-            margin: 20px 0; 
-            position: relative; 
-            width: 100%; 
-        }
-        .separador span { 
-            background: #0a0a0a; 
-            padding: 0 15px; 
-            color: #555; 
-            font-size: 11px; 
-            text-transform: uppercase; 
-            position: relative; 
-            z-index: 2; 
-        }
-        .separador::before { 
-            content: ""; 
-            position: absolute; 
-            top: 50%; 
-            left: 0; 
-            width: 100%; 
-            height: 1px; 
-            background: #222; 
-            z-index: 1; 
-        }
-        .grupo-input { 
-            margin-bottom: 15px; 
-            width: 100%; 
-        }
-        .grupo-input label { 
-            display: block; 
-            font-size: 12px; 
-            color: #888; 
-            margin-bottom: 5px; 
-            text-transform: uppercase; 
-        }
-        .grupo-input input, .grupo-input select { 
-            width: 100%; 
-            padding: 12px; 
-            background: #161616; 
-            border: 1px solid #222; 
-            border-radius: 8px; 
-            color: white; 
-            outline: none; 
-            transition: 0.3s;
-        }
-        .grupo-input input:focus, .grupo-input select:focus { 
-            border-color: #4CAF50; 
-            background: #1a1a1a;
-        }
-        .fila-doble { 
-            display: flex; 
-            gap: 10px; 
-            width: 100%; 
-        }
-        .btn-ingresar { 
-            width: 100%; 
-            padding: 14px; 
-            background: #4CAF50; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            margin-top: 10px; 
-            text-transform: uppercase; 
-            color: white; 
-        }
-        .btn-ingresar:hover { 
-            background: #45a049; 
-            transform: scale(1.02); 
-        }
-        .enlace-interactivo { 
-            color: #4CAF50; 
-            cursor: pointer; 
-            font-weight: 600; 
-            text-decoration: none; 
-        }
-        .enlace-interactivo:hover { 
-            text-decoration: underline; 
-        }
-        .dashboard-body { 
-            position: relative; 
-            width: 100%; 
-            min-height: 100vh; 
-            background: url('./assets/img/dashboard-bg.jpeg') center/cover no-repeat fixed; 
-            display: flex; 
-            flex-direction: column; 
-            padding-bottom: 110px; 
-        }
-        .db-bg-overlay { 
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: rgba(0, 0, 0, 0.85); 
-            backdrop-filter: blur(8px); 
-            z-index: 0; 
-        }
-        .content-panel { 
-            background: rgba(20, 20, 20, 0.9); 
-            border: 1px solid rgba(255,255,255,0.08); 
-            border-radius: 15px; 
-            padding: 25px; 
-            position: relative; 
-            z-index: 10; 
-        }
-        .amd-grid { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            grid-gap: 20px; 
-            width: 100%; 
-        }
-        .amd-panel { 
-            background: rgba(15, 15, 15, 0.95); 
-            border: 1px solid #333; 
-            border-radius: 12px; 
-            padding: 20px; 
-            display: flex; 
-            flex-direction: column; 
-            position: relative; 
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3); 
-        }
-        .amd-panel-header { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-bottom: 1px solid #222; 
-            padding-bottom: 10px; 
-            margin-bottom: 15px; 
-        }
-        .amd-panel-title { 
-            font-size: 14px; 
-            font-weight: 600; 
-            color: #ddd; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-        }
-        .amd-panel-value { 
-            font-size: 28px; 
-            font-weight: bold; 
-            font-family: monospace; 
-        }
-        .chart-container { 
-            flex-grow: 1; 
-            position: relative; 
-            height: 150px; 
-            width: 100%; 
-        }
-        .btn-power { 
-            padding: 12px 15px; 
-            border-radius: 8px; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            color: white; 
-            border: none; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            justify-content: center; 
-            width: 100%; 
-            font-size: 13px;
-        }
-        .btn-power:disabled { 
-            opacity: 0.3; 
-            cursor: not-allowed; 
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #0a0a0a; color: white; overflow-x: hidden; overflow-y: scroll; min-height: 100vh; }
+        .hidden { display: none !important; }
+        .contenedor-principal { display: flex; height: 100vh; width: 100%; }
+        .mitad-video { width: 55%; position: relative; background: #000; overflow: hidden; }
+        .video-fondo { width: 100%; height: 100%; object-fit: cover; opacity: 0.7; position: absolute; top: 0; left: 0; }
+        .filtro-oscuro { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, rgba(0,0,0,0) 60%, rgba(10,10,10,1) 100%); z-index: 1; }
+        .mitad-login { width: 45%; display: flex; justify-content: center; align-items: center; background: #0a0a0a; padding: 40px; z-index: 2; }
+        .caja-login { width: 100%; max-width: 420px; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+        .titulo-container { text-align: center; margin-bottom: 10px; display: flex; flex-direction: column; align-items: center; }
+        .titulo-pro { font-family: 'Press Start 2P', cursive; font-size: 24px; color: #4CAF50; display: block; margin-bottom: 8px; }
+        .titulo-servers { font-family: 'Press Start 2P', cursive; font-size: 24px; color: white; display: block; }
+        .contenedor-social { display: flex; justify-content: center; gap: 20px; margin: 25px 0; width: 100%; }
+        .btn-circular { width: 52px; height: 52px; border-radius: 50%; border: 1px solid #333; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.3s; background: #161616; }
+        .btn-circular:hover { transform: translateY(-3px); border-color: #4CAF50; box-shadow: 0 5px 15px rgba(76,175,80,0.2); }
+        .btn-circular img { width: 26px; height: 26px; pointer-events: none; }
+        .btn-circular img.invertir-blanco { filter: invert(1); }
+        .separador { text-align: center; margin: 20px 0; position: relative; width: 100%; }
+        .separador span { background: #0a0a0a; padding: 0 15px; color: #555; font-size: 11px; text-transform: uppercase; position: relative; z-index: 2; }
+        .separador::before { content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #222; z-index: 1; }
+        .grupo-input { margin-bottom: 15px; width: 100%; }
+        .grupo-input label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
+        .grupo-input input, .grupo-input select { width: 100%; padding: 12px; background: #161616; border: 1px solid #222; border-radius: 8px; color: white; outline: none; transition: 0.3s; }
+        .grupo-input input:focus, .grupo-input select:focus { border-color: #4CAF50; background: #1a1a1a; }
+        .fila-doble { display: flex; gap: 10px; width: 100%; }
+        .btn-ingresar { width: 100%; padding: 14px; background: #4CAF50; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; color: white; }
+        .btn-ingresar:hover { background: #45a049; transform: scale(1.02); }
+        .enlace-interactivo { color: #4CAF50; cursor: pointer; font-weight: 600; text-decoration: none; }
+        .enlace-interactivo:hover { text-decoration: underline; }
+        .dashboard-body { position: relative; width: 100%; min-height: 100vh; background: url('./assets/img/dashboard-bg.jpeg') center/cover no-repeat fixed; display: flex; flex-direction: column; padding-bottom: 110px; }
+        .db-bg-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px); z-index: 0; }
+        .content-panel { background: rgba(20, 20, 20, 0.9); border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; padding: 25px; position: relative; z-index: 10; }
+        .amd-grid { display: grid; grid-template-columns: 1fr 1fr; grid-gap: 20px; width: 100%; }
+        .amd-panel { background: rgba(15, 15, 15, 0.95); border: 1px solid #333; border-radius: 12px; padding: 20px; display: flex; flex-direction: column; position: relative; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .amd-panel-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222; padding-bottom: 10px; margin-bottom: 15px; }
+        .amd-panel-title { font-size: 14px; font-weight: 600; color: #ddd; display: flex; align-items: center; gap: 8px; }
+        .amd-panel-value { font-size: 28px; font-weight: bold; font-family: monospace; }
+        .chart-container { flex-grow: 1; position: relative; height: 150px; width: 100%; }
+        .btn-power { padding: 12px 15px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; color: white; border: none; display: flex; align-items: center; gap: 8px; justify-content: center; width: 100%; font-size: 13px; }
+        .btn-power:disabled { opacity: 0.3; cursor: not-allowed; }
         .btn-start { background-color: #4CAF50; }
         .btn-start:hover:not(:disabled) { background-color: #45a049; transform: scale(1.03); }
         .btn-restart { background-color: #3b82f6; }
         .btn-restart:hover:not(:disabled) { background-color: #2563eb; transform: scale(1.03); }
         .btn-stop { background-color: #ef4444; }
         .btn-stop:hover:not(:disabled) { background-color: #dc2626; transform: scale(1.03); }
-        .plan-badge { 
-            background-color: rgba(76, 175, 80, 0.2); 
-            color: #4CAF50; 
-            padding: 4px 10px; 
-            border-radius: 12px; 
-            font-size: 11px; 
-            font-weight: 600; 
-            text-transform: uppercase; 
-            border: 1px solid rgba(76, 175, 80, 0.5); 
-            display: inline-block; 
-            margin-top: 5px;
-        }
-        .btn-planes { 
-            background: transparent; 
-            border: 1px solid #4CAF50; 
-            color: #4CAF50; 
-            padding: 6px 12px; 
-            border-radius: 6px; 
-            font-size: 11px; 
-            cursor: pointer; 
-            transition: 0.3s; 
-            margin-top: 8px; 
-            font-weight: bold; 
-            text-transform: uppercase;
-        }
+        
+        .btn-planes { background: transparent; border: 1px solid #4CAF50; color: #4CAF50; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; transition: 0.3s; margin-top: 8px; font-weight: bold; text-transform: uppercase; }
         .btn-planes:hover { background: #4CAF50; color: white; }
-        .navigation-container { 
-            position: fixed; 
-            bottom: 15px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            z-index: 1000; 
-            width: 90%; 
-            max-width: 1100px; 
-        }
-        .navigation { 
-            display: flex; 
-            justify-content: space-between; 
-            background: rgba(30, 30, 30, 0.95); 
-            backdrop-filter: blur(15px); 
-            border-radius: 20px; 
-            padding: 5px 15px; 
-            border: 1px solid rgba(255,255,255,0.1); 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        }
-        .navigation a { 
-            padding: 12px 10px; 
-            color: #888; 
-            transition: 0.3s; 
-            cursor: pointer; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
-            text-align: center; 
-        }
+        .navigation-container { position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 1100px; }
+        .navigation { display: flex; justify-content: space-between; background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(15px); border-radius: 20px; padding: 5px 15px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .navigation a { padding: 12px 10px; color: #888; transition: 0.3s; cursor: pointer; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; }
         .navigation a.active { color: #4CAF50; transform: translateY(-3px); }
-        .navigation a span.title { 
-            font-size: 9px; 
-            margin-top: 4px; 
-            text-transform: uppercase; 
-            letter-spacing: 1px; 
-        }
-        .navigation .btn-hub {
-            color: #3b82f6; 
-            border-left: 1px solid #333; 
-            padding-left: 20px; 
-            margin-left: 10px;
-        }
+        .navigation a span.title { font-size: 9px; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px; }
+        .navigation .btn-hub { color: #3b82f6; border-left: 1px solid #333; padding-left: 20px; margin-left: 10px; }
         .navigation .btn-hub:hover { color: #60a5fa; transform: scale(1.05); }
-        .console-textarea, .file-editor { 
-            width:100%; 
-            height:400px; 
-            background-color:#000; 
-            border:1px solid #333; 
-            color:#0f0; 
-            font-family: monospace; 
-            font-size:13px; 
-            resize:none; 
-            border-radius:8px; 
-            padding: 10px; 
-        }
-        .player-card { 
-            background:rgba(31, 41, 55, 0.8); 
-            border:1px solid #374151; 
-            border-radius:1rem; 
-            padding:1rem; 
-            text-align:center; 
-        }
-        .player-avatar { 
-            width:80px; 
-            height:80px; 
-            border-radius:50%; 
-            margin:0 auto .5rem; 
-            border:3px solid #4CAF50; 
-        }
-        .file-tree { 
-            height: 400px; 
-            overflow-y: auto; 
-            background-color: #111; 
-            border-radius: 8px; 
-            padding: 10px; 
-            border: 1px solid #333; 
-        }
-        .file-tree-item { 
-            cursor: pointer; 
-            padding: 8px; 
-            border-radius: 4px; 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            transition: 0.2s;
-        }
+        .console-textarea, .file-editor { width:100%; height:400px; background-color:#000; border:1px solid #333; color:#0f0; font-family: monospace; font-size:13px; resize:none; border-radius:8px; padding: 10px; }
+        .player-card { background:rgba(31, 41, 55, 0.8); border:1px solid #374151; border-radius:1rem; padding:1rem; text-align:center; }
+        .player-avatar { width:80px; height:80px; border-radius:50%; margin:0 auto .5rem; border:3px solid #4CAF50; object-fit: cover; }
+        .file-tree { height: 400px; overflow-y: auto; background-color: #111; border-radius: 8px; padding: 10px; border: 1px solid #333; }
+        .file-tree-item { cursor: pointer; padding: 8px; border-radius: 4px; display: flex; align-items: center; gap: 8px; transition: 0.2s; }
         .file-tree-item:hover { background-color: #222; }
-        .mod-pills-tab { 
-            display: flex; 
-            gap: 10px; 
-            border-bottom: 1px solid #333; 
-            padding-bottom: 10px; 
-            margin-bottom: 20px; 
-            flex-wrap: wrap;
-        }
-        .mod-pill { 
-            padding: 8px 16px; 
-            border-radius: 20px; 
-            background: #222; 
-            border: 1px solid #444; 
-            color: #aaa; 
-            font-size: 12px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-            text-transform: uppercase;
-        }
-        .mod-pill.active { 
-            background: #4CAF50; 
-            color: white; 
-            border-color: #4CAF50; 
-            font-weight: bold; 
-        }
-        .search-mod-input { 
-            background: #1a1a1a; 
-            border: 1px solid #333; 
-            color: white; 
-            padding: 10px 15px; 
-            border-radius: 8px; 
-            width: 100%; 
-            font-size: 14px; 
-            outline: none; 
-        }
+        .mod-pills-tab { display: flex; gap: 10px; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .mod-pill { padding: 8px 16px; border-radius: 20px; background: #222; border: 1px solid #444; color: #aaa; font-size: 12px; cursor: pointer; transition: 0.2s; text-transform: uppercase; }
+        .mod-pill.active { background: #4CAF50; color: white; border-color: #4CAF50; font-weight: bold; }
+        .search-mod-input { background: #1a1a1a; border: 1px solid #333; color: white; padding: 10px 15px; border-radius: 8px; width: 100%; font-size: 14px; outline: none; }
         .search-mod-input:focus { border-color: #4CAF50; }
-        .mod-item { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            background: rgba(30,30,30,0.7); 
-            border: 1px solid #333; 
-            border-radius: 10px; 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            transition: 0.2s;
-        }
-        .mod-item:hover { 
-            border-color: #4CAF50; 
-            background: rgba(40,40,40,0.9); 
-        }
-        .permissions-table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            font-size: 12px; 
-            text-transform: uppercase; 
-            color: #ccc; 
-        }
-        .permissions-table th { 
-            padding: 12px 10px; 
-            border-bottom: 2px solid #333; 
-            color: #888; 
-            letter-spacing: 1px; 
-        }
-        .permissions-table td { 
-            padding: 12px 10px; 
-            border-bottom: 1px solid #222; 
-        }
-        .perm-check { 
-            appearance: none; 
-            width: 18px; 
-            height: 18px; 
-            background: #222; 
-            border: 2px solid #555; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            transition: 0.2s; 
-        }
-        .perm-check:checked { 
-            background: #4CAF50; 
-            border-color: #4CAF50; 
-        }
-        .variant-pill { 
-            border: 1px solid #555; 
-            background: #222; 
-            color: #ccc; 
-            border-radius: 5px; 
-            padding: 6px 12px; 
-            text-transform: uppercase; 
-            font-size: 11px; 
-            cursor: pointer; 
-            transition: 0.2s;
-        }
-        .variant-pill:hover { background: #333; }
-        .variant-pill.active { 
-            border-color: #4CAF50; 
-            background: #1a1a1a; 
-            color: white; 
-            font-weight: bold; 
-            box-shadow: 0 0 8px rgba(76, 175, 80, 0.3); 
-        }
-        .cloud-badge { 
-            display: flex; 
-            align-items: center; 
-            gap: 8px; 
-            background: #222; 
-            border: 1px solid #444; 
-            padding: 12px; 
-            border-radius: 8px; 
-            flex: 1;
-        }
+        .mod-item { display: flex; justify-content: space-between; align-items: center; background: rgba(30,30,30,0.7); border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 10px; transition: 0.2s; }
+        .mod-item:hover { border-color: #4CAF50; background: rgba(40,40,40,0.9); }
+        .cloud-badge { display: flex; align-items: center; gap: 8px; background: #222; border: 1px solid #444; padding: 12px; border-radius: 8px; flex: 1; }
         .glowing-text { text-shadow: 0 0 15px rgba(76, 175, 80, 0.5); }
+        
+        /* ==========================================
+           CLASES DINÁMICAS DE TEMAS (PLANES)
+           ========================================== */
+        .header-user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 3px solid transparent; transition: 0.3s; }
+        .plan-badge-base { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; display: inline-block; margin-top: 5px; }
+
+        /* REDSTONE */
+        .theme-border-redstone { border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
+        .theme-text-redstone { color: #fff; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); }
+        .theme-badge-redstone { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+
+        /* HIERRO */
+        .theme-border-hierro { border-color: #e5e7eb; box-shadow: 0 0 15px rgba(229, 231, 235, 0.4); }
+        .theme-text-hierro { color: #fff; text-shadow: 0 0 10px rgba(229, 231, 235, 0.8), 0 0 20px rgba(229, 231, 235, 0.4); }
+        .theme-badge-hierro { background: rgba(229, 231, 235, 0.15); color: #e5e7eb; border: 1px solid rgba(229, 231, 235, 0.5); box-shadow: 0 0 10px rgba(229, 231, 235, 0.2); }
+
+        /* ORO */
+        .theme-border-oro { border-color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+        .theme-text-oro { color: #fff; text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 20px rgba(245, 158, 11, 0.4); }
+        .theme-badge-oro { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.5); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
+
+        /* DIAMANTE */
+        .theme-border-diamante { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+        .theme-text-diamante { color: #fff; text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4); }
+        .theme-badge-diamante { background: rgba(6, 182, 212, 0.15); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.5); box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
+
+        /* NETHERITE */
+        .theme-border-netherite { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+        .theme-text-netherite { color: #fff; text-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.4); }
+        .theme-badge-netherite { background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.5); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
+
+        /* GHOST WARRIOR */
+        .theme-border-ghost-warrior { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
+        .theme-text-ghost-warrior { color: #fff; text-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4); }
+        .theme-badge-ghost-warrior { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
+
+        /* ENTERPRISE */
+        .theme-border-enterprise { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
+        .theme-text-enterprise { color: #fff; text-shadow: 0 0 10px rgba(251, 191, 36, 0.8), 0 0 20px rgba(251, 191, 36, 0.4); }
+        .theme-badge-enterprise { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.5); box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
         
         @media (max-width: 768px) {
             .contenedor-principal { flex-direction: column; position: relative; }
@@ -543,6 +140,50 @@
             .navigation::-webkit-scrollbar { display: none; }
             .navigation a { min-width: 70px; padding: 8px 5px; flex-shrink: 0;}
             .navigation .btn-hub { border-left: none; margin-left: 0; padding-left: 5px; border-top: 1px solid #333; }
+        }
+
+        /* Mine AI Chat Estilos */
+        .mine-hidden { display: none !important; }
+        #mine-chat-modal { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 350px; max-width: 95%; background-color: #121212; border: 1px solid #4ade80; border-radius: 12px; box-shadow: 0 10px 30px rgba(74, 222, 128, 0.15); z-index: 1000; font-family: 'Poppins', sans-serif; display: flex; flex-direction: column; max-height: 500px; }
+        .mine-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #18181b; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom: 1px solid #27272a; }
+        .mine-title { color: #ffffff; font-weight: bold; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+        .mine-dot { width: 8px; height: 8px; background-color: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
+        .mine-close { background: none; border: none; color: #a1a1aa; font-size: 20px; cursor: pointer; transition: 0.3s; }
+        .mine-close:hover { color: #ef4444; }
+        .mine-body { padding: 15px; overflow-y: auto; flex: 1; max-height: 350px; }
+        .mine-message { background-color: #27272a; color: #e4e4e7; padding: 12px; border-radius: 8px; font-size: 12px; line-height: 1.5; border-left: 3px solid #4ade80; }
+        .mine-message-user span { background-color: #4f46e5; color: white; padding: 8px 12px; border-radius: 8px; font-size: 12px; display: inline-block; }
+        .mine-footer { display: flex; padding: 12px; border-top: 1px solid #27272a; gap: 8px; background-color: #18181b; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px; }
+        .mine-footer input { flex: 1; padding: 10px 12px; background-color: #1a1a1a; border: 1px solid #3f3f46; border-radius: 6px; color: white; font-size: 12px; outline: none; transition: 0.3s; }
+        .mine-footer input:focus { border-color: #4ade80; }
+        .mine-footer button { background-color: #4ade80; color: #000; border: none; border-radius: 6px; padding: 0 15px; cursor: pointer; font-weight: bold; transition: 0.3s; font-size: 12px; }
+        .mine-footer button:hover { background-color: #22c55e; }
+        .mine-footer button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        /* Botón Flotante de Soporte */
+        .support-btn-floating { position: fixed; bottom: 20px; right: 20px; background-color: #4f46e5; color: white; border-radius: 50%; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4); cursor: pointer; z-index: 1000; transition: 0.3s; border: 2px solid #6366f1; }
+        .support-btn-floating:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6); }
+
+        /* Estilo para el Modal de Versiones */
+        #mod-versions-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 2000;
+        }
+        .modal-content-modrinth {
+            background: #1a1a1a; border: 1px solid #333;
+            border-radius: 12px; width: 90%; max-width: 600px;
+            max-height: 80vh; display: flex; flex-direction: column;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+        }
+        .modal-header-modrinth {
+            padding: 15px 20px; border-bottom: 1px solid #333;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .modal-body-modrinth {
+            padding: 20px; overflow-y: auto; flex-grow: 1;
         }
     </style>
 </head>
@@ -564,7 +205,7 @@
                         <i data-feather="x" class="text-gray-600 w-4 h-4"></i>
                         <img src="./assets/img/logo-minecraft.ico" alt="Minecraft" class="w-10 h-10 object-contain drop-shadow-[0_0_12px_rgba(255,255,255,0.2)] transition-transform hover:scale-110">
                         <i data-feather="x" class="text-gray-600 w-4 h-4"></i>
-                        <img src="./assets/img/modrinth.ico" alt="Modrinth" class="w-10 h-10 rounded-xl object-contain drop-shadow-[0_0_12px_rgba(27,217,106,0.5)] transition-transform hover:scale-110" onerror="this.src='./assets/img/logo-minecraft.ico'">
+                        <img src="./assets/img/modrinth.ico" alt="CurseForge" class="w-10 h-10 rounded-xl object-contain drop-shadow-[0_0_12px_rgba(27,217,106,0.5)] transition-transform hover:scale-110" onerror="this.src='./assets/img/logo-minecraft.ico'">
                     </div>
                     <span class="titulo-pro">Professional</span>
                     <span class="titulo-servers">Servers</span>
@@ -658,11 +299,30 @@
                 </div>
             </div>
             
-            <p style="position: absolute; bottom: 20px; right: 20px; font-size: 10px; color: #333;">PROFESSIONAL SERVERS V2.6 BETA | @MAXPRO</p>
+            <p style="position: absolute; bottom: 20px; right: 20px; font-size: 10px; color: #333;">PROFESSIONAL SERVERS V0.8 BETA | @MAXPRO</p>
         </div>
     </div>
 
     <div id="main-dashboard" class="dashboard-body hidden"></div>
+
+    <div id="mod-versions-modal" class="hidden">
+        <div class="modal-content-modrinth">
+            <div class="modal-header-modrinth">
+                <h3 class="text-white font-bold text-lg flex items-center gap-2" id="mod-modal-title">
+                    <i data-feather="package" class="w-5 h-5 text-indigo-400"></i> Cargando...
+                </h3>
+                <button onclick="document.getElementById('mod-versions-modal').classList.add('hidden')" class="text-gray-400 hover:text-white transition-colors">
+                    <i data-feather="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div class="modal-body-modrinth" id="mod-modal-body">
+                <div class="text-center py-8">
+                    <i data-feather="loader" class="animate-spin text-indigo-500 mx-auto mb-4 w-8 h-8"></i>
+                    <p class="text-gray-400">Buscando versiones compatibles...</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
@@ -687,10 +347,13 @@
         const providerGithub = new GithubAuthProvider();
         const providerMicrosoft = new OAuthProvider('microsoft.com');
 
+        window.userPlan = { name: 'Plan Redstone', maxServers: 1, ram: '8GB', ramNum: 8, fileManager: false };
+        let isSharedServer = false;
+
         document.addEventListener('DOMContentLoaded', () => {
             feather.replace();
 
-            const API_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? 'http://localhost:3000' : '';
+            const API_URL = ''; 
             
             const authContainer = document.getElementById('auth-container');
             const dashboard = document.getElementById('main-dashboard');
@@ -718,7 +381,39 @@
                     const selectedServer = sessionStorage.getItem('selectedServer');
                     
                     if (selectedServer) {
-                        entrarAlPanel(JSON.parse(selectedServer));
+                        try {
+                            const config = JSON.parse(selectedServer);
+                            isSharedServer = config.isShared === true; // Guardamos si el servidor es de otro usuario
+                            
+                            const token = await user.getIdToken();
+                            
+                            try {
+                                const verifyRes = await fetch(`${API_URL}/api/user/status?uid=${user.uid}`, {
+                                    headers: { 'Authorization': 'Bearer ' + token }
+                                });
+                                const verifyData = await verifyRes.json();
+                                
+                                if (verifyData.plan) {
+                                    window.userPlan = verifyData.plan;
+                                }
+                            } catch(e) { console.error("Error leyendo plan:", e); }
+                            
+                            const res = await fetch(`${API_URL}/api/project/check`, {
+                                headers: { 'Authorization': 'Bearer ' + token }
+                            });
+                            const data = await res.json();
+                            
+                            const serverExists = data.exists && data.servers.some(s => s.id === config.id);
+                            
+                            if (serverExists) {
+                                entrarAlPanel(config);
+                            } else {
+                                sessionStorage.removeItem('selectedServer');
+                                window.location.href = 'create.html';
+                            }
+                        } catch (e) {
+                            entrarAlPanel(JSON.parse(selectedServer));
+                        }
                     } else {
                         window.location.href = 'create.html';
                     }
@@ -768,6 +463,7 @@
                 try {
                     const cred = await createUserWithEmailAndPassword(auth, idIngresado, f.password.value);
                     await updateProfile(cred.user, { displayName: `${f.nombre.value} ${f.apellido.value}` });
+                    window.location.href = 'planes.html';
                 } catch (err) { 
                     loginBoxesWrapper.classList.remove('hidden');
                     checkingStatus.classList.add('hidden');
@@ -793,6 +489,78 @@
                 }
             });
 
+            window.uploadLocalModpack = async () => {
+                const fileInput = document.getElementById('modpackFileInput');
+                if (!fileInput.files[0]) return;
+                const file = fileInput.files[0];
+                const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+
+                const btn = document.getElementById('btn-upload-local');
+                if(btn) {
+                    btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i> Subiendo...';
+                    btn.disabled = true;
+                    feather.replace();
+                }
+
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('serverId', config.id);
+
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    const res = await fetch(`${API_URL}/api/files/upload`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    const data = await res.json();
+                    if(data.success) {
+                        alert(data.message || "Archivo subido exitosamente.");
+                        window.loadFiles('/');
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                } catch(e) {
+                    alert("Error al subir el archivo: " + e.message);
+                }
+
+                if(btn) {
+                    btn.innerHTML = '<i data-feather="upload-cloud" class="w-4 h-4"></i> Subir desde PC';
+                    btn.disabled = false;
+                    feather.replace();
+                }
+                fileInput.value = '';
+            };
+
+            window.promptCloudUrl = async () => {
+                const url = prompt("Pega el enlace directo de descarga de tu Modpack (Google Drive, OneDrive, Mediafire, etc.):");
+                if(!url) return;
+                const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+
+                alert("Iniciando descarga en el servidor... El contenedor lo procesará automáticamente.");
+
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    const res = await fetch(`${API_URL}/api/files/upload-url`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ serverId: config.id, downloadUrl: url })
+                    });
+                    const data = await res.json();
+                    if(data.success) {
+                        alert(data.message || "URL procesada exitosamente.");
+                        window.loadFiles('/');
+                    } else {
+                        alert("Error: " + data.error);
+                    }
+                } catch(e) {
+                    alert("Error al importar el enlace: " + e.message);
+                }
+            };
+
             window.guardarIP = async () => {
                 const ip = document.getElementById('manual-ip-input').value.trim();
                 if (!ip) {
@@ -800,11 +568,14 @@
                     return;
                 }
                 try {
+                    const token = await auth.currentUser.getIdToken();
                     await fetch(`${API_URL}/api/project/ip`, { 
                         method: 'POST', 
-                        headers: { 'Content-Type': 'application/json' }, 
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        }, 
                         body: JSON.stringify({
-                            uid: auth.currentUser.uid,
                             serverId: JSON.parse(sessionStorage.getItem('selectedServer')).id,
                             ip: ip
                         }) 
@@ -841,8 +612,26 @@
                 const softwareServer = config.software || "Vanilla";
                 const motdServer = config.motd || "Gestión de infraestructura";
 
-                const queryAuth = `?uid=${auth.currentUser.uid}&serverId=${config.id}`;
-                const bodyAuth = { uid: auth.currentUser.uid, serverId: config.id };
+                const queryAuth = `?serverId=${config.id}`;
+                const bodyAuth = { serverId: config.id };
+                
+                let rawName = auth.currentUser ? auth.currentUser.displayName : 'Administrador';
+                const userName = rawName.split(' ')[0]; 
+                const userPhoto = (auth.currentUser && auth.currentUser.photoURL) ? auth.currentUser.photoURL : './assets/img/default-avatar.png';
+
+                // LÓGICA DE TEMAS DINÁMICOS BASADA EN EL PLAN
+                const pName = window.userPlan.name.toLowerCase();
+                let theme = 'hierro'; 
+                if(pName.includes('redstone')) theme = 'redstone';
+                else if(pName.includes('oro')) theme = 'oro';
+                else if(pName.includes('diamante')) theme = 'diamante';
+                else if(pName.includes('netherite')) theme = 'netherite';
+                else if(pName.includes('ghost') || pName.includes('warrior')) theme = 'ghost-warrior';
+                else if(pName.includes('enterprise')) theme = 'enterprise';
+
+                // Verificamos si el plan permite File Manager y IA
+                const hasPremiumAccess = window.userPlan.fileManager === true;
+                const lockHtml = hasPremiumAccess ? '' : `<div class="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 shadow"><i data-feather="lock" class="w-3 h-3 text-white"></i></div>`;
 
                 element.innerHTML = `
                     <div class="db-bg-overlay"></div>
@@ -852,27 +641,31 @@
                             <div class="flex items-center gap-6 header-left w-full md:w-auto">
                                 <div class="flex flex-col items-center justify-center text-center border-r border-[#333] pr-6">
                                     <img src="./assets/img/favicon.ico" alt="Logo" class="w-12 h-12 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)] mb-2" onerror="this.src='./assets/img/logo-minecraft.ico'">
-                                    <span class="text-[10px] uppercase tracking-widest text-green-500 font-bold glowing-text">Professional</span>
-                                    <span class="text-[10px] uppercase tracking-widest text-white font-bold">Servers</span>
+                                    <p class="text-[10px] uppercase tracking-widest text-green-500 font-bold glowing-text">Professional Servers</p>
                                 </div>
                                 
                                 <div>
                                     <div class="flex items-center gap-3 mb-1 justify-center md:justify-start">
-                                        <h2 class="text-xs uppercase tracking-widest text-green-500 font-bold">Servidor Activo</h2>
+                                        <h2 class="text-xs uppercase tracking-widest text-green-500 font-bold">Servidor Activo ${isSharedServer ? '<span class="text-yellow-500">(Invitado)</span>' : ''}</h2>
                                         <span class="bg-[#222] border border-[#444] text-[#ccc] text-[10px] px-2 py-1 rounded uppercase font-bold tracking-wider">
                                             ${softwareServer} ${versionServer}
                                         </span>
                                     </div>
                                     <h1 class="text-3xl font-bold font-['Cinzel'] tracking-wide text-white">${nombreDelServer}</h1>
-                                    <p class="text-xs text-gray-400 mt-1 font-mono">${motdServer}</p>
+                                    <p class="text-xs text-gray-400 mt-1 font-mono">MOTD: ${motdServer}</p>
                                 </div>
                             </div>
 
-                            <div class="text-right header-right w-full md:w-auto">
-                                <p class="text-xs text-gray-400 uppercase tracking-widest">Sesión Activa</p>
-                                <p class="font-bold text-xl text-white">${auth.currentUser ? auth.currentUser.displayName : 'Administrador'}</p>
-                                <div class="flex items-center justify-end gap-3 mt-2">
-                                    <span class="plan-badge">Plan Free</span>
+                            <div class="text-right header-right w-full md:w-auto flex flex-col items-end">
+                                <div class="flex items-center gap-4">
+                                    <div class="text-right">
+                                        <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Sesión Activa</p>
+                                        <p class="font-bold text-3xl font-['MedievalSharp'] tracking-wider theme-text-${theme}">${userName}</p>
+                                    </div>
+                                    <img src="${userPhoto}" alt="Avatar" class="header-user-avatar theme-border-${theme}" onerror="this.src='./assets/img/default-avatar.png'">
+                                </div>
+                                <div class="flex items-center justify-end gap-3 mt-3">
+                                    <span class="plan-badge-base theme-badge-${theme}">${window.userPlan.name}</span>
                                     <button class="btn-planes" onclick="window.location.href='planes.html'">Ver Planes</button>
                                 </div>
                             </div>
@@ -898,17 +691,31 @@
                             <a data-panel="console-panel">
                                 <i data-feather="terminal"></i><span class="title">Consolas</span>
                             </a>
+                            
+                            <a id="btn-mine-ai" class="cursor-pointer relative" style="color: #4ade80;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin: 0 auto;">
+                                    <rect x="3" y="11" width="18" height="10" rx="2"></rect>
+                                    <circle cx="12" cy="5" r="2"></circle>
+                                    <path d="M12 7v4"></path>
+                                    <line x1="8" y1="16" x2="8" y2="16"></line>
+                                    <line x1="16" y1="16" x2="16" y2="16"></line>
+                                </svg>
+                                <span class="title" style="color: #a1a1aa;">MINE AI</span>
+                                ${lockHtml}
+                            </a>
+
                             <a data-panel="players-panel">
                                 <i data-feather="users"></i><span class="title">Staff</span>
                             </a>
-                            <a data-panel="files-panel">
+                            <a data-panel="files-panel" class="relative">
                                 <i data-feather="folder"></i><span class="title">Archivos</span>
+                                ${lockHtml}
                             </a>
                             <a data-panel="mods-panel">
                                 <i data-feather="package"></i><span class="title">Mods & APIS</span>
                             </a>
-                            <a data-panel="nube-panel">
-                                <i data-feather="cloud"></i><span class="title">Copias Nube</span>
+                            <a data-panel="compartidos-panel">
+                                <i data-feather="share-2"></i><span class="title">Accesos</span>
                             </a>
                             <a data-panel="settings-panel">
                                 <i data-feather="settings"></i><span class="title">Ajustes</span>
@@ -920,7 +727,24 @@
                                 <i data-feather="log-out"></i><span class="title">Salir</span>
                             </a>
                         </nav>
-                    </div>`;
+                    </div>
+
+                    <div id="mine-chat-modal" class="mine-hidden">
+                        <div class="mine-header">
+                            <div class="mine-title"><span class="mine-dot"></span> Mine AI - Análisis Técnico</div>
+                            <button id="close-mine" class="mine-close">&times;</button>
+                        </div>
+                        <div class="mine-body" id="mine-body">
+                            <div class="mine-message mb-3">
+                                <b>👋 ¡Hola! Soy Mine</b>, tu analista experto. Estoy conectado a la consola de tu servidor. Toca "Analizar Log" para que revise si hay errores o mods incompatibles.
+                            </div>
+                        </div>
+                        <div class="mine-footer">
+                            <input type="text" id="mine-input" placeholder="Haz clic en analizar..." disabled>
+                            <button id="mine-send-btn" onclick="window.analizarConMine()">Analizar Log</button>
+                        </div>
+                    </div>
+                `;
                 
                 feather.replace();
 
@@ -928,6 +752,142 @@
                     sessionStorage.removeItem('selectedServer');
                     window.location.reload();
                 });
+
+                const btnMine = document.getElementById('btn-mine-ai');
+                const chatModal = document.getElementById('mine-chat-modal');
+                const btnCloseMine = document.getElementById('close-mine');
+
+                if(btnMine && chatModal && btnCloseMine) {
+                    btnMine.addEventListener('click', () => {
+                        // PAYWALL DE MINE AI
+                        if (!hasPremiumAccess) {
+                            chatModal.classList.remove('mine-hidden');
+                            document.getElementById('mine-body').innerHTML = `
+                                <div class="text-center py-6 h-full flex flex-col justify-center items-center">
+                                    <i data-feather="lock" class="w-12 h-12 text-red-500 mx-auto mb-3"></i>
+                                    <h4 class="text-white font-bold text-sm uppercase">Función Premium</h4>
+                                    <p class="text-xs text-gray-400 mt-2 px-4">Mine AI requiere Plan Diamante o superior para analizar logs masivos.</p>
+                                    <button onclick="window.location.href='planes.html'" class="mt-4 bg-indigo-600 hover:bg-indigo-500 transition-colors px-6 py-2 rounded-lg font-bold text-xs text-white uppercase shadow-lg shadow-indigo-900/50">Mejorar Plan</button>
+                                </div>`;
+                            document.getElementById('mine-send-btn').disabled = true;
+                            feather.replace();
+                            return;
+                        }
+
+                        chatModal.classList.toggle('mine-hidden');
+                        element.querySelectorAll('.navigation a').forEach(i => i.classList.remove('active'));
+                        btnMine.classList.add('active');
+                    });
+
+                    btnCloseMine.addEventListener('click', () => {
+                        chatModal.classList.add('mine-hidden');
+                        btnMine.classList.remove('active');
+                        const activeId = Array.from(element.querySelectorAll('main > div')).find(d => !d.classList.contains('hidden'))?.id;
+                        if(activeId) {
+                            const btn = element.querySelector(`a[data-panel="${activeId}"]`);
+                            if(btn) btn.classList.add('active');
+                        }
+                    });
+                }
+
+                window.analizarConMine = async () => {
+                    const mineBtn = document.getElementById('mine-send-btn');
+                    const mineBody = document.getElementById('mine-body');
+                    
+                    mineBtn.disabled = true;
+                    mineBtn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i>';
+                    feather.replace();
+                    
+                    mineBody.innerHTML += `<div class="mine-message-user mb-3 text-right"><span class="bg-indigo-600 text-white px-3 py-2 rounded-lg text-xs inline-block shadow">Revisar servidor</span></div>`;
+                    mineBody.scrollTop = mineBody.scrollHeight;
+
+                    const loadingId = 'loading-' + Date.now();
+                    mineBody.innerHTML += `<div id="${loadingId}" class="mine-message mb-3 text-xs"><i data-feather="cpu" class="inline w-3 h-3"></i> Analizando el corazón del contenedor...</div>`;
+                    feather.replace();
+                    mineBody.scrollTop = mineBody.scrollHeight;
+
+                    try {
+                        const token = await auth.currentUser.getIdToken();
+                        const res = await fetch(`${API_URL}/api/server/mine-ai`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + token
+                            },
+                            body: JSON.stringify({serverId: config.id})
+                        });
+                        const data = await res.json();
+                        document.getElementById(loadingId)?.remove();
+                        
+                        if(!data.success) throw new Error(data.error);
+
+                        const ans = data.analysis;
+                        let htmlRes = `<div class="mine-message mb-3 border-l-4 border-green-500">
+                            <p class="font-bold text-green-400 text-[11px] uppercase tracking-wider mb-1">Diagnóstico:</p>
+                            <p class="text-xs text-gray-300 mb-3">${ans.mensaje}</p>`;
+                        
+                        if(ans.mod_alternativo && ans.mod_alternativo !== "null") {
+                            htmlRes += `<p class="font-bold text-blue-400 text-[11px] uppercase tracking-wider mb-1">Alternativa:</p>
+                                        <p class="text-xs text-gray-300 mb-3">${ans.mod_alternativo}</p>`;
+                        }
+                        
+                        if(ans.paso_a_paso && ans.paso_a_paso !== "null") {
+                            htmlRes += `<p class="font-bold text-yellow-400 text-[11px] uppercase tracking-wider mb-1">Solución Manual:</p>
+                                        <p class="text-xs text-gray-300 mb-3">${ans.paso_a_paso}</p>`;
+                        }
+
+                        if(ans.hay_que_borrar && ans.archivo_a_borrar && ans.archivo_a_borrar !== "null") {
+                            htmlRes += `<div class="bg-[#1a1a1a] p-3 rounded-lg border border-red-500 mt-3 shadow-lg">
+                                <p class="text-[10px] text-red-400 uppercase font-bold mb-1 flex items-center gap-1"><i data-feather="alert-triangle" class="w-3 h-3"></i> Acción Sugerida</p>
+                                <p class="text-xs text-gray-300 mb-3">Mine recomienda purgar: <b>${ans.archivo_a_borrar}</b></p>
+                                <button onclick="window.confirmarBorradoMine('${ans.archivo_a_borrar}')" class="bg-red-600 hover:bg-red-700 transition-colors text-white text-xs px-3 py-2 rounded font-bold w-full uppercase tracking-wider">Confirmar Borrado</button>
+                            </div>`;
+                        }
+
+                        htmlRes += `</div>`;
+                        mineBody.innerHTML += htmlRes;
+                        feather.replace();
+                        
+                    } catch(e) {
+                        document.getElementById(loadingId)?.remove();
+                        mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-red-500"><p class="text-xs text-red-400 font-bold">Error:</p><p class="text-xs text-gray-300">${e.message}</p></div>`;
+                    }
+                    mineBody.scrollTop = mineBody.scrollHeight;
+                    mineBtn.disabled = false;
+                    mineBtn.innerText = 'Analizar Log';
+                };
+
+                window.confirmarBorradoMine = async (archivo) => {
+                    const mineBody = document.getElementById('mine-body');
+                    if(!confirm(`⚠️ ¿Deseas eliminar permanentemente ${archivo}?`)) {
+                        mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-yellow-500"><p class="text-[11px] text-yellow-400 uppercase font-bold">Operación Cancelada</p><p class="text-xs text-gray-300">Tus archivos están a salvo.</p></div>`;
+                        mineBody.scrollTop = mineBody.scrollHeight;
+                        return;
+                    }
+                    
+                    try {
+                        const token = await auth.currentUser.getIdToken();
+                        const res = await fetch(`${API_URL}/api/files/delete`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + token
+                            },
+                            body: JSON.stringify({serverId: config.id, path: `mods/${archivo}`})
+                        });
+                        const data = await res.json();
+                        
+                        if(data.success) {
+                            mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-green-500 bg-[#1a1a1a]"><p class="text-[11px] text-green-400 uppercase font-bold flex items-center gap-1"><i data-feather="check-circle" class="w-3 h-3"></i> Ejecución Exitosa</p><p class="text-xs text-gray-300 mt-1">El archivo <b>${archivo}</b> fue eliminado.</p></div>`;
+                        } else {
+                            throw new Error(data.error || "No se pudo eliminar el archivo.");
+                        }
+                    } catch(e) {
+                        mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-red-500"><p class="text-xs text-red-400 font-bold">Error en la ejecución:</p><p class="text-xs text-gray-300">${e.message}</p></div>`;
+                    }
+                    feather.replace();
+                    mineBody.scrollTop = mineBody.scrollHeight;
+                };
 
                 element.querySelectorAll('.navigation a[data-panel]').forEach(link => {
                     link.onclick = (e) => {
@@ -941,22 +901,18 @@
                 let cpuChart, ramChart;
                 let currentModType = 'mod';
 
-                window.showPanel = function(id) {
+                window.showPanel = async function(id) {
                     document.querySelectorAll('main > div').forEach(p => p.classList.add('hidden'));
-                    
                     if (statusInterval) clearInterval(statusInterval);
                     if (playerListInterval) clearInterval(playerListInterval);
-                    if (socket) {
-                        socket.disconnect();
-                        socket = null;
-                    }
+                    if (socket) { socket.disconnect(); socket = null; }
 
                     const panel = document.getElementById(id);
                     if (!panel) return;
                     panel.classList.remove('hidden');
-                    
                     const config = JSON.parse(sessionStorage.getItem('selectedServer'));
                     const ipActualizada = config.publicIp;
+                    const token = await auth.currentUser.getIdToken();
 
                     if (id === 'home-panel') {
                         panel.innerHTML = `
@@ -995,7 +951,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="amd-panel">
                                     <div class="amd-panel-header">
                                         <div class="amd-panel-title">
@@ -1017,19 +972,17 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="amd-panel">
                                     <div class="amd-panel-header">
                                         <div class="amd-panel-title">
                                             <i data-feather="server" class="text-green-500 w-4 h-4"></i>Uso de Memoria (RAM)
                                         </div>
-                                        <div id="stat-ram-value" class="amd-panel-value text-green-500">0.00 GB / 8.00 GB</div>
+                                        <div id="stat-ram-value" class="amd-panel-value text-green-500">0.00 GB / ${window.userPlan.ram}</div>
                                     </div>
                                     <div class="chart-container">
                                         <canvas id="ramChart"></canvas>
                                     </div>
                                 </div>
-
                                 <div class="amd-panel">
                                     <div class="amd-panel-header">
                                         <div class="amd-panel-title">
@@ -1043,14 +996,8 @@
                                 </div>
                             </div>
                         `;
-                        feather.replace();
-                        initCharts();
-                        checkStatus();
-                        checkPlayitLogs();
-                        statusInterval = setInterval(() => {
-                            checkStatus();
-                            checkPlayitLogs();
-                        }, 3000);
+                        feather.replace(); initCharts(); checkStatus(); checkPlayitLogs();
+                        statusInterval = setInterval(() => { checkStatus(); checkPlayitLogs(); }, 3000);
                     }
                     
                     if (id === 'console-panel') {
@@ -1074,53 +1021,40 @@
                                 </div>
                             </div>`;
                         feather.replace();
-                        
-                        document.getElementById('console-form').onsubmit = (e) => {
+                        document.getElementById('console-form').onsubmit = async (e) => {
                             e.preventDefault();
                             const input = document.getElementById('cmd-in');
                             if (input && input.value) {
-                                fetch(`${API_URL}/api/server/command`, {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify({...bodyAuth, command: input.value})
+                                const t = await auth.currentUser.getIdToken();
+                                fetch(`${API_URL}/api/server/command`, { 
+                                    method: 'POST', 
+                                    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t}, 
+                                    body: JSON.stringify({...bodyAuth, command: input.value}) 
                                 });
                                 input.value = '';
                             }
                         };
-
                         const out = document.getElementById('console-out');
                         if(out) {
-                            socket = io(API_URL, { query: { uid: auth.currentUser.uid, serverId: config.id } });
-                            socket.on('log', (data) => {
-                                out.value += data.replace(/\u001b\[[0-9;]*m/g, '');
-                                out.scrollTop = out.scrollHeight;
-                            });
+                            socket = io(API_URL, { query: { token: token, serverId: config.id } });
+                            socket.on('log', (data) => { out.value += data.replace(/\u001b\[[0-9;]*m/g, ''); out.scrollTop = out.scrollHeight; });
                         }
-
-                        checkPlayitLogs();
-                        statusInterval = setInterval(() => { 
-                            checkPlayitLogs(); 
-                        }, 3000);
+                        checkPlayitLogs(); statusInterval = setInterval(() => { checkPlayitLogs(); }, 3000);
                     }
-
                     if (id === 'players-panel') {
                         panel.innerHTML = `
                             <div class="content-panel">
                                 <h3 class="text-xl mb-4 font-bold text-green-500">Jugadores Conectados</h3>
                                 <div id="player-list" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4"></div>
                             </div>`;
-                        
                         async function fetchPlayers() {
                             const list = document.getElementById('player-list');
                             if (!list) return;
                             try {
-                                const res = await fetch(`${API_URL}/api/server/players${queryAuth}`);
+                                const t = await auth.currentUser.getIdToken();
+                                const res = await fetch(`${API_URL}/api/server/players${queryAuth}`, { headers: {'Authorization': 'Bearer ' + t} });
                                 const data = await res.json();
                                 list.innerHTML = '';
-                                if (data.error) {
-                                    list.innerHTML = `<p class="col-span-full text-center text-red-500">${data.error}</p>`;
-                                    return;
-                                }
                                 if (data.players && data.players.length > 0) {
                                     data.players.forEach(p => {
                                         list.innerHTML += `
@@ -1133,40 +1067,57 @@
                                                 </div>
                                             </div>`;
                                     });
-                                } else {
-                                    list.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay jugadores conectados.</p>';
-                                }
-                            } catch(e) {
-                                list.innerHTML = '<p class="col-span-full text-center text-red-500">Error al cargar jugadores.</p>';
-                            }
+                                } else { list.innerHTML = '<p class="col-span-full text-center text-gray-500">No hay jugadores conectados.</p>'; }
+                            } catch(e) { list.innerHTML = '<p class="col-span-full text-center text-red-500">Error al cargar jugadores.</p>'; }
                         }
-
                         window.managePlayer = async (action, name) => {
                             if (!confirm(`¿Seguro que quieres aplicar ${action} a ${name}?`)) return;
                             try {
-                                const res = await fetch(`${API_URL}/api/server/${action}`, {
-                                    method: 'POST',
-                                    headers: {'Content-Type': 'application/json'},
-                                    body: JSON.stringify({...bodyAuth, player: name})
+                                const t = await auth.currentUser.getIdToken();
+                                const res = await fetch(`${API_URL}/api/server/${action}`, { 
+                                    method: 'POST', 
+                                    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t}, 
+                                    body: JSON.stringify({...bodyAuth, player: name}) 
                                 });
-                                const data = await res.json();
-                                if(data.success) {
-                                    alert(`${name} ha sido procesado.`);
-                                }
+                                await res.json();
                                 fetchPlayers();
-                            } catch(e) {
-                                alert("Error al ejecutar la acción.");
-                            }
+                            } catch(e) { alert("Error al ejecutar la acción."); }
                         };
-
-                        fetchPlayers();
-                        playerListInterval = setInterval(fetchPlayers, 10000);
+                        fetchPlayers(); playerListInterval = setInterval(fetchPlayers, 10000);
                     }
-
+                    
                     if (id === 'files-panel') {
+                        // PAYWALL DE ARCHIVOS
+                        if (!hasPremiumAccess) {
+                            panel.innerHTML = `
+                                <div class="content-panel text-center py-16 flex flex-col items-center justify-center border border-red-900/50 bg-[#1a0a0a]">
+                                    <i data-feather="lock" class="w-16 h-16 text-red-500 mb-4 opacity-80"></i>
+                                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] tracking-widest uppercase">Acceso Denegado</h3>
+                                    <p class="text-gray-400 mt-3 max-w-md">El Gestor de Archivos y la descarga de Modpacks masivos requieren recursos de almacenamiento avanzados. Actualiza al <b class="text-red-400">Plan Diamante</b> o superior para desbloquear esta función.</p>
+                                    <button onclick="window.location.href='planes.html'" class="mt-8 bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-8 rounded-lg transition-colors uppercase text-sm tracking-wider shadow-[0_0_15px_rgba(220,38,38,0.3)]">Mejorar Plan</button>
+                                </div>`;
+                            feather.replace();
+                            return;
+                        }
+
                         panel.innerHTML = `
                             <div class="content-panel">
-                                <h3 class="text-xl mb-4 font-bold text-green-500">Archivos del Servidor</h3>
+                                <div class="flex flex-col md:flex-row justify-between items-center mb-4 gap-4 border-b border-[#333] pb-4">
+                                    <h3 class="text-xl font-bold text-green-500">Gestor de Archivos y Modpacks</h3>
+                                    
+                                    <div class="flex gap-2 w-full md:w-auto">
+                                        <input type="file" id="modpackFileInput" accept=".zip,.jar" style="display:none;" onchange="window.uploadLocalModpack()">
+                                        <button id="btn-upload-local" onclick="document.getElementById('modpackFileInput').click()" class="bg-indigo-600 hover:bg-indigo-700 transition-colors px-4 py-2 rounded-lg text-white text-xs font-bold flex items-center gap-2" title="Subir Modpack (.zip) o Mod (.jar)">
+                                            <i data-feather="upload-cloud" class="w-4 h-4"></i> Subir desde PC
+                                        </button>
+                                        <button onclick="window.promptCloudUrl()" class="bg-blue-600 hover:bg-blue-700 transition-colors px-4 py-2 rounded-lg text-white text-xs font-bold flex items-center gap-2" title="Descargar Modpack desde Google Drive o OneDrive">
+                                            <i data-feather="link" class="w-4 h-4"></i> Importar URL
+                                        </button>
+                                        <button onclick="window.loadFiles('/')" class="bg-[#222] border border-[#333] hover:bg-[#333] transition-colors p-2 rounded-lg text-white" title="Recargar Explorador">
+                                            <i data-feather="refresh-cw" class="w-4 h-4"></i>
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div class="md:col-span-1 file-tree" id="file-tree"></div>
                                     <div class="md:col-span-2">
@@ -1175,188 +1126,421 @@
                                     </div>
                                 </div>
                             </div>`;
-                        
+                        feather.replace();
                         window.loadFiles = async (dir) => {
                             const tree = document.getElementById('file-tree');
                             if (!tree) return;
-                            tree.innerHTML = '<p class="text-gray-500">Cargando...</p>';
                             try {
-                                const res = await fetch(`${API_URL}/api/files/list${queryAuth}&path=${encodeURIComponent(dir)}`);
+                                const t = await auth.currentUser.getIdToken();
+                                const res = await fetch(`${API_URL}/api/files/list${queryAuth}&path=${encodeURIComponent(dir)}`, { headers: {'Authorization': 'Bearer ' + t} });
                                 const files = await res.json();
+                                if(files.error) {
+                                    tree.innerHTML = `<p class="text-red-500 text-xs">${files.error}</p>`;
+                                    return;
+                                }
                                 tree.innerHTML = '';
                                 if (dir !== '/') {
                                     const pDir = dir.substring(0, dir.lastIndexOf('/')) || '/';
-                                    tree.innerHTML += `
-                                        <div class="file-tree-item" onclick="window.loadFiles(atob('${btoa(pDir)}'))">
-                                            <i data-feather="corner-up-left" class="w-4 h-4 text-gray-400"></i>
-                                            <span class="text-sm text-gray-400">Volver</span>
-                                        </div>`;
+                                    tree.innerHTML += `<div class="file-tree-item" onclick="window.loadFiles('${pDir}')"><i data-feather="corner-up-left" class="w-4 h-4 text-gray-400"></i><span class="text-sm text-gray-400">Volver</span></div>`;
                                 }
                                 files.sort((a,b) => a.isDir ? -1 : 1).forEach(f => {
                                     const icon = f.isDir ? 'folder' : 'file';
                                     const color = f.isDir ? 'text-green-500' : 'text-gray-300';
-                                    const action = f.isDir ? `window.loadFiles(atob('${btoa(f.path)}'))` : `window.openFile(atob('${btoa(f.path)}'))`;
-                                    tree.innerHTML += `
-                                        <div class="file-tree-item" onclick="${action}">
-                                            <i data-feather="${icon}" class="w-4 h-4 ${color}"></i>
-                                            <span class="text-sm text-white">${f.name}</span>
-                                        </div>`;
+                                    const action = f.isDir ? `window.loadFiles('${f.path}')` : `window.openFile('${f.path}')`;
+                                    tree.innerHTML += `<div class="file-tree-item" onclick="${action}"><i data-feather="${icon}" class="w-4 h-4 ${color}"></i><span class="text-sm text-white">${f.name}</span></div>`;
                                 });
                                 feather.replace();
-                            } catch(e) {
-                                tree.innerHTML = '<p class="text-red-500">Error al cargar archivos.</p>';
-                            }
+                            } catch(e) { tree.innerHTML = '<p class="text-red-500 text-xs">Error al cargar archivos.</p>'; }
                         };
-
                         window.openFile = async (path) => {
                             currentEditingFile = path;
                             const editor = document.getElementById('file-editor');
-                            try {
-                                const res = await fetch(`${API_URL}/api/files/content${queryAuth}&path=${encodeURIComponent(path)}`);
-                                const data = await res.json();
-                                editor.value = data.content;
-                            } catch(e) {
-                                editor.value = "Error al abrir el archivo.";
-                            }
+                            const t = await auth.currentUser.getIdToken();
+                            const res = await fetch(`${API_URL}/api/files/content${queryAuth}&path=${encodeURIComponent(path)}`, { headers: {'Authorization': 'Bearer ' + t} });
+                            const data = await res.json();
+                            editor.value = data.content;
                         };
-
                         document.getElementById('save-file-btn').onclick = async () => {
                             if (!currentEditingFile) return;
                             const editor = document.getElementById('file-editor');
-                            await fetch(`${API_URL}/api/files/save`, {
-                                method: 'POST',
-                                headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify({...bodyAuth, path: currentEditingFile, content: editor.value })
+                            const t = await auth.currentUser.getIdToken();
+                            const res = await fetch(`${API_URL}/api/files/save`, { 
+                                method: 'POST', 
+                                headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t}, 
+                                body: JSON.stringify({...bodyAuth, path: currentEditingFile, content: editor.value }) 
                             });
-                            alert('Archivo guardado.');
+                            const data = await res.json();
+                            if(data.success) alert('Archivo guardado.');
+                            else alert('Error: ' + data.error);
                         };
-
                         window.loadFiles('/');
                     }
-
                     if (id === 'mods-panel') {
                         panel.innerHTML = `
                             <div class="content-panel">
-                                <h3 class="text-xl font-bold text-green-500 mb-6">Buscador Oficial (Modrinth API)</h3>
-                                <div class="mod-pills-tab flex-wrap">
-                                    <div class="mod-pill active" data-type="mod">Mods</div>
-                                    <div class="mod-pill" data-type="modpack">Modpacks</div>
-                                    <div class="mod-pill" data-type="plugin">Bukkit Plugins</div>
-                                    <div class="mod-pill" data-type="datapack">Data Packs</div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xl font-bold text-green-500">App de Mods (CurseForge)</h3>
                                 </div>
-                                <form id="mod-search-form" class="flex flex-col md:flex-row gap-2 mb-6">
-                                    <input type="text" id="mod-search-input" class="search-mod-input" placeholder="Buscar por nombre...">
-                                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-3 md:py-0 rounded-lg font-bold text-white text-xs uppercase">Buscar</button>
-                                </form>
-                                <div id="mod-results-list" class="flex flex-col gap-4">
-                                    <p class="text-gray-500 text-sm">Realiza una búsqueda...</p>
+                                
+                                <div class="mod-pills-tab">
+                                    <button class="mod-pill active" onclick="window.setModType('mod', this)">Mods</button>
+                                    <button class="mod-pill" onclick="window.setModType('plugin', this)">Plugins</button>
+                                    <button class="mod-pill" onclick="window.setModType('datapack', this)">Datapacks</button>
+                                    <button class="mod-pill border-indigo-500 text-indigo-400" onclick="window.setModType('modpack', this)">Modpacks</button>
+                                </div>
+
+                                <div class="flex gap-4 mb-6">
+                                    <input type="text" id="mod-search" placeholder="Buscar en CurseForge..." class="search-mod-input flex-1">
+                                    <button onclick="window.buscarMods()" class="bg-indigo-600 hover:bg-indigo-700 px-6 py-2 rounded-lg font-bold text-white uppercase text-sm transition-colors">Buscar</button>
+                                </div>
+
+                                <div id="mods-list" class="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2">
+                                    <div class="col-span-full text-center text-gray-500 py-8">
+                                        <i data-feather="search" class="w-12 h-12 mx-auto mb-3 opacity-50"></i>
+                                        <p>Busca un mod, plugin, datapack o modpack para ver sus versiones disponibles.</p>
+                                    </div>
                                 </div>
                             </div>`;
-                            
-                        const pills = panel.querySelectorAll('.mod-pill');
-                        pills.forEach(pill => {
-                            pill.addEventListener('click', () => {
-                                pills.forEach(p => p.classList.remove('active'));
-                                pill.classList.add('active');
-                                currentModType = pill.getAttribute('data-type');
-                                if(document.getElementById('mod-search-input').value) {
-                                    document.getElementById('mod-search-form').dispatchEvent(new Event('submit'));
-                                }
-                            });
-                        });
-                        
-                        window.installMod = (slug, title) => {
-                            alert(`Preparando instalación de "${title}"...\n\nNota: La descarga directa al servidor estará disponible en la versión v2.7.`);
+                        feather.replace();
+
+                        window.setModType = (type, btn) => {
+                            currentModType = type;
+                            document.querySelectorAll('.mod-pill').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            window.buscarMods(); 
                         };
 
-                        document.getElementById('mod-search-form').addEventListener('submit', async (e) => {
-                            e.preventDefault();
-                            const query = document.getElementById('mod-search-input').value;
-                            const list = document.getElementById('mod-results-list');
-                            list.innerHTML = '<p class="text-green-500 text-sm">Buscando...</p>';
+                        window.buscarMods = async () => {
+                            const term = document.getElementById('mod-search').value;
+                            const list = document.getElementById('mods-list');
+                            list.innerHTML = '<div class="col-span-full text-center py-4"><i data-feather="loader" class="animate-spin w-8 h-8 mx-auto mb-2 text-indigo-500"></i><p class="text-gray-400">Buscando en la API de CurseForge...</p></div>';
+                            feather.replace();
                             
+                            let catId = '6'; // Minecraft Mods
+                            if(currentModType === 'plugin') catId = '5'; // Bukkit Plugins
+                            if(currentModType === 'datapack') catId = '17'; // Worlds (Datapacks)
+                            if(currentModType === 'modpack') catId = '4471'; // Modpacks
+
                             try {
-                                let facets = `[["project_type:${currentModType}"]]`;
-                                if (currentModType === 'plugin' || currentModType === 'datapack') {
-                                    facets = `[["project_type:mod"],["categories:${currentModType === 'plugin' ? 'bukkit' : currentModType}"]]`;
+                                const token = await auth.currentUser.getIdToken();
+                                
+                                let fetchUrl = `${API_URL}/api/curseforge/search?categoryId=${catId}`;
+                                if (term && term.trim() !== '') {
+                                    fetchUrl += `&query=${encodeURIComponent(term.trim())}`;
                                 }
+
+                                const response = await fetch(fetchUrl, { headers: { 'Authorization': 'Bearer ' + token } });
+                                const data = await response.json();
+                                list.innerHTML = '';
                                 
-                                const res = await fetch(`https://api.modrinth.com/v2/search?query=${query}&facets=${facets}`);
-                                const data = await res.json();
-                                
-                                if(data.hits && data.hits.length > 0) {
-                                    list.innerHTML = data.hits.map(hit => `
-                                        <div class="mod-item flex-col md:flex-row text-center md:text-left">
-                                            <div class="flex flex-col md:flex-row items-center gap-4 mb-3 md:mb-0">
-                                                <img src="${hit.icon_url || './assets/img/logo-minecraft.ico'}" class="w-12 h-12 rounded object-cover border border-[#444]">
+                                if(!data.data || data.data.length === 0) {
+                                    list.innerHTML = '<p class="col-span-full text-center text-gray-400 py-4">No se encontraron resultados.</p>';
+                                    return;
+                                }
+
+                                data.data.forEach(mod => {
+                                    const icon = (mod.logo && mod.logo.url) ? mod.logo.url : './assets/img/favicon.ico';
+                                    list.innerHTML += `
+                                        <div class="mod-item flex justify-between items-center bg-[#1a1a1a] p-4 rounded-lg mb-2 border border-[#333] cursor-pointer hover:border-indigo-500" onclick="window.verVersionesMod('${mod.id}', '${mod.name.replace(/'/g, "\\'")}', '${icon}')">
+                                            <div class="flex gap-4 items-center">
+                                                <img src="${icon}" class="w-10 h-10 rounded shadow-md" onerror="this.src='./assets/img/favicon.ico'">
                                                 <div>
-                                                    <p class="font-bold text-white">${hit.title}</p>
-                                                    <p class="text-xs text-gray-400">Autor: ${hit.author}</p>
+                                                    <p class="font-bold text-white text-sm">${mod.name}</p>
+                                                    <p class="text-xs text-gray-400 max-w-[200px] truncate" title="${mod.summary.replace(/"/g, '&quot;')}">${mod.summary}</p>
+                                                    <p class="text-[10px] text-indigo-400 mt-1">Haga clic para ver versiones</p>
                                                 </div>
                                             </div>
-                                            <button onclick="window.installMod('${hit.slug}', '${hit.title.replace(/'/g, "\\'")}')" class="bg-green-600 px-4 py-2 rounded font-bold text-white text-xs uppercase w-full md:w-auto">Instalar</button>
-                                        </div>`).join('');
-                                } else {
-                                    list.innerHTML = '<p class="text-gray-500 text-sm">No se encontraron resultados.</p>';
-                                }
-                            } catch(err) {
-                                list.innerHTML = '<p class="text-red-500 text-sm">Error de conexión.</p>';
+                                            <i data-feather="chevron-right" class="text-gray-500"></i>
+                                        </div>`;
+                                });
+                                feather.replace();
+                            } catch (e) {
+                                list.innerHTML = '<p class="col-span-full text-center text-red-500 py-4">Error conectando con CurseForge. Intenta nuevamente.</p>';
                             }
-                        });
-                        feather.replace();
+                        };
+
+                        window.verVersionesMod = async (modId, modName, iconUrl) => {
+                            const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                            const mcVersion = config.version;
+                            
+                            const modal = document.getElementById('mod-versions-modal');
+                            const title = document.getElementById('mod-modal-title');
+                            const body = document.getElementById('mod-modal-body');
+                            
+                            modal.classList.remove('hidden');
+                            title.innerHTML = `<img src="${iconUrl}" class="w-6 h-6 rounded" onerror="this.src='./assets/img/favicon.ico'"> ${modName} - Versiones`;
+                            body.innerHTML = '<div class="text-center py-8"><i data-feather="loader" class="animate-spin text-indigo-500 mx-auto mb-4 w-8 h-8"></i><p class="text-gray-400">Buscando versiones compatibles...</p></div>';
+                            feather.replace();
+
+                            try {
+                                const token = await auth.currentUser.getIdToken();
+                                
+                                let url = `${API_URL}/api/curseforge/files?modId=${modId}`;
+                                if (mcVersion && mcVersion !== 'Auto') {
+                                    url += `&version=${mcVersion}`;
+                                }
+                                
+                                let res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+                                let resData = await res.json();
+                                let versions = resData.data;
+
+                                if(!versions || versions.length === 0) {
+                                    body.innerHTML = `<div class="text-center py-8"><i data-feather="alert-circle" class="text-yellow-500 mx-auto mb-4 w-12 h-12"></i><p class="text-gray-400">No hay archivos de este proyecto compatibles con <br><b class="text-white">${mcVersion}</b>.</p></div>`;
+                                    feather.replace();
+                                    return;
+                                }
+
+                                body.innerHTML = '<div class="space-y-3" id="versions-list-container"></div>';
+                                const listContainer = document.getElementById('versions-list-container');
+
+                                versions.slice(0, 10).forEach(file => { 
+                                    const date = new Date(file.fileDate).toLocaleDateString();
+                                    const typeColor = file.releaseType === 1 ? 'text-green-400' : 'text-yellow-400';
+                                    const typeName = file.releaseType === 1 ? 'RELEASE' : (file.releaseType === 2 ? 'BETA' : 'ALPHA');
+                                    
+                                    listContainer.innerHTML += `
+                                        <div class="flex justify-between items-center bg-[#222] p-3 rounded-lg border border-[#333]">
+                                            <div>
+                                                <p class="font-bold text-sm text-white">${file.fileName} <span class="text-[10px] ${typeColor} uppercase ml-2">${typeName}</span></p>
+                                                <p class="text-xs text-gray-400 mt-1">Soporta: ${file.gameVersions.join(', ')} | Fecha: ${date}</p>
+                                            </div>
+                                            <button onclick="window.instalarVersionDirecta('${file.downloadUrl}', '${file.fileName}', event)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-xs font-bold transition-colors">
+                                                Instalar
+                                            </button>
+                                        </div>
+                                    `;
+                                });
+
+                            } catch (e) {
+                                body.innerHTML = '<p class="text-center text-red-500 py-8">Error al obtener las versiones.</p>';
+                            }
+                        };
+
+                        window.instalarVersionDirecta = async (downloadUrl, filename, event) => {
+                            if (!hasPremiumAccess) {
+                                alert("ACCESO DENEGADO: La instalación de archivos requiere el Plan Diamante o superior.");
+                                return;
+                            }
+
+                            if(currentModType === 'modpack') {
+                                alert("⚠️ ALERTA DE SISTEMA ⚠️\n\nLos Modpacks de CurseForge requieren descompresión profunda y lectura de manifest.json.\n\nEl autoinstalador de Modpacks estará disponible en la V1.0. Por ahora, descarga el modpack en tu PC y usa el botón 'Subir desde PC' en el Gestor de Archivos.");
+                                event.currentTarget.innerText = 'Requiere V1.0';
+                                event.currentTarget.classList.replace('bg-indigo-600', 'bg-yellow-600');
+                                return;
+                            }
+
+                            if (!downloadUrl || downloadUrl === 'undefined' || downloadUrl === 'null') {
+                                alert("El autor del mod no ha proporcionado un link de descarga directa en CurseForge para esta versión.");
+                                return;
+                            }
+
+                            const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                            const btn = event.currentTarget;
+                            
+                            btn.innerText = 'Descargando...';
+                            btn.disabled = true;
+                            btn.classList.add('opacity-50');
+
+                            let folder = 'mods';
+                            if(currentModType === 'plugin') folder = 'plugins';
+                            if(currentModType === 'datapack') folder = 'world/datapacks';
+
+                            try {
+                                const token = await auth.currentUser.getIdToken();
+                                const installRes = await fetch(`${API_URL}/api/server/installmod`, {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Authorization': 'Bearer ' + token
+                                    },
+                                    body: JSON.stringify({
+                                        serverId: config.id,
+                                        downloadUrl: downloadUrl,
+                                        filename: filename,
+                                        folder: folder
+                                    })
+                                });
+
+                                const installData = await installRes.json();
+                                if(installData.success) {
+                                    btn.innerText = '¡Listo!';
+                                    btn.classList.replace('bg-indigo-600', 'bg-green-600');
+                                    btn.classList.replace('hover:bg-indigo-700', 'hover:bg-green-700');
+                                } else {
+                                    throw new Error(installData.error);
+                                }
+                            } catch (e) {
+                                alert("Error al instalar: " + e.message);
+                                btn.innerText = 'Error';
+                                btn.classList.replace('bg-indigo-600', 'bg-red-600');
+                                btn.classList.remove('opacity-50');
+                            }
+                        };
                     }
 
+                    // ==========================================
+                    // PANEL DE NUBE (VISTA Y FUNCIONES HABILITADAS)
+                    // ==========================================
                     if (id === 'nube-panel') {
                         panel.innerHTML = `
                             <div class="content-panel">
-                                <h3 class="text-xl mb-6 font-bold text-green-500">Copias de Seguridad (Cloud Backup)</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                                    <div class="cloud-badge">
-                                        <img src="./assets/img/gdrive.ico" class="w-8 h-8" onerror="this.src='https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg'">
-                                        <div class="flex flex-col ml-2">
-                                            <p class="text-sm font-bold text-white">Google Drive</p>
-                                            <button id="btn-gdrive" class="text-xs text-gray-500 text-left">Cargando...</button>
+                                <h3 class="text-xl mb-4 font-bold text-green-500 flex items-center gap-2"><i data-feather="cloud"></i> Copias de Seguridad</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                                    <div class="cloud-badge flex-col items-start gap-4">
+                                        <div class="flex items-center gap-3 w-full border-b border-[#333] pb-3">
+                                            <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/google/google-original.svg" class="w-6 h-6">
+                                            <span class="font-bold text-white">Google Drive</span>
                                         </div>
+                                        <button id="btn-gdrive" class="text-xs text-green-400 hover:underline">Vincular y Dar Permiso</button>
+                                        <button onclick="window.createBackup('gdrive')" class="w-full bg-[#111] hover:bg-[#222] border border-[#333] py-2 rounded text-xs font-bold text-white transition-colors shadow">Crear Backup Aquí</button>
                                     </div>
-                                    <div class="cloud-badge">
-                                        <img src="./assets/img/onedrive.ico" class="w-8 h-8" onerror="this.src='./assets/img/microsoft.ico'">
-                                        <div class="flex flex-col ml-2">
-                                            <p class="text-sm font-bold text-white">OneDrive</p>
-                                            <button id="btn-onedrive" class="text-xs text-gray-500 text-left">Cargando...</button>
+                                    <div class="cloud-badge flex-col items-start gap-4">
+                                        <div class="flex items-center gap-3 w-full border-b border-[#333] pb-3">
+                                            <img src="./assets/img/microsoft.ico" class="w-6 h-6" onerror="this.style.display='none'">
+                                            <span class="font-bold text-white">OneDrive</span>
                                         </div>
+                                        <button id="btn-onedrive" class="text-xs text-green-400 hover:underline">Vincular y Dar Permiso</button>
+                                        <button onclick="window.createBackup('onedrive')" class="w-full bg-[#111] hover:bg-[#222] border border-[#333] py-2 rounded text-xs font-bold text-white transition-colors shadow">Crear Backup Aquí</button>
                                     </div>
                                 </div>
-                                <div class="flex flex-col md:flex-row justify-between items-center mb-4 border-b border-[#222] pb-4 gap-4">
-                                    <h4 class="text-sm uppercase text-gray-400 font-bold w-full md:w-auto text-center md:text-left">Tus Respaldos</h4>
-                                    <div class="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto">
-                                        <button onclick="window.createBackup('gdrive')" class="w-full md:w-auto bg-green-600 hover:bg-green-700 px-4 py-3 md:py-2 rounded text-xs font-bold text-white uppercase transition-colors shadow-lg">Respaldar GDrive</button>
-                                        <button onclick="window.createBackup('onedrive')" class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 px-4 py-3 md:py-2 rounded text-xs font-bold text-white uppercase transition-colors shadow-lg">Respaldar OneDrive</button>
-                                    </div>
-                                </div>
-                                <div id="backup-list" class="flex flex-col gap-4"></div>
+                                <h4 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-widest border-b border-[#333] pb-2">Historial de Backups</h4>
+                                <div id="backup-list" class="flex flex-col gap-2 max-h-[300px] overflow-y-auto pr-2"></div>
                             </div>`;
                         feather.replace();
                         updateProviderUI();
-                        window.loadSavedBackups(); 
+                        window.loadSavedBackups();
                     }
 
                     if (id === 'settings-panel') {
-                        panel.innerHTML = `<div class="content-panel"><h3 class="text-xl mb-6 font-bold text-green-500">Configuración Avanzada</h3><p class="text-gray-400">Próximamente en V2.7 opciones para este servidor...</p></div>`;
+                        panel.innerHTML = `
+                            <div class="content-panel">
+                                <h3 class="text-xl mb-6 font-bold text-green-500">Ajustes del Servidor</h3>
+                                <div class="mt-10 border border-red-900 bg-[#1a0505] rounded-xl p-6 relative overflow-hidden shadow-2xl">
+                                    <div class="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
+                                    <h4 class="text-red-500 font-bold text-lg mb-2 flex items-center gap-2"><i data-feather="alert-triangle"></i> Zona de Peligro</h4>
+                                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 mt-6 border-b border-red-900/50 pb-6">
+                                        <div>
+                                            <h5 class="text-white font-bold mb-1">Reseteo de Red (Playit.gg)</h5>
+                                            <p class="text-xs text-gray-400 max-w-lg">Si perdiste acceso a tu cuenta de Playit o la IP se bugeó, esto destruirá el túnel actual y generará un link de vinculación virgen.</p>
+                                        </div>
+                                        <button onclick="window.resetPlayitNetwork()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors whitespace-nowrap text-sm shadow-[0_0_15px_rgba(220,38,38,0.4)]">Resetear Red</button>
+                                    </div>
+                                </div>
+                            </div>`;
+                        feather.replace();
                     }
+
+                    // ==========================================
+                    // EL NUEVO PANEL COMPARTIDO (SUB-USUARIOS)
+                    // ==========================================
                     if (id === 'compartidos-panel') {
-                        panel.innerHTML = `<div class="content-panel"><h3 class="text-xl mb-6 font-bold text-green-500">Acceso Compartido</h3><p class="text-gray-400">Próximamente en V2.7...</p></div>`;
+                        if (isSharedServer) {
+                            panel.innerHTML = `
+                                <div class="content-panel text-center py-16">
+                                    <i data-feather="users" class="w-16 h-16 text-blue-500 mx-auto mb-4 opacity-50"></i>
+                                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] tracking-widest uppercase mb-2">Servidor Compartido</h3>
+                                    <p class="text-gray-400 max-w-md mx-auto">Eres un invitado en este servidor. Tienes acceso a la consola y al encendido del nodo, pero solo el propietario original puede gestionar las invitaciones o eliminarlo.</p>
+                                </div>`;
+                        } else {
+                            let sharedListHtml = (config.sharedWith || []).map(email => `
+                                <div class="flex justify-between items-center bg-[#111] border border-[#333] p-3 rounded-lg mb-2 shadow">
+                                    <span class="text-sm text-gray-300 font-bold flex items-center gap-2"><i data-feather="user" class="w-4 h-4 text-blue-400"></i> ${email}</span>
+                                    <button onclick="window.unshareServer('${email}')" class="text-red-500 hover:text-red-400 bg-red-900/20 p-2 rounded transition-colors" title="Revocar Acceso">
+                                        <i data-feather="x-circle" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            `).join('') || '<p class="text-xs text-gray-500 text-center py-4 bg-[#111] rounded-lg border border-[#222]">No has invitado a nadie aún.</p>';
+
+                            panel.innerHTML = `
+                                <div class="content-panel">
+                                    <h3 class="text-xl mb-6 font-bold text-green-500 flex items-center gap-2"><i data-feather="share-2"></i> Acceso Compartido (Sub-usuarios)</h3>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div class="bg-[#161616] p-6 rounded-xl border border-[#333]">
+                                            <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-wider text-blue-400">Invitar Colaborador</h4>
+                                            <p class="text-xs text-gray-400 mb-6">Ingresa el correo electrónico de un usuario registrado en Professional Servers. Podrá encender, apagar y ver la consola de tu servidor sin límites.</p>
+                                            <div class="flex gap-2">
+                                                <input type="email" id="share-email-input" class="bg-[#0a0a0a] border border-[#444] text-white p-3 rounded-lg flex-1 outline-none focus:border-blue-500 text-sm transition-colors" placeholder="correo@amigo.com">
+                                                <button id="btn-share" onclick="window.shareServer()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 rounded-lg transition-colors text-xs uppercase tracking-wider shadow-lg shadow-blue-900/50">Invitar</button>
+                                            </div>
+                                        </div>
+                                        <div class="bg-[#161616] p-6 rounded-xl border border-[#333]">
+                                            <h4 class="text-sm font-bold text-white mb-4 uppercase tracking-wider text-green-400">Usuarios con Acceso</h4>
+                                            <div id="shared-list-container" class="max-h-[200px] overflow-y-auto pr-2">
+                                                ${sharedListHtml}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
+                        }
+                        feather.replace();
+
+                        window.shareServer = async () => {
+                            const emailInput = document.getElementById('share-email-input');
+                            const email = emailInput.value.trim();
+                            const btn = document.getElementById('btn-share');
+                            
+                            if(!email) return alert("Por favor ingresa un correo válido.");
+                            if(email === auth.currentUser.email) return alert("No puedes invitarte a ti mismo.");
+                            
+                            btn.disabled = true;
+                            btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i>';
+                            feather.replace();
+
+                            try {
+                                const token = await auth.currentUser.getIdToken();
+                                const res = await fetch(API_URL + '/api/project/share', {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+                                    body: JSON.stringify({serverId: config.id, emailToShare: email})
+                                });
+                                const data = await res.json();
+                                if(data.success) {
+                                    config.sharedWith = data.sharedWith;
+                                    sessionStorage.setItem('selectedServer', JSON.stringify(config));
+                                    emailInput.value = '';
+                                    window.showPanel('compartidos-panel');
+                                    alert(`¡Excelente! El usuario ${email} ahora tiene acceso a tu servidor.`);
+                                } else { 
+                                    throw new Error(data.error); 
+                                }
+                            } catch(e) { 
+                                alert("Error al invitar: " + e.message); 
+                                btn.disabled = false;
+                                btn.innerText = 'Invitar';
+                            }
+                        };
+
+                        window.unshareServer = async (email) => {
+                            if(!confirm(`¿Estás seguro de que quieres revocar el acceso a ${email}? Ya no podrá gestionar el servidor.`)) return;
+                            try {
+                                const token = await auth.currentUser.getIdToken();
+                                const res = await fetch(API_URL + '/api/project/unshare', {
+                                    method: 'POST',
+                                    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
+                                    body: JSON.stringify({serverId: config.id, emailToUnshare: email})
+                                });
+                                const data = await res.json();
+                                if(data.success) {
+                                    config.sharedWith = data.sharedWith;
+                                    sessionStorage.setItem('selectedServer', JSON.stringify(config));
+                                    window.showPanel('compartidos-panel');
+                                } else { 
+                                    throw new Error(data.error); 
+                                }
+                            } catch(e) { 
+                                alert("Error al revocar: " + e.message); 
+                            }
+                        };
                     }
                 } // FIN showPanel
 
                 async function checkPlayitLogs() {
                     try {
-                        const res = await fetch(`${API_URL}/api/server/playitlogs${queryAuth}`);
+                        const t = await auth.currentUser.getIdToken();
+                        const res = await fetch(`${API_URL}/api/server/playitlogs${queryAuth}`, { headers: {'Authorization': 'Bearer ' + t} });
                         const data = await res.json();
                         const pOut = document.getElementById('playit-out');
-                        if (pOut) {
-                            pOut.value = data.logs;
-                            pOut.scrollTop = pOut.scrollHeight;
-                        }
+                        if (pOut) { pOut.value = data.logs; pOut.scrollTop = pOut.scrollHeight; }
                         const claimBtn = document.getElementById('claim-link-btn');
                         const waitText = document.getElementById('claim-wait-text');
                         if (claimBtn && data.logs) {
@@ -1372,7 +1556,8 @@
 
                 async function checkStatus() {
                     try {
-                        const res = await fetch(`${API_URL}/api/server/status${queryAuth}`);
+                        const t = await auth.currentUser.getIdToken();
+                        const res = await fetch(`${API_URL}/api/server/status${queryAuth}`, { headers: {'Authorization': 'Bearer ' + t} });
                         const data = await res.json();
                         const isOn = data.status === 'on';
                         
@@ -1382,14 +1567,14 @@
                             sText.className = isOn ? 'text-sm font-bold text-green-500 uppercase tracking-widest' : 'text-sm font-bold text-red-500 uppercase tracking-widest';
                         }
                         if (document.getElementById('btn-start')) document.getElementById('btn-start').disabled = isOn;         
-                        if (document.getElementById('btn-restart')) document.getElementById('btn-restart').disabled = !isOn;    
-                        if (document.getElementById('btn-stop')) document.getElementById('btn-stop').disabled = !isOn;          
+                        if (document.getElementById('btn-restart')) document.getElementById('btn-restart').disabled = !isOn;  
+                        if (document.getElementById('btn-stop')) document.getElementById('btn-stop').disabled = !isOn;         
 
                         if (isOn) {
-                            const statRes = await fetch(`${API_URL}/api/server/stats${queryAuth}`);
+                            const statRes = await fetch(`${API_URL}/api/server/stats${queryAuth}`, { headers: {'Authorization': 'Bearer ' + t} });
                             const statData = await statRes.json();
                             if (document.getElementById('stat-cpu-value')) document.getElementById('stat-cpu-value').innerText = statData.cpu;
-                            if (document.getElementById('stat-ram-value')) document.getElementById('stat-ram-value').innerText = `${(parseFloat(statData.ram) / 1024).toFixed(2)} GB / 8.00 GB`;
+                            if (document.getElementById('stat-ram-value')) document.getElementById('stat-ram-value').innerText = `${(parseFloat(statData.ram) / 1024).toFixed(2)} GB / ${window.userPlan.ram}`;
                             if(ramChart && cpuChart) {
                                 ramChart.data.datasets[0].data.shift();
                                 ramChart.data.datasets[0].data.push(parseFloat(statData.ram));
@@ -1400,7 +1585,7 @@
                             }
                         } else {
                             if (document.getElementById('stat-cpu-value')) document.getElementById('stat-cpu-value').innerText = '0%';
-                            if (document.getElementById('stat-ram-value')) document.getElementById('stat-ram-value').innerText = '0.00 GB / 8.00 GB';
+                            if (document.getElementById('stat-ram-value')) document.getElementById('stat-ram-value').innerText = `0.00 GB / ${window.userPlan.ram}`;
                             if(ramChart && cpuChart) {
                                 ramChart.data.datasets[0].data.shift();
                                 ramChart.data.datasets[0].data.push(0);
@@ -1419,11 +1604,21 @@
                     document.getElementById('btn-stop').disabled = true;
                     document.getElementById('status-text').innerText = 'PROCESANDO...';
                     document.getElementById('status-text').className = 'text-sm font-bold text-yellow-500 uppercase tracking-widest';
-                    await fetch(`${API_URL}/api/server/${action}`, {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify(bodyAuth)
-                    });
+                    const t = await auth.currentUser.getIdToken();
+                    try {
+                        const res = await fetch(`${API_URL}/api/server/${action}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + t
+                            },
+                            body: JSON.stringify(bodyAuth)
+                        });
+                        const data = await res.json();
+                        if(data.error) throw new Error(data.error);
+                    } catch(e) {
+                        alert("Error: " + e.message);
+                    }
                     setTimeout(checkStatus, 3000);
                 };
 
@@ -1433,6 +1628,9 @@
                     const ramCtx = document.getElementById('ramChart');
                     const cpuCtx = document.getElementById('cpuChart');
                     if(!ramCtx || !cpuCtx) return;
+                    
+                    const ramMax = window.userPlan.ramNum ? window.userPlan.ramNum * 1024 : 8192;
+
                     const cOpt = {
                         responsive: true, maintainAspectRatio: false, animation: { duration: 0 },
                         elements: { point: { radius: 0 } },
@@ -1442,7 +1640,7 @@
                     ramChart = new Chart(ramCtx, {
                         type: 'line',
                         data: { labels: Array(15).fill(''), datasets: [{ data: Array(15).fill(0), borderColor: '#4CAF50', backgroundColor: 'rgba(76, 175, 80, 0.2)', borderWidth: 2, fill: true, tension: 0.4 }] },
-                        options: cOpt
+                        options: { ...cOpt, scales: { y: { ...cOpt.scales.y, max: ramMax } } }
                     });
                     cpuChart = new Chart(cpuCtx, {
                         type: 'line',
@@ -1451,7 +1649,6 @@
                     });
                 }
 
-                // ================== FUNCIONES CLOUD BACKUPS ================== //
                 function updateProviderUI() {
                     const user = auth.currentUser;
                     if(!user) return;
@@ -1617,10 +1814,14 @@
                     }, 1500);
 
                     try {
+                        const t = await auth.currentUser.getIdToken();
                         const endpoint = isG ? '/api/backup/gdrive' : '/api/backup/onedrive';
                         const res = await fetch(`${API_URL}${endpoint}`, {
                             method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
+                            headers: { 
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + t
+                            },
                             body: JSON.stringify({ token })
                         });
                         const data = await res.json();
@@ -1660,6 +1861,45 @@
                         document.getElementById(`status-${bId}`).innerText = e.message;
                         document.getElementById(`status-${bId}`).classList.replace('text-yellow-400', 'text-red-500');
                         feather.replace();
+                    }
+                };
+
+                window.resetPlayitNetwork = async () => {
+                    if (!confirm("⚠️ ADVERTENCIA EXTREMA ⚠️\n\nEsto destruirá la conexión actual de tu servidor. La IP que tenías dejará de funcionar para siempre y tendrás que vincular una nueva cuenta de Playit.\n\nTu mundo y archivos están a salvo.\n\n¿Estás ABSOLUTAMENTE seguro?")) return;
+                    
+                    const btn = document.querySelector('button[onclick="window.resetPlayitNetwork()"]');
+                    const originalText = btn.innerHTML;
+                    btn.disabled = true;
+                    btn.innerHTML = '<i data-feather="loader" class="animate-spin inline w-4 h-4"></i> Purificando Red...';
+                    feather.replace();
+
+                    try {
+                        const t = await auth.currentUser.getIdToken();
+                        const res = await fetch(`${API_URL}/api/server/reset-network`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': 'Bearer ' + t
+                            },
+                            body: JSON.stringify(bodyAuth)
+                        });
+                        const data = await res.json();
+                        
+                        if (data.success) {
+                            alert("✅ Red reseteada con éxito. Serás redirigido al inicio para obtener tu nuevo link de vinculación.");
+                            
+                            let sessionConf = JSON.parse(sessionStorage.getItem('selectedServer'));
+                            sessionConf.publicIp = null;
+                            sessionStorage.setItem('selectedServer', JSON.stringify(sessionConf));
+                            
+                            document.querySelector('.navigation a[data-panel="home-panel"]').click();
+                        } else {
+                            throw new Error(data.error || "Error desconocido");
+                        }
+                    } catch(e) {
+                        alert("❌ Error: " + e.message);
+                        btn.disabled = false;
+                        btn.innerHTML = originalText;
                     }
                 };
             }

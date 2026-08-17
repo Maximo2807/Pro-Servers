@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil | Professional Servers</title>
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #0a0a0a; color: white; min-height: 100vh; overflow-x: hidden; }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #0a0a0a 100%); z-index: -1; }
+        .glass { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; }
+        .input-pro { background: #161616; border: 1px solid #333; border-radius: 10px; color: white; padding: 12px; outline: none; transition: 0.3s; width: 100%; font-size: 14px; }
+        .input-pro:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.2); }
+        .btn-pro { background: #4CAF50; color: white; font-weight: bold; padding: 15px; border-radius: 12px; transition: 0.3s; text-transform: uppercase; cursor: pointer; border: none; width: 100%; }
+        .btn-pro:hover { background: #45a049; }
+        .btn-danger { background: #ef4444; color: white; font-weight: bold; padding: 15px; border-radius: 12px; transition: 0.3s; text-transform: uppercase; cursor: pointer; border: none; width: 100%; }
+        .btn-danger:hover { background: #dc2626; }
+        .avatar-preview { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #4CAF50; margin: 0 auto; display: block; background-color: #111; }
+        .upload-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; cursor: pointer; }
+        .avatar-container:hover .upload-overlay { opacity: 1; }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+    <div class="max-w-6xl mx-auto p-6 pt-12">
+        <div class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-['Cinzel'] text-white uppercase">Área Personal</h1>
+            <button onclick="window.history.back()" class="text-xs font-bold tracking-widest bg-[#111] hover:bg-[#222] transition-colors px-6 py-3 rounded-lg border border-[#333] flex items-center gap-2">
+                <i data-feather="arrow-left" class="w-4 h-4"></i> VOLVER AL PANEL
+            </button>
+        </div>
+
+        <form id="profile-form" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="glass">
+                    <h3 class="text-sm font-bold text-gray-400 mb-6 uppercase flex items-center gap-2"><i data-feather="user" class="w-4 h-4"></i> Identidad y Contacto</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Nombre</label><input type="text" id="nombre" class="input-pro"></div>
+                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Apellido(s)</label><input type="text" id="apellido" class="input-pro"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Segundo Nombre</label><input type="text" id="sec-nombre" class="input-pro"></div>
+                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Nombre Alternativo / Nickname</label><input type="text" id="alt-nombre" class="input-pro"></div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Correo Electrónico</label><input type="email" id="email" class="input-pro bg-[#111] text-gray-500" disabled title="No se puede cambiar desde aquí"></div>
+                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Teléfono / WhatsApp</label><input type="text" id="movil" class="input-pro" placeholder="+54 9 ..."></div>
+                    </div>
+                </div>
+
+                <div class="glass">
+                    <h3 class="text-sm font-bold text-gray-400 mb-6 uppercase flex items-center gap-2"><i data-feather="map-pin" class="w-4 h-4"></i> Ubicación y Detalles</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold tracking-wider">Ciudad / Localidad</label>
+                            <input type="text" id="ciudad" class="input-pro" placeholder="Ej: Leandro N. Alem, Misiones">
+                        </div>
+                        <div>
+                            <label class="text-xs text-gray-500 font-bold tracking-wider">Zona Horaria</label>
+                            <select id="zona" class="input-pro">
+                                <option value="America/Argentina/Buenos_Aires">America/Argentina/Buenos_Aires (GMT-3)</option>
+                                <option value="America/Santiago">America/Santiago (GMT-4)</option>
+                                <option value="America/Mexico_City">America/Mexico_City (GMT-6)</option>
+                                <option value="Europe/Madrid">Europe/Madrid (GMT+1)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label class="text-xs text-gray-500 font-bold tracking-wider">Dirección (Opcional)</label>
+                        <input type="text" id="dir" class="input-pro">
+                    </div>
+                    <div class="mt-4">
+                        <label class="text-xs text-gray-500 font-bold tracking-wider">Descripción / Bio</label>
+                        <textarea id="desc" class="input-pro h-24" placeholder="Algo sobre ti..."></textarea>
+                    </div>
+                </div>
+
+                <div class="glass border border-red-900/30">
+                    <h3 class="text-sm font-bold text-red-500 mb-6 uppercase flex items-center gap-2"><i data-feather="shield" class="w-4 h-4"></i> Seguridad de la Cuenta</h3>
+                    <div id="password-section">
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="text-xs text-gray-500 font-bold tracking-wider">Contraseña Actual</label>
+                                <input type="password" id="current-password" class="input-pro" placeholder="Requerida para hacer cambios">
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-xs text-gray-500 font-bold tracking-wider">Nueva Contraseña</label>
+                                    <input type="password" id="new-password" class="input-pro" placeholder="Mínimo 6 caracteres">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500 font-bold tracking-wider">Repetir Nueva Contraseña</label>
+                                    <input type="password" id="confirm-password" class="input-pro" placeholder="Repetí la contraseña">
+                                </div>
+                            </div>
+                        </div>
+                        <p id="pass-msg" class="text-xs mt-3 hidden font-bold"></p>
+                    </div>
+                    <div id="google-auth-msg" class="hidden p-4 bg-[#111] rounded-lg border border-[#333]">
+                        <p class="text-xs text-gray-400 flex items-center gap-2"><i data-feather="info" class="text-blue-400 w-4 h-4"></i> Iniciaste sesión con Google. Las contraseñas se gestionan directamente desde tu cuenta de Google.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="glass flex flex-col items-center relative text-center">
+                    <h3 class="text-sm font-bold text-gray-400 mb-6 uppercase w-full text-left flex items-center gap-2"><i data-feather="image" class="w-4 h-4"></i> Avatar</h3>
+                    
+                    <div class="relative avatar-container w-[120px] h-[120px] mb-6">
+                        <img id="avatar-preview" src="./assets/img/default-avatar.png" class="avatar-preview" alt="Tu Avatar">
+                        <div class="upload-overlay" onclick="document.getElementById('file-input').click()">
+                            <i data-feather="upload-cloud" class="text-white w-8 h-8"></i>
+                        </div>
+                        <input type="file" id="file-input" class="hidden" accept="image/png, image/jpeg, image/webp">
+                    </div>
+                    
+                    <p class="text-[10px] text-gray-500 mb-4">Haz clic en la imagen para subir una nueva. Máximo 2MB (JPG, PNG, WEBP).</p>
+                    
+                    <div id="upload-status" class="hidden text-xs text-green-400 font-bold mb-4 flex items-center gap-1 justify-center">
+                        <i data-feather="loader" class="animate-spin w-3 h-3"></i> Subiendo imagen...
+                    </div>
+                </div>
+
+                <button type="submit" id="btn-save" class="btn-pro flex justify-center items-center gap-2">
+                    <i data-feather="save" class="w-5 h-5"></i> GUARDAR CAMBIOS
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM",
+            authDomain: "proffesional-server.firebaseapp.com",
+            projectId: "proffesional-server",
+            storageBucket: "proffesional-server.firebasestorage.app",
+            messagingSenderId: "833822850667",
+            appId: "1:833822850667:web:3c03219c6822116edbfb2e"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const storage = getStorage(app);
+        
+        // Elementos UI
+        const fileInput = document.getElementById('file-input');
+        const avatarPreview = document.getElementById('avatar-preview');
+        const uploadStatus = document.getElementById('upload-status');
+        const btnSave = document.getElementById('btn-save');
+        const passMsg = document.getElementById('pass-msg');
+
+        let isGoogleAuth = false;
+        let newAvatarFile = null;
+
+        feather.replace();
+
+        // 1. CARGA INICIAL Y AUTO-COMPLETADO DESDE GOOGLE
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+                return;
+            }
+
+            // Validar si entró con Google
+            isGoogleAuth = user.providerData.some(p => p.providerId === 'google.com');
+
+            // Autocompletado de datos
+            document.getElementById('email').value = user.email || '';
+            
+            if (user.displayName) {
+                const partes = user.displayName.split(' ');
+                document.getElementById('nombre').value = partes[0] || '';
+                document.getElementById('apellido').value = partes.slice(1).join(' ') || '';
+            }
+
+            if (user.phoneNumber) document.getElementById('movil').value = user.phoneNumber;
+            
+            if (user.photoURL) {
+                avatarPreview.src = user.photoURL;
+            }
+
+            // Ocultar sección de contraseñas si es Google
+            if (isGoogleAuth) {
+                document.getElementById('password-section').style.display = 'none';
+                document.getElementById('google-auth-msg').classList.remove('hidden');
+            }
+        });
+
+        // 2. PREVISUALIZACIÓN DE IMAGEN LOCAL
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validar tamaño (Máx 2MB)
+            if (file.size > 2 * 1024 * 1024) {
+                alert("La imagen es demasiado grande. El máximo es 2MB.");
+                fileInput.value = '';
+                return;
+            }
+
+            newAvatarFile = file;
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                avatarPreview.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 3. GUARDADO GENERAL (PERFIL + FOTO + CONTRASEÑA)
+        document.getElementById('profile-form').onsubmit = async (e) => {
+            e.preventDefault();
+            btnSave.disabled = true;
+            btnSave.innerHTML = '<i data-feather="loader" class="animate-spin"></i> GUARDANDO...';
+            feather.replace();
+
+            const user = auth.currentUser;
+            let currentPhotoURL = user.photoURL;
+
+            try {
+                // --- A. SUBIDA DE FOTO A FIREBASE STORAGE ---
+                if (newAvatarFile) {
+                    uploadStatus.classList.remove('hidden');
+                    const storageRef = ref(storage, `avatars/${user.uid}_${Date.now()}`);
+                    await uploadBytes(storageRef, newAvatarFile);
+                    currentPhotoURL = await getDownloadURL(storageRef);
+                    uploadStatus.classList.add('hidden');
+                }
+
+                // --- B. ACTUALIZACIÓN DE DATOS DEL PERFIL ---
+                const nombre = document.getElementById('nombre').value.trim();
+                const apellido = document.getElementById('apellido').value.trim();
+                const displayNameFinal = `${nombre} ${apellido}`.trim();
+
+                await updateProfile(user, {
+                    displayName: displayNameFinal || user.displayName,
+                    photoURL: currentPhotoURL
+                });
+
+                // --- C. LÓGICA DE CONTRASEÑA E INVIOLABILIDAD ---
+                if (!isGoogleAuth) {
+                    const currentPass = document.getElementById('current-password').value;
+                    const newPass = document.getElementById('new-password').value;
+                    const confPass = document.getElementById('confirm-password').value;
+
+                    if (newPass || confPass || currentPass) {
+                        passMsg.classList.remove('hidden');
+
+                        if (!currentPass) {
+                            throw new Error("pass-missing-current");
+                        }
+                        if (newPass !== confPass) {
+                            throw new Error("pass-mismatch");
+                        }
+                        if (newPass === currentPass) {
+                            throw new Error("pass-same");
+                        }
+
+                        // Reautenticar primero para poder cambiar la contraseña
+                        const credential = EmailAuthProvider.credential(user.email, currentPass);
+                        await reauthenticateWithCredential(user, credential);
+                        
+                        // Si pasa la reautenticación, actualizamos
+                        await updatePassword(user, newPass);
+                        
+                        // Limpiar campos de contraseña tras el éxito
+                        document.getElementById('current-password').value = '';
+                        document.getElementById('new-password').value = '';
+                        document.getElementById('confirm-password').value = '';
+                        
+                        passMsg.innerText = "¡Contraseña actualizada con éxito!";
+                        passMsg.className = "text-xs mt-3 font-bold text-green-400";
+                    }
+                }
+
+                alert("✅ Todos los cambios se han guardado correctamente.");
+
+            } catch (error) {
+                console.error(error);
+                passMsg.classList.remove('hidden');
+                passMsg.className = "text-xs mt-3 font-bold text-red-500";
+                
+                if (error.message === "pass-missing-current") {
+                    passMsg.innerText = "Error: Necesitas ingresar tu contraseña actual para hacer cambios.";
+                } else if (error.message === "pass-mismatch") {
+                    passMsg.innerText = "Error: Las contraseñas nuevas no coinciden.";
+                } else if (error.message === "pass-same") {
+                    passMsg.innerText = "Error de seguridad: La nueva contraseña no puede ser exactamente igual a la actual.";
+                } else if (error.code === "auth/invalid-credential") {
+                    passMsg.innerText = "Error: La contraseña actual ingresada es incorrecta.";
+                } else if (error.code === "auth/weak-password") {
+                    passMsg.innerText = "Error: La nueva contraseña debe tener al menos 6 caracteres.";
+                } else {
+                    alert("Error al guardar: " + error.message);
+                }
+                
+                if (newAvatarFile) uploadStatus.classList.add('hidden');
+            } finally {
+                btnSave.disabled = false;
+                btnSave.innerHTML = '<i data-feather="save" class="w-5 h-5"></i> GUARDAR CAMBIOS';
+                feather.replace();
+            }
+        };
+    </script>
+</body>
+</html>

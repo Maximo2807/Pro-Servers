@@ -3,27 +3,358 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Planes | Professional Servers</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Planes de Alojamiento | Professional Servers</title>
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600;700&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: #0a0a0a; color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
-        .bg-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at center, rgba(30,30,30,1) 0%, rgba(10,10,10,1) 100%); z-index: -1; }
-        .glowing-text { text-shadow: 0 0 15px rgba(76, 175, 80, 0.5); }
+        body { background: #0a0a0a; color: white; min-height: 100vh; overflow-x: hidden; }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 15%, #142914 0%, #0a0a0a 85%); z-index: -1; }
+        
+        .glass-card { 
+            background: rgba(18, 18, 18, 0.9); 
+            backdrop-filter: blur(14px); 
+            border: 1px solid rgba(255,255,255,0.08); 
+            border-radius: 22px; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .glass-card:hover { transform: translateY(-6px); }
+
+        .glow-redstone { border-color: rgba(239, 68, 68, 0.5); box-shadow: 0 0 25px rgba(239, 68, 68, 0.15); }
+        .glow-redstone:hover { box-shadow: 0 0 35px rgba(239, 68, 68, 0.35); border-color: #ef4444; }
+
+        .glow-hierro { border-color: rgba(229, 231, 235, 0.3); box-shadow: 0 0 20px rgba(229, 231, 235, 0.08); }
+        .glow-hierro:hover { box-shadow: 0 0 35px rgba(229, 231, 235, 0.25); border-color: #e5e7eb; }
+
+        .glow-oro { border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 0 25px rgba(245, 158, 11, 0.15); }
+        .glow-oro:hover { box-shadow: 0 0 35px rgba(245, 158, 11, 0.35); border-color: #f59e0b; }
+
+        .glow-diamante { border-color: rgba(6, 182, 212, 0.6); box-shadow: 0 0 30px rgba(6, 182, 212, 0.25); }
+        .glow-diamante:hover { box-shadow: 0 0 45px rgba(6, 182, 212, 0.5); border-color: #06b6d4; }
+
+        .glow-netherite { border-color: rgba(168, 85, 247, 0.6); box-shadow: 0 0 30px rgba(168, 85, 247, 0.25); }
+        .glow-netherite:hover { box-shadow: 0 0 45px rgba(168, 85, 247, 0.5); border-color: #a855f7; }
+
+        .glow-ghost-warrior { border-color: rgba(30, 58, 138, 0.6); box-shadow: 0 0 30px rgba(30, 58, 138, 0.25); }
+        .glow-ghost-warrior:hover { box-shadow: 0 0 50px rgba(59, 130, 246, 0.5); border-color: #3b82f6; }
+
+        .glow-enterprise { border-color: rgba(245, 158, 11, 0.4); box-shadow: 0 0 40px rgba(245, 158, 11, 0.15); }
+        .glow-enterprise:hover { box-shadow: 0 0 60px rgba(245, 158, 11, 0.3); border-color: #fbbf24; }
+
+        /* Selector de facturación */
+        .billing-toggle { background: rgba(20, 20, 20, 0.8); border: 1px solid rgba(255,255,255,0.1); padding: 5px; border-radius: 99px; display: inline-flex; position: relative; }
+        .billing-btn { padding: 10px 24px; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.3s; color: #888; position: relative; z-index: 2; }
+        .billing-btn.active { color: white; }
+        .billing-bg { position: absolute; top: 5px; left: 5px; height: calc(100% - 10px); background: #22c55e; border-radius: 99px; transition: 0.3s ease; z-index: 1; }
+        .discount-badge { position: absolute; top: -10px; right: -5px; background: #ef4444; color: white; font-size: 10px; padding: 2px 6px; border-radius: 10px; font-weight: bold; }
+
+        .inherits-benefits { background: rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.05); }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div class="bg-overlay"></div>
-    <div class="z-10 text-center flex flex-col items-center">
-        <i data-feather="tool" class="text-green-500 w-20 h-20 mb-6 animate-pulse"></i>
-        <h1 class="text-4xl font-['Cinzel'] font-bold mb-2 glowing-text">Sección en Construcción</h1>
-        <p class="text-gray-400 mb-8 max-w-md">Nuestros ingenieros están preparando los mejores planes de alojamiento para la Version oficial por ahora esperalo. ¡Vuelve pronto!</p>
-        <button onclick="window.history.back()" class="bg-green-600 hover:bg-green-700 transition-colors px-8 py-3 rounded-lg font-bold text-white uppercase tracking-wider shadow-lg shadow-green-900/50 flex items-center gap-2">
-            <i data-feather="arrow-left" class="w-4 h-4"></i> Volver al Panel
-        </button>
+    <div class="bg-glow"></div>
+
+    <div class="max-w-7xl mx-auto px-6 py-12 w-full flex flex-col items-center">
+        
+        <div class="flex flex-col items-center text-center mb-8">
+            <button onclick="window.location.href='index.html'" class="mb-6 text-xs text-gray-400 hover:text-white transition-colors uppercase font-bold flex items-center gap-2 bg-[#161616] px-4 py-2 rounded-lg border border-[#333]">
+                <i data-feather="arrow-left" class="w-4 h-4"></i> Volver al Panel
+            </button>
+            <h1 class="text-4xl md:text-5xl font-bold font-['Cinzel'] tracking-wider text-white uppercase mb-3">Escala de Rendimiento</h1>
+            <p class="text-sm text-gray-400 max-w-2xl">Elegí la potencia exacta para tu comunidad. Aislado con Docker y hardware de alta frecuencia.</p>
+        </div>
+
+        <div class="mb-14 text-center">
+            <div class="billing-toggle" id="billing-container">
+                <div class="billing-bg" id="billing-indicator"></div>
+                <button class="billing-btn active" onclick="setBilling(1, 0, this)">Mensual</button>
+                <button class="billing-btn" onclick="setBilling(3, 10, this)">Trimestral <span class="discount-badge">-10%</span></button>
+                <button class="billing-btn" onclick="setBilling(6, 15, this)">Semestral <span class="discount-badge">-15%</span></button>
+                <button class="billing-btn" onclick="setBilling(12, 20, this)">Anual <span class="discount-badge">-20%</span></button>
+            </div>
+            <p id="billing-helper" class="text-xs text-gray-500 mt-4 h-4 transition-all">Precios base sin descuento. Facturación cada mes.</p>
+        </div>
+
+        <!-- GRILLA PRINCIPAL DE 6 PLANES -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full mb-12">
+            
+            <!-- PLAN REDSTONE (BASE - 8GB) -->
+            <div class="glass-card glow-redstone p-8">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-red-400 bg-red-950/60 border border-red-800/60 px-3 py-1 rounded-full">Prueba 15 Días</span>
+                        <i data-feather="zap" class="text-red-500 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Redstone</h3>
+                    <p class="text-xs text-gray-400 mb-6">El punto de partida perfecto para tu mundo.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="6">$6 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0"></i> <span><b>1 Servidor</b> (Ranuras de proyecto)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0"></i> <span><b>10 Slots</b> (Límite de Jugadores)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0"></i> <span><b>8 GB RAM</b> Dedicada</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="check" class="w-4 h-4 text-green-400 shrink-0"></i> <span>Consola Activa y Red Playit.gg</span></div>
+                        
+                        <!-- RESTRICCIONES VISUALES (PAYWALL) -->
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Gestor de Archivos Avanzado</span></div>
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Mine AI (Analista Técnico)</span></div>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <!-- Prueba va a crear server, Directo va a pagar -->
+                    <button onclick="window.location.href='create.html'" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-red-950/50">Prueba Gratis (15 Días)</button>
+                    <button onclick="window.location.href='checkout.html?plan=redstone'" class="w-full bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-gray-300 font-bold py-2 rounded-xl transition-colors uppercase text-[11px] tracking-wider">Contratar Directo</button>
+                </div>
+            </div>
+
+            <!-- PLAN HIERRO (12GB) -->
+            <div class="glass-card glow-hierro p-8">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-gray-300 bg-gray-800/60 border border-gray-700/60 px-3 py-1 rounded-full">Starter</span>
+                        <i data-feather="shield" class="text-gray-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Hierro</h3>
+                    <p class="text-xs text-gray-400 mb-6">Estabilidad mejorada para grupos medianos.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="9">$9 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="inherits-benefits flex items-center gap-2 text-gray-300">
+                            <i data-feather="layers" class="w-4 h-4 text-gray-400"></i> <span>Incluye todos los beneficios de <b>Redstone</b></span>
+                        </div>
+                        
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-white"></i> <span>Hasta <b>2 Servidores</b></span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-white"></i> <span><b>20 Slots</b> (Límite Ampliado)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-white"></i> <span><b>12 GB RAM</b> (Mejora de Rendimiento)</span></div>
+                        
+                        <!-- RESTRICCIONES VISUALES (PAYWALL) -->
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Gestor de Archivos Avanzado</span></div>
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Mine AI (Analista Técnico)</span></div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='checkout.html?plan=hierro'" class="w-full bg-gray-300 hover:bg-white text-black font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg">Contratar Plan</button>
+            </div>
+
+            <!-- PLAN ORO (16GB) -->
+            <div class="glass-card glow-oro p-8">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-yellow-400 bg-yellow-950/60 border border-yellow-800/60 px-3 py-1 rounded-full">Popular</span>
+                        <i data-feather="award" class="text-yellow-500 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Oro</h3>
+                    <p class="text-xs text-gray-400 mb-6">El salto necesario para modpacks pesados.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="15">$15 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="inherits-benefits flex items-center gap-2 text-yellow-100">
+                            <i data-feather="layers" class="w-4 h-4 text-yellow-500"></i> <span>Incluye todos los beneficios de <b>Hierro</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-yellow-400"></i> <span>Hasta <b>3 Servidores</b></span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-yellow-400"></i> <span><b>40 Slots</b> (Límite Ampliado)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-yellow-400"></i> <span><b>16 GB RAM</b> de Alta Velocidad</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="check" class="w-4 h-4 text-green-400 shrink-0"></i> <span>Copias Automáticas (Google Drive)</span></div>
+                        
+                        <!-- RESTRICCIONES VISUALES (PAYWALL) -->
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Gestor de Archivos y Mine AI</span></div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='checkout.html?plan=oro'" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-yellow-950/50">Contratar Plan</button>
+            </div>
+
+            <!-- PLAN DIAMANTE (32GB) -->
+            <div class="glass-card glow-diamante p-8 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-3 py-1 rounded-full">Recomendado</span>
+                        <i data-feather="cpu" class="text-cyan-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Diamante</h3>
+                    <p class="text-xs text-gray-400 mb-6">Rendimiento sin cuellos de botella para el público.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="25">$25 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="inherits-benefits flex items-center gap-2 text-cyan-100">
+                            <i data-feather="layers" class="w-4 h-4 text-cyan-400"></i> <span>Incluye todos los beneficios de <b>Oro</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span>Hasta <b>6 Servidores</b> (Ideal Network)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span><b>100 Slots</b> (Límite Ampliado)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span><b>32 GB RAM</b> de Rendimiento Extremo</span></div>
+                        
+                        <!-- EL GRAN DESBLOQUEO VISUAL -->
+                        <div class="flex items-center gap-3"><i data-feather="unlock" class="w-4 h-4 text-green-400 shrink-0"></i> <span class="text-green-400 font-bold">Gestor de Archivos Pro</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="unlock" class="w-4 h-4 text-green-400 shrink-0"></i> <span class="text-green-400 font-bold">Mine AI Desbloqueado</span></div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='checkout.html?plan=diamante'" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-cyan-950/50">Contratar Plan</button>
+            </div>
+
+            <!-- PLAN NETHERITE (64GB) -->
+            <div class="glass-card glow-netherite p-8">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-purple-400 bg-purple-950/60 border border-purple-800/60 px-3 py-1 rounded-full">Alto Rendimiento</span>
+                        <i data-feather="shield" class="text-purple-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Netherite</h3>
+                    <p class="text-xs text-gray-400 mb-6">Infraestructura lista para redes BungeeCord masivas.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="45">$45 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="inherits-benefits flex items-center gap-2 text-purple-100">
+                            <i data-feather="layers" class="w-4 h-4 text-purple-400"></i> <span>Incluye todos los beneficios de <b>Diamante</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-purple-400"></i> <span>Hasta <b>12 Servidores</b></span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-purple-400"></i> <span><b>250 Slots</b> (Límite Ampliado)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-purple-400"></i> <span><b>64 GB RAM</b> Dedicada</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="check" class="w-4 h-4 text-green-400 shrink-0"></i> <span>Soporte Nativo Redes Multiserver</span></div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='checkout.html?plan=netherite'" class="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-purple-950/50">Contratar Plan</button>
+            </div>
+
+            <!-- PLAN GHOST WARRIOR (128GB) -->
+            <div class="glass-card glow-ghost-warrior p-8 relative overflow-hidden">
+                <div class="absolute -top-10 -right-10 w-32 h-32 bg-blue-600/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-blue-400 bg-blue-950/60 border border-blue-800/60 px-3 py-1 rounded-full">Poder Máximo</span>
+                        <i data-feather="server" class="text-blue-400 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Ghost Warrior</h3>
+                    <p class="text-xs text-gray-400 mb-6">Poder bruto para macro-servidores y eventos masivos.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="85">$85 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="inherits-benefits flex items-center gap-2 text-blue-100">
+                            <i data-feather="layers" class="w-4 h-4 text-blue-400"></i> <span>Incluye todos los beneficios de <b>Netherite</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-blue-400"></i> <span><b>Servidores Ilimitados</b></span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-blue-400"></i> <span><b>Slots Ilimitados</b> (Sin restricciones)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-blue-400"></i> <span><b>128 GB RAM</b> Ultrarrápida</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="check" class="w-4 h-4 text-green-400 shrink-0"></i> <span>Atención VIP exclusiva en Discord</span></div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='checkout.html?plan=ghost-warrior'" class="w-full bg-blue-700 hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-blue-900/50">Contratar Plan</button>
+            </div>
+        </div>
+
+        <!-- PLAN PROFESSIONAL ENTERPRISE -->
+        <div class="w-full glass-card glow-enterprise p-8 lg:p-12 mb-12 flex flex-col lg:flex-row items-center justify-between gap-8 relative overflow-hidden">
+            <div class="absolute -top-20 -left-20 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+            
+            <div class="lg:w-2/3 z-10">
+                <div class="flex items-center gap-4 mb-4">
+                    <span class="text-xs uppercase tracking-widest font-bold text-amber-400 bg-amber-950/60 border border-amber-800/60 px-3 py-1 rounded-full">Corporativo Exclusivo</span>
+                    <i data-feather="globe" class="text-amber-500 w-6 h-6"></i>
+                </div>
+                <h3 class="text-3xl md:text-4xl font-bold text-white font-['Cinzel'] mb-3">Professional Enterprise</h3>
+                <p class="text-sm text-gray-400 mb-8 max-w-2xl">La solución definitiva de <b>Professional Servers</b>. Hardware físico dedicado, soporte directo por WhatsApp y escalabilidad sin límites para proyectos empresariales o comunidades titánicas.</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-300">
+                    <div class="inherits-benefits flex items-center gap-2 text-amber-100 md:col-span-2">
+                        <i data-feather="layers" class="w-4 h-4 text-amber-500"></i> <span>Incluye todo el poder de <b>Ghost Warrior</b> elevado al máximo</span>
+                    </div>
+                    <div class="flex items-center gap-3"><i data-feather="hard-drive" class="w-5 h-5 text-amber-500 shrink-0"></i> <span><b>Nodos Ilimitados</b> (Sin restricciones)</span></div>
+                    <div class="flex items-center gap-3"><i data-feather="check" class="w-5 h-5 text-amber-500 shrink-0"></i> <span><b>256 GB+ RAM</b> (Servidor Físico Completo)</span></div>
+                    <div class="flex items-center gap-3"><i data-feather="check" class="w-5 h-5 text-amber-500 shrink-0"></i> <span><b>IP Propia IPv4</b> + Dominio Personalizado</span></div>
+                    <div class="flex items-center gap-3"><i data-feather="check" class="w-5 h-5 text-amber-500 shrink-0"></i> <span>Acuerdo <b>SLA 99.99%</b> Disponibilidad</span></div>
+                </div>
+            </div>
+
+            <div class="lg:w-1/3 flex flex-col items-center justify-center border-t lg:border-t-0 lg:border-l border-[rgba(255,255,255,0.1)] pt-8 lg:pt-0 lg:pl-8 w-full z-10">
+                <div class="text-center mb-6">
+                    <span class="text-4xl font-bold text-amber-400 block mb-1">A Medida</span>
+                    <span class="text-xs text-gray-400">Armamos el presupuesto exacto según los fierros que necesites.</span>
+                </div>
+                <!-- Este botón queda con el ALERT porque requiere presupuesto a medida, no pasa por checkout automático -->
+                <button onclick="alert('Contactate directamente con la administración de Professional Servers por WhatsApp o Ticket.')" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl transition-colors uppercase text-sm tracking-wider shadow-lg shadow-amber-950/50 flex items-center justify-center gap-2">
+                    <i data-feather="message-circle" class="w-5 h-5"></i> Contactar Ventas
+                </button>
+            </div>
+        </div>
+
     </div>
-    <script>feather.replace();</script>
+
+    <script>
+        feather.replace();
+        function setBilling(months, discountPercent, btnElement) {
+            document.querySelectorAll('.billing-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            
+            const indicator = document.getElementById('billing-indicator');
+            indicator.style.width = btnElement.offsetWidth + 'px';
+            indicator.style.left = btnElement.offsetLeft + 'px';
+
+            const helper = document.getElementById('billing-helper');
+            if (months === 1) helper.innerText = "Precios base sin descuento. Facturación cada mes.";
+            if (months === 3) helper.innerText = "Facturación total cada 3 meses con 10% de ahorro.";
+            if (months === 6) helper.innerText = "Facturación total cada 6 meses con 15% de ahorro.";
+            if (months === 12) helper.innerText = "Facturación total anual. ¡Ahorraste un 20%!";
+            helper.style.color = months > 1 ? '#22c55e' : '#6b7280';
+
+            document.querySelectorAll('.price-display').forEach(el => {
+                const basePrice = parseFloat(el.getAttribute('data-base'));
+                const pricePerMonth = basePrice * (1 - (discountPercent / 100));
+                const totalPrice = (pricePerMonth * months).toFixed(2);
+                
+                el.style.opacity = 0;
+                setTimeout(() => { el.innerText = `$${totalPrice} USD`; el.style.opacity = 1; }, 150);
+            });
+
+            document.querySelectorAll('.billing-period').forEach(el => {
+                el.style.opacity = 0;
+                setTimeout(() => {
+                    if (months === 1) el.innerText = '/ mes';
+                    else el.innerHTML = `/ ${months} meses <span class="text-green-500 font-bold ml-1">(-${discountPercent}%)</span>`;
+                    el.style.opacity = 1;
+                }, 150);
+            });
+        }
+        window.onload = () => {
+            const firstBtn = document.querySelector('.billing-btn.active');
+            const indicator = document.getElementById('billing-indicator');
+            indicator.style.width = firstBtn.offsetWidth + 'px';
+            indicator.style.left = firstBtn.offsetLeft + 'px';
+        };
+    </script>
 </body>
 </html>

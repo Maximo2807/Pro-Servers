@@ -1,0 +1,25 @@
+{
+  "users": {
+    "N7wJg4gkl5WA3aiGUJLLnUzFjTz2": [
+      {
+        "id": "1786907148297",
+        "edition": "java",
+        "projectName": "prueba",
+        "motd": "prueba final ",
+        "software": "vanilla",
+        "version": "LATEST",
+        "publicIp": null,
+        "sharedWith": []
+      }
+    ]
+  },
+  "roles": {
+    "N7wJg4gkl5WA3aiGUJLLnUzFjTz2": "admin"
+  },
+  "plans": {},
+  "ips": {
+    "131.108.140.117, 162.158.195.136": [
+      "N7wJg4gkl5WA3aiGUJLLnUzFjTz2"
+    ]
+  }
+}

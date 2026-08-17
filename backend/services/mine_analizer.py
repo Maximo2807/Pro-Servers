@@ -6,7 +6,7 @@ from openai import OpenAI
 
 # Configuración de Groq
 client = OpenAI(
-    api_key="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", 
+    api_key="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", 
     base_url="https://api.groq.com/openai/v1"
 )
 
@@ -59,7 +59,7 @@ def generar_diagnostico_mine(texto_log):
     
     try:
         response = client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
+            model="openai/gpt-oss-120b",
             messages=[{"role": "user", "content": prompt}],
             response_format={"type": "json_object"}
         )

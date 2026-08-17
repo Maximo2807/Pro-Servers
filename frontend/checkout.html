@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Professional Servers</title>
+    <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: #0a0a0a; color: white; min-height: 100vh; overflow-x: hidden; }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 15%, #142914 0%, #0a0a0a 85%); z-index: -1; }
+
+        .glass-panel { background: rgba(18, 18, 18, 0.9); backdrop-filter: blur(14px); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; }
+
+        .input-dark { background: #111; border: 1px solid #333; color: white; outline: none; transition: 0.3s; padding: 12px; border-radius: 8px; width: 100%; font-size: 14px; }
+        .input-dark:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76,175,80,0.2); }
+        .input-error { border-color: #EF4444 !important; box-shadow: 0 0 10px rgba(239,68,68,0.2) !important; }
+
+        .cycle-box { border: 1px solid #333; background: #161616; cursor: pointer; transition: 0.3s; }
+        .cycle-box:hover { border-color: #555; background: #1a1a1a; }
+        .cycle-box.active { border-color: #4CAF50; background: rgba(76, 175, 80, 0.1); }
+
+        /* Botones de Pago */
+        .link-button { background: #6366f1; color: white; font-weight: bold; transition: 0.3s; }
+        .link-button:hover:not(:disabled) { background: #4f46e5; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3); }
+        .link-button:disabled { background: #333; color: #777; cursor: not-allowed; }
+
+        .astropay-button { background: #E63946; color: white; font-weight: bold; transition: 0.3s; }
+        .astropay-button:hover:not(:disabled) { background: #D32F2F; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(229, 57, 70, 0.3); }
+
+        .transfer-button { background: #111; color: white; border: 1px solid #333; font-weight: bold; transition: 0.3s; }
+        .transfer-button:hover:not(:disabled) { border-color: #4CAF50; background: #1a1a1a; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.2); }
+
+        /* Logos de pago */
+        .payment-pill { background: #111; border: 1px solid #222; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: bold; color: #aaa; display: inline-flex; align-items: center; gap: 5px; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    </style>
+</head>
+<body>
+    <div class="bg-glow"></div>
+
+    <div class="max-w-5xl mx-auto px-4 py-10">
+
+        <!-- HEADER -->
+        <div class="flex items-center justify-between mb-8 pb-6 border-b border-[#333]">
+            <div class="flex items-center gap-4">
+                <img src="./assets/img/favicon.ico" class="w-12 h-12 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)]" onerror="this.src='./assets/img/logo-minecraft.ico'">
+                <div>
+                    <h1 class="text-2xl font-bold font-['Cinzel'] tracking-wider text-white">Finalizar Compra</h1>
+                    <p class="text-xs text-gray-400">Checkout seguro con Link, AstroPay y Transferencia</p>
+                </div>
+            </div>
+            <button onclick="window.location.href='planes.html'" class="text-xs text-gray-400 hover:text-white transition-colors uppercase font-bold flex items-center gap-2 bg-[#161616] px-4 py-2 rounded-lg border border-[#333]">
+                <i data-feather="arrow-left" class="w-4 h-4"></i> Volver a Planes
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- COLUMNA IZQUIERDA: CONFIGURACIÓN -->
+            <div class="lg:col-span-2 space-y-6">
+
+                <!-- 1. RESUMEN DEL SERVIDOR -->
+                <div class="glass-panel p-6">
+                    <h2 class="text-sm uppercase tracking-widest text-green-500 font-bold mb-4 flex items-center gap-2">
+                        <span class="bg-green-500/20 text-green-400 w-6 h-6 flex items-center justify-center rounded-full">1</span>
+                        Plan Seleccionado
+                    </h2>
+                    <div class="flex items-center justify-between bg-[#111] border border-[#222] p-4 rounded-xl">
+                        <div class="flex items-center gap-4">
+                            <div class="bg-[#1a1a1a] p-3 rounded-lg border border-[#333]">
+                                <i data-feather="server" class="w-6 h-6 text-gray-300" id="plan-icon"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-bold text-white font-['Cinzel']" id="plan-name">Cargando Plan...</h3>
+                                <div class="flex gap-3 text-xs text-gray-400 mt-1">
+                                    <span id="plan-ram"><i data-feather="cpu" class="w-3 h-3 inline"></i> -- GB RAM</span>
+                                    <span id="plan-slots"><i data-feather="users" class="w-3 h-3 inline"></i> -- Slots</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="block text-xs text-gray-500 uppercase tracking-widest">Precio Base</span>
+                            <span class="text-2xl font-bold text-white" id="plan-base-price">$0.00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. TARJETA DE CRÉDITO / DÉBITO (LINK SYSTEM) -->
+                <div class="glass-panel p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-sm uppercase tracking-widest text-indigo-400 font-bold flex items-center gap-2">
+                            <span class="bg-indigo-500/20 text-indigo-400 w-6 h-6 flex items-center justify-center rounded-full">2</span>
+                            Método de Pago con Tarjeta
+                        </h2>
+                        <span class="text-[10px] bg-blue-500/20 text-blue-400 border border-blue-500/30 px-2 py-0.5 rounded font-mono flex items-center gap-1">
+                            <i data-feather="shield" class="w-3 h-3"></i> Verificación $1 USD (Reembolsable)
+                        </span>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="relative">
+                            <label class="text-xs text-gray-400 uppercase font-bold mb-1 block">Número de Tarjeta</label>
+                            <input type="text" id="card-number" class="input-dark pr-16 font-mono tracking-widest" placeholder="4506 5212 0000 0000" maxlength="19" oninput="formatCard(this)">
+                            <div id="card-brand" class="absolute top-9 right-3 text-xs font-bold font-mono text-white uppercase bg-[#222] px-2 py-1 rounded hidden"></div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase font-bold mb-1 block">Expiración</label>
+                                <input type="text" id="card-exp" class="input-dark font-mono text-center" placeholder="MM/AA" maxlength="5" oninput="formatExp(this)">
+                            </div>
+                            <div>
+                                <label class="text-xs text-gray-400 uppercase font-bold mb-1 block flex items-center gap-1">
+                                    CVC <i data-feather="info" class="w-3 h-3 text-gray-500" title="Código de 3 o 4 dígitos al reverso"></i>
+                                </label>
+                                <input type="password" id="card-cvc" class="input-dark font-mono text-center" placeholder="123" maxlength="4">
+                            </div>
+                        </div>
+                        
+                        <!-- Mensaje de Error / Bloqueo -->
+                        <div id="security-warning" class="hidden bg-red-950/50 border border-red-500/50 text-red-400 text-xs p-3 rounded-lg flex items-center gap-2 font-bold mt-2">
+                            <i data-feather="alert-triangle" class="w-4 h-4 shrink-0"></i>
+                            <span id="warning-text">Error en los datos de la tarjeta.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. CICLO DE FACTURACIÓN -->
+                <div class="glass-panel p-6">
+                    <h2 class="text-sm uppercase tracking-widest text-green-500 font-bold mb-4 flex items-center gap-2">
+                        <span class="bg-green-500/20 text-green-400 w-6 h-6 flex items-center justify-center rounded-full">3</span>
+                        Ciclo de Facturación
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="cycle-box active p-4 rounded-xl relative" onclick="selectCycle(1, 0, this)">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-white">Mensual</span>
+                                <i data-feather="check-circle" class="text-green-500 w-5 h-5 check-icon"></i>
+                            </div>
+                            <p class="text-xs text-gray-400">Renovación cada 30 días</p>
+                        </div>
+                        <div class="cycle-box p-4 rounded-xl relative" onclick="selectCycle(3, 10, this)">
+                            <div class="absolute -top-3 -right-2 bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg">Ahorras 10%</div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-white">Trimestral</span>
+                                <i data-feather="circle" class="text-gray-600 w-5 h-5 check-icon"></i>
+                            </div>
+                            <p class="text-xs text-gray-400">Renovación cada 3 meses</p>
+                        </div>
+                        <div class="cycle-box p-4 rounded-xl relative" onclick="selectCycle(6, 15, this)">
+                            <div class="absolute -top-3 -right-2 bg-purple-500 text-white text-[10px] font-bold px-2 py-1 rounded-lg">Ahorras 15%</div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-white">Semestral</span>
+                                <i data-feather="circle" class="text-gray-600 w-5 h-5 check-icon"></i>
+                            </div>
+                            <p class="text-xs text-gray-400">Renovación cada 6 meses</p>
+                        </div>
+                        <div class="cycle-box p-4 rounded-xl relative border-amber-500/30" onclick="selectCycle(12, 20, this)">
+                            <div class="absolute -top-3 -right-2 bg-amber-500 text-black text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider">Mejor Valor -20%</div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="font-bold text-white">Anual</span>
+                                <i data-feather="circle" class="text-gray-600 w-5 h-5 check-icon"></i>
+                            </div>
+                            <p class="text-xs text-gray-400">Pagas 1 vez al año</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLUMNA DERECHA: TICKET Y PAGO -->
+            <div class="lg:col-span-1">
+                <div class="glass-panel p-6 sticky top-6">
+                    <h3 class="font-bold text-lg text-white mb-4 border-b border-[#333] pb-3 font-['Cinzel'] tracking-wider">Resumen de Compra</h3>
+
+                    <div class="space-y-3 mb-6 text-sm">
+                        <div class="flex justify-between text-gray-300">
+                            <span id="ticket-plan-name">Plan ...</span>
+                            <span id="ticket-base-price">$0.00</span>
+                        </div>
+                        <div class="flex justify-between text-gray-400 text-xs">
+                            <span id="ticket-multipler">x 1 Mes</span>
+                            <span></span>
+                        </div>
+                        
+                        <!-- DESCUENTOS -->
+                        <div id="cycle-discount-row" class="flex justify-between text-green-400 hidden border-t border-[#222] pt-2 mt-2">
+                            <span>Descuento por Ciclo (<span id="cycle-pct">0</span>%)</span>
+                            <span id="cycle-discount-amount">-$0.00</span>
+                        </div>
+                        <div id="promo-discount-row" class="flex justify-between text-indigo-400 hidden border-t border-[#222] pt-2 mt-2">
+                            <span>Código Promocional (<span id="promo-pct">0</span>%)</span>
+                            <span id="promo-discount-amount">-$0.00</span>
+                        </div>
+                    </div>
+
+                    <!-- CAJA DE CUPONES -->
+                    <div class="mb-6 bg-[#0a0a0a] p-3 rounded-lg border border-[#222]">
+                        <label class="text-[10px] text-gray-500 uppercase font-bold block mb-2 tracking-widest">¿Tenés un código?</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="promo-input" class="input-dark flex-1 rounded px-3 py-2 text-xs uppercase" placeholder="Ej: NAVIDAD50">
+                            <button onclick="applyPromoCode()" class="bg-[#222] hover:bg-[#333] text-white text-xs px-3 rounded transition-colors font-bold border border-[#444]">Aplicar</button>
+                        </div>
+                        <p id="promo-msg" class="text-[10px] mt-2 hidden"></p>
+                    </div>
+
+                    <!-- TOTAL -->
+                    <div class="border-t border-[#444] pt-4 mb-4">
+                        <div class="flex justify-between items-end">
+                            <span class="text-gray-400 uppercase tracking-widest text-xs font-bold">Total a Pagar</span>
+                            <div class="text-right">
+                                <span id="original-total" class="text-gray-500 line-through text-sm hidden block mb-1">$0.00</span>
+                                <span id="final-total" class="text-3xl font-bold text-white">$0.00</span>
+                                <span class="text-[10px] text-gray-500 block">USD (Conversión local)</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- MÉTODOS DE PAGO ACEPTADOS -->
+                    <div class="mb-5 flex flex-wrap gap-2 justify-center">
+                        <span class="payment-pill"><span class="text-blue-500 font-black italic">VISA</span></span>
+                        <span class="payment-pill"><span class="text-red-500 font-black">mastercard</span></span>
+                        <span class="payment-pill"><span class="text-blue-400 font-black">AMEX</span></span>
+                        <span class="payment-pill text-indigo-400"><i data-feather="link" class="w-3 h-3"></i> Link</span>
+                        <span class="payment-pill text-red-400"><i data-feather="credit-card" class="w-3 h-3"></i> AstroPay</span>
+                    </div>
+
+                    <!-- BOTONES DE PAGO -->
+                    <div class="space-y-3">
+                        <!-- Botón Principal: Paga la tarjeta ingresada en el paso 2 -->
+                        <button onclick="procesarPagoTarjeta()" id="btn-pay-card" class="link-button w-full py-3.5 rounded-xl flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider">
+                            <i data-feather="lock" class="w-4 h-4"></i>
+                            Pagar con Tarjeta Segura
+                        </button>
+
+                        <!-- Botones Secundarios -->
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="procesarAstroPay()" id="btn-pay-astropay" class="astropay-button w-full py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider">
+                                AstroPay
+                            </button>
+                            <button onclick="mostrarAlias()" id="btn-pay-transfer" class="transfer-button w-full py-3 rounded-xl flex items-center justify-center gap-2 text-[10px] uppercase tracking-wider">
+                                Transferencia
+                            </button>
+                        </div>
+                    </div>
+
+                    <p class="text-center text-[10px] text-gray-500 mt-4 flex items-center justify-center gap-1">
+                        <i data-feather="shield" class="w-3 h-3 text-green-500"></i> Protegido por Stripe / AES-256
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE TRANSFERENCIA -->
+    <div id="transfer-modal" class="hidden fixed top-0 left-0 w-full h-full bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+        <div class="bg-[#111] border border-[#333] p-8 rounded-2xl max-w-md w-full relative shadow-[0_0_30px_rgba(76,175,80,0.1)]">
+            <button onclick="cerrarAlias()" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-feather="x"></i></button>
+            <div class="text-center mb-6">
+                <i data-feather="smartphone" class="w-12 h-12 text-green-500 mx-auto mb-3"></i>
+                <h3 class="text-xl font-bold text-white font-['Cinzel'] tracking-wider">Pago por Transferencia</h3>
+                <p class="text-xs text-gray-400 mt-2">Transfiere el monto exacto al siguiente Alias y envíanos el comprobante por ticket o WhatsApp.</p>
+            </div>
+            
+            <div class="bg-[#0a0a0a] border border-[#222] p-4 rounded-xl text-center mb-6 relative">
+                <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold mb-1">Tu Alias de Pago</p>
+                <p class="text-2xl font-bold text-green-400 font-mono tracking-widest select-all">MAXPRO.SERVERS</p>
+                <button onclick="navigator.clipboard.writeText('MAXPRO.SERVERS'); alert('Alias copiado')" class="absolute top-4 right-4 text-gray-500 hover:text-white"><i data-feather="copy" class="w-4 h-4"></i></button>
+            </div>
+
+            <div class="flex justify-between items-center border-t border-[#333] pt-4 mb-6">
+                <span class="text-xs text-gray-400">Total a transferir:</span>
+                <span class="text-xl font-bold text-white" id="transfer-total-amount">$0.00</span>
+            </div>
+
+            <button onclick="alert('Redirigiendo a WhatsApp / Panel de Tickets...')" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 rounded-lg transition-colors uppercase text-xs tracking-wider flex items-center justify-center gap-2">
+                <i data-feather="check-circle" class="w-4 h-4"></i> Ya transferí (Enviar comprobante)
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // DICCIONARIO DE PLANES LOCAL
+        const PLANES = {
+            'redstone': { name: 'Plan Redstone', ram: 8, slots: 10, price: 6, color: 'text-red-500' },
+            'hierro': { name: 'Plan Hierro', ram: 12, slots: 20, price: 9, color: 'text-gray-300' },
+            'oro': { name: 'Plan Oro', ram: 16, slots: 40, price: 15, color: 'text-yellow-500' },
+            'diamante': { name: 'Plan Diamante', ram: 32, slots: 100, price: 25, color: 'text-cyan-400' },
+            'netherite': { name: 'Plan Netherite', ram: 64, slots: 250, price: 45, color: 'text-purple-500' },
+            'ghost-warrior': { name: 'Ghost Warrior', ram: 128, slots: 'Ilimitados', price: 85, color: 'text-blue-500' }
+        };
+
+        let currentPlan = null;
+        let selectedMonths = 1;
+        let cycleDiscount = 0;
+        let promoDiscount = 0;
+        let finalNetTotal = 0;
+
+        // Variables de Seguridad Anti-Fraude
+        let intentosFallidos = 0;
+        let estaBloqueado = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            feather.replace();
+            
+            const urlParams = new URLSearchParams(window.location.search);
+            const planSlug = urlParams.get('plan') || 'hierro';
+            
+            currentPlan = PLANES[planSlug];
+            
+            if(!currentPlan) {
+                alert("Plan inválido. Redirigiendo...");
+                window.location.href = 'planes.html';
+                return;
+            }
+
+            document.getElementById('plan-name').innerText = currentPlan.name;
+            document.getElementById('plan-name').className = `text-xl font-bold font-['Cinzel'] ${currentPlan.color}`;
+            document.getElementById('plan-ram').innerHTML = `<i data-feather="cpu" class="w-3 h-3 inline"></i> ${currentPlan.ram} GB RAM`;
+            document.getElementById('plan-slots').innerHTML = `<i data-feather="users" class="w-3 h-3 inline"></i> ${currentPlan.slots} Slots`;
+            document.getElementById('plan-base-price').innerText = `$${currentPlan.price.toFixed(2)}`;
+            
+            document.getElementById('ticket-plan-name').innerText = currentPlan.name;
+            document.getElementById('ticket-base-price').innerText = `$${currentPlan.price.toFixed(2)} USD`;
+
+            feather.replace();
+            calculateTotal();
+        });
+
+        // ==========================================
+        // LÓGICA DE DETECCIÓN DE TARJETAS (BIN)
+        // ==========================================
+        function formatCard(input) {
+            // Elimina todo lo que no sea número
+            let val = input.value.replace(/\D/g, '');
+            // Agrega un espacio cada 4 dígitos
+            input.value = val.replace(/(\d{4})(?=\d)/g, '$1 ');
+            
+            const brandEl = document.getElementById('card-brand');
+            const bin = val.substring(0, 6); // Extraemos los primeros 6 dígitos reales
+            
+            input.classList.remove('input-error');
+
+            if(bin.length < 4) { 
+                brandEl.classList.add('hidden'); 
+                return; 
+            }
+            
+            brandEl.classList.remove('hidden');
+            brandEl.classList.remove('bg-blue-600', 'bg-orange-600', 'bg-blue-400');
+            
+            if (/^4/.test(bin)) {
+                brandEl.innerText = 'VISA';
+                brandEl.classList.add('bg-blue-600');
+            } else if (/^5[1-5]/.test(bin) || /^2[2-7]/.test(bin) || /^5212/.test(bin)) {
+                brandEl.innerText = 'MASTERCARD';
+                brandEl.classList.add('bg-orange-600');
+            } else if (/^3[47]/.test(bin)) {
+                brandEl.innerText = 'AMEX';
+                brandEl.classList.add('bg-blue-400');
+            } else {
+                brandEl.innerText = 'TARJETA';
+                brandEl.classList.add('bg-[#333]');
+            }
+        }
+
+        function formatExp(input) {
+            let val = input.value.replace(/\D/g, '');
+            if (val.length >= 3) {
+                input.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+            } else {
+                input.value = val;
+            }
+            input.classList.remove('input-error');
+        }
+
+        document.getElementById('card-cvc').addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+            this.classList.remove('input-error');
+        });
+
+        // ==========================================
+        // LÓGICA DE FACTURACIÓN Y CUPONES
+        // ==========================================
+        function selectCycle(months, discountPct, element) {
+            document.querySelectorAll('.cycle-box').forEach(box => {
+                box.classList.remove('active');
+                box.querySelector('.check-icon').setAttribute('data-feather', 'circle');
+                box.querySelector('.check-icon').classList.replace('text-green-500', 'text-gray-600');
+            });
+            
+            element.classList.add('active');
+            element.querySelector('.check-icon').setAttribute('data-feather', 'check-circle');
+            element.querySelector('.check-icon').classList.replace('text-gray-600', 'text-green-500');
+            feather.replace();
+
+            selectedMonths = months;
+            cycleDiscount = discountPct;
+            
+            document.getElementById('ticket-multipler').innerText = `x ${months} Mes${months > 1 ? 'es' : ''}`;
+            calculateTotal();
+        }
+
+        function applyPromoCode() {
+            const input = document.getElementById('promo-input').value.toUpperCase().trim();
+            const msg = document.getElementById('promo-msg');
+            
+            const cuponesValidos = {
+                'MAXPRO': 100, 
+                'NAVIDAD50': 50, 
+                'BIENVENIDA20': 20, 
+                'WEARIEST': 15 
+            };
+
+            if (input === '') {
+                promoDiscount = 0;
+                msg.classList.add('hidden');
+                calculateTotal();
+                return;
+            }
+
+            if (cuponesValidos[input]) {
+                promoDiscount = cuponesValidos[input];
+                msg.innerText = `¡Cupón aplicado! Se descontará un ${promoDiscount}% extra.`;
+                msg.className = "text-[10px] mt-2 font-bold text-indigo-400";
+            } else {
+                promoDiscount = 0;
+                msg.innerText = "Código inválido o expirado.";
+                msg.className = "text-[10px] mt-2 text-red-500 font-bold";
+            }
+            msg.classList.remove('hidden');
+            calculateTotal();
+        }
+
+        function calculateTotal() {
+            if(!currentPlan) return;
+
+            const grossTotal = currentPlan.price * selectedMonths;
+            const discountAmountCycle = grossTotal * (cycleDiscount / 100);
+            const subTotal = grossTotal - discountAmountCycle;
+            const discountAmountPromo = subTotal * (promoDiscount / 100);
+            
+            finalNetTotal = subTotal - discountAmountPromo;
+
+            if (cycleDiscount > 0) {
+                document.getElementById('cycle-discount-row').classList.remove('hidden');
+                document.getElementById('cycle-pct').innerText = cycleDiscount;
+                document.getElementById('cycle-discount-amount').innerText = `-$${discountAmountCycle.toFixed(2)}`;
+            } else {
+                document.getElementById('cycle-discount-row').classList.add('hidden');
+            }
+
+            if (promoDiscount > 0) {
+                document.getElementById('promo-discount-row').classList.remove('hidden');
+                document.getElementById('promo-pct').innerText = promoDiscount;
+                document.getElementById('promo-discount-amount').innerText = `-$${discountAmountPromo.toFixed(2)}`;
+            } else {
+                document.getElementById('promo-discount-row').classList.add('hidden');
+            }
+
+            const finalEl = document.getElementById('final-total');
+            const originalEl = document.getElementById('original-total');
+
+            finalEl.style.opacity = 0;
+            setTimeout(() => {
+                finalEl.innerText = `$${finalNetTotal.toFixed(2)}`;
+                document.getElementById('transfer-total-amount').innerText = `$${finalNetTotal.toFixed(2)} USD`;
+                finalEl.style.opacity = 1;
+            }, 200);
+
+            if (cycleDiscount > 0 || promoDiscount > 0) {
+                originalEl.innerText = `$${grossTotal.toFixed(2)}`;
+                originalEl.classList.remove('hidden');
+            } else {
+                originalEl.classList.add('hidden');
+            }
+        }
+
+        // ==========================================
+        // PROCESAMIENTO DE PAGO SEGURO (ANTI-FRAUDE)
+        // ==========================================
+        function procesarPagoTarjeta() {
+            if (estaBloqueado) return;
+
+            const cardNumberEl = document.getElementById('card-number');
+            const cardExpEl = document.getElementById('card-exp');
+            const cardCvcEl = document.getElementById('card-cvc');
+            const warningBox = document.getElementById('security-warning');
+            const warningText = document.getElementById('warning-text');
+            const btn = document.getElementById('btn-pay-card');
+
+            const cardNumber = cardNumberEl.value.replace(/\s/g, '');
+            const cardExp = cardExpEl.value;
+            const cardCvc = cardCvcEl.value;
+
+            let hasError = false;
+
+            // Validación de longitud básica
+            if (cardNumber.length < 15) { cardNumberEl.classList.add('input-error'); hasError = true; }
+            if (cardExp.length !== 5) { cardExpEl.classList.add('input-error'); hasError = true; }
+            if (cardCvc.length < 3) { cardCvcEl.classList.add('input-error'); hasError = true; }
+
+            if (hasError) {
+                intentosFallidos++;
+                warningBox.classList.remove('hidden');
+                
+                if (intentosFallidos >= 3) {
+                    estaBloqueado = true;
+                    warningText.innerText = "Múltiples intentos fallidos. Sistema bloqueado temporalmente por seguridad.";
+                    
+                    // Deshabilitar todos los botones de pago
+                    btn.disabled = true;
+                    document.getElementById('btn-pay-astropay').disabled = true;
+                    
+                    let segundos = 30;
+                    let timer = setInterval(() => {
+                        segundos--;
+                        btn.innerHTML = `<i data-feather="lock" class="w-4 h-4"></i> Bloqueado (${segundos}s)`;
+                        feather.replace();
+                        
+                        if (segundos <= 0) {
+                            clearInterval(timer);
+                            estaBloqueado = false;
+                            intentosFallidos = 0;
+                            btn.disabled = false;
+                            document.getElementById('btn-pay-astropay').disabled = false;
+                            btn.innerHTML = '<i data-feather="lock" class="w-4 h-4"></i> Pagar con Tarjeta Segura';
+                            warningBox.classList.add('hidden');
+                            feather.replace();
+                        }
+                    }, 1000);
+                } else {
+                    warningText.innerText = `Datos inválidos o incompletos. Intento ${intentosFallidos} de 3.`;
+                }
+                return;
+            }
+
+            // Si los datos están bien, procedemos con el Auth Hold
+            warningBox.classList.add('hidden');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i> Verificando tarjeta ($1 USD)...';
+            feather.replace();
+
+            // Simulación de conexión a la pasarela (Ej: Stripe Link)
+            setTimeout(() => {
+                btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i> Procesando pago final...';
+                feather.replace();
+                
+                setTimeout(() => {
+                    alert(`✅ ¡Transacción Aprobada!\n\nSe procesó el cargo temporal de $1.00 USD (Verificación) y se reembolsó al instante.\nSe cobró el total de $${finalNetTotal.toFixed(2)} USD correctamente.\n\nRedirigiendo a tu panel...`);
+                    btn.innerHTML = '<i data-feather="check" class="w-4 h-4"></i> ¡Pago Exitoso!';
+                    btn.classList.replace('bg-[#6366f1]', 'bg-green-600');
+                    feather.replace();
+                }, 1500);
+            }, 2000);
+        }
+
+        // Simulación de Pago AstroPay
+        function procesarAstroPay() {
+            if (estaBloqueado) return;
+            const btn = document.getElementById('btn-pay-astropay');
+            btn.disabled = true;
+            btn.innerHTML = '<i data-feather="loader" class="animate-spin w-3 h-3"></i> Cargando...';
+            feather.replace();
+
+            setTimeout(() => {
+                alert(`¡Redirigiendo al Checkout de AstroPay!\n\nTotal a cobrar: $${finalNetTotal.toFixed(2)} USD.`);
+                btn.disabled = false;
+                btn.innerHTML = 'AstroPay';
+            }, 1000);
+        }
+
+        // Modal de Transferencia
+        function mostrarAlias() {
+            document.getElementById('transfer-modal').classList.remove('hidden');
+        }
+        function cerrarAlias() {
+            document.getElementById('transfer-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

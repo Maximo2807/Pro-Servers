@@ -1,26 +1,30 @@
-# Usa la imagen base de Node.js más reciente y ligera.
-FROM node:18-alpine
+# Usa la imagen base de Node.js
+FROM node:20-alpine
 
-# Instala las herramientas de construcción necesarias para algunas dependencias.
-RUN apk add --no-cache python3 make g++
+# Silenciamos los avisos molestos de NPM (Actualizaciones, auditorías y fondos)
+ENV NPM_CONFIG_UPDATE_NOTIFIER=false
+ENV NPM_CONFIG_FUND=false
+ENV NPM_CONFIG_AUDIT=false
+ENV NPM_CONFIG_LOGLEVEL=error
 
-# Define el directorio de trabajo dentro del contenedor.
+# Instala las herramientas de construcción necesarias y el unzip nativo
+RUN apk add --no-cache python3 make g++ unzip
+
+# Define el directorio de trabajo
 WORKDIR /usr/src/app
 
-# Copia solo el archivo package.json para aprovechar el caché de Docker.
+# Copia solo los archivos de dependencias para aprovechar el caché
 COPY package*.json ./
 
-# Instala las dependencias ignorando quejas de versiones
-RUN npm install --legacy-peer-deps
+# Instalamos todo en una sola capa de forma silenciosa
+RUN npm install --legacy-peer-deps && \
+    npm install firebase-admin@13 archiver adm-zip multer --legacy-peer-deps
 
-# Instalamos explícitamente las librerías de la nube para evitar cualquier falta
-RUN npm install archiver googleapis --legacy-peer-deps
-
-# Copia el resto de los archivos del proyecto.
+# Copia el resto de los archivos del proyecto
 COPY . .
 
-# Expone el puerto que usa el backend.
+# Expone el puerto que usa el backend
 EXPOSE 3000
 
-# Comando para iniciar el servidor.
+# Comando para iniciar el servidor
 CMD [ "npm", "start" ]
