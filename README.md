@@ -3,8 +3,8 @@
 # 🚀 ProServers | Cloud & Game Hosting Automation
 
 ![Status](https://img.shields.io/badge/Status-En%20Desarrollo-orange?style=for-the-badge)
-![Version](https://img.shields.io/badge/Versión-v2.6_beta-blue?style=for-the-badge)
-![Target](https://img.shields.io/badge/Meta-v3.0_Stable-success?style=for-the-badge)
+![Version](https://img.shields.io/badge/Versión-v0.8_beta-blue?style=for-the-badge)
+![Target](https://img.shields.io/badge/Meta-v1.0_Stable-success?style=for-the-badge)
 
 *Plataforma automatizada de despliegue y gestión de servidores de alto rendimiento.*
 
