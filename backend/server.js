@@ -6,13 +6,16 @@ const Docker = require('dockerode');
 const fs = require('fs');
 const path = require('path');
 const archiver = require('archiver');
-const admin = require('firebase-admin');
 const multer = require('multer');
 const AdmZip = require('adm-zip');
 const { execSync } = require('child_process');
 const { pipeline } = require('stream/promises');
 const mongoose = require('mongoose');
-require('dotenv').config(); // Mongoose URI
+require('dotenv').config();
+
+// Imports modulares de Firebase (Versión 13+)
+const { initializeApp, cert } = require('firebase-admin/app');
+const { getAuth } = require('firebase-admin/auth');
 
 const app = express();
 const server = http.createServer(app);
@@ -82,15 +85,15 @@ app.use(express.json({ limit: '10000mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10000mb' }));
 
 // ==========================================
-// CONFIGURACIÓN DE FIREBASE ADMIN
+// CONFIGURACIÓN DE FIREBASE ADMIN (V13)
 // ==========================================
 let serviceAccount;
 try {
     serviceAccount = require('./firebase-adminsdk.json');
-    admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
-    console.log("[SEGURIDAD] Firebase Admin inicializado correctamente.");
+    initializeApp({ credential: cert(serviceAccount) });
+    console.log("\x1b[32m[SEGURIDAD] Firebase Admin inicializado correctamente.\x1b[0m");
 } catch (e) {
-    console.warn("\x1b[31m[ALERTA CRÍTICA] No se encontró firebase-adminsdk.json.\x1b[0m");
+    console.warn("\x1b[31m[ALERTA CRÍTICA] Fallo al cargar firebase-adminsdk.json:\x1b[0m", e.message);
 }
 
 const verifyToken = async (req, res, next) => {
@@ -99,7 +102,7 @@ const verifyToken = async (req, res, next) => {
         return res.status(401).json({ error: 'Acceso denegado.' });
     }
     try {
-        req.user = await admin.auth().verifyIdToken(authHeader.split(' ')[1]);
+        req.user = await getAuth().verifyIdToken(authHeader.split(' ')[1]);
         next();
     } catch (error) {
         return res.status(403).json({ error: 'Token inválido o expirado.' });
@@ -889,7 +892,7 @@ app.post('/api/server/installmod', verifyToken, requireAccess, requireFeature('f
 // ==========================================
 io.use(async (socket, next) => {
     if (!socket.handshake.query.token) return next(new Error('Sin token'));
-    try { socket.user = await admin.auth().verifyIdToken(socket.handshake.query.token); next(); } 
+    try { socket.user = await getAuth().verifyIdToken(socket.handshake.query.token); next(); } 
     catch (err) { next(new Error('Invalido')); }
 });
 
