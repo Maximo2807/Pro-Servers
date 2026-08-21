@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Perfil | Professional Servers</title>
+    <title>Desplegar Servidor | Professional Servers V0.8 BETA</title>
     <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
@@ -11,303 +11,780 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
         body { background: #0a0a0a; color: white; min-height: 100vh; overflow-x: hidden; }
-        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a1a3a 0%, #0a0a0a 100%); z-index: -1; }
-        .glass { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 25px; }
+        .bg-glow { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle at 50% 50%, #1a3a1a 0%, #0a0a0a 100%); z-index: -1; }
+        .glass { background: rgba(20, 20, 20, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; }
         .input-pro { background: #161616; border: 1px solid #333; border-radius: 10px; color: white; padding: 12px; outline: none; transition: 0.3s; width: 100%; font-size: 14px; }
-        .input-pro:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.2); }
-        .btn-pro { background: #4CAF50; color: white; font-weight: bold; padding: 15px; border-radius: 12px; transition: 0.3s; text-transform: uppercase; cursor: pointer; border: none; width: 100%; }
-        .btn-pro:hover { background: #45a049; }
-        .btn-danger { background: #ef4444; color: white; font-weight: bold; padding: 15px; border-radius: 12px; transition: 0.3s; text-transform: uppercase; cursor: pointer; border: none; width: 100%; }
-        .btn-danger:hover { background: #dc2626; }
-        .avatar-preview { width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 4px solid #4CAF50; margin: 0 auto; display: block; background-color: #111; }
-        .upload-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); border-radius: 50%; display: flex; align-items: center; justify-content: center; opacity: 0; transition: 0.3s; cursor: pointer; }
-        .avatar-container:hover .upload-overlay { opacity: 1; }
+        .input-pro:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.2); background: #1a1a1a; }
+        .btn-crear { background: #4CAF50; color: white; font-weight: bold; padding: 15px; border-radius: 12px; transition: 0.3s; text-transform: uppercase; cursor: pointer; border: none; width: 100%; }
+        .btn-crear:hover { background: #45a049; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76,175,80,0.3); }
+        .btn-crear:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; background: #555; }
+        
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 5, 0.96); backdrop-filter: blur(15px); z-index: 1000; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
+        .loading-overlay.active { opacity: 1; pointer-events: all; }
+        .spinner-ring { width: 80px; height: 80px; border: 4px solid rgba(255, 255, 255, 0.1); border-top-color: currentColor; border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .glow-purple { box-shadow: 0 0 10px rgba(147, 51, 234, 0.5); }
+        
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #111; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
     </style>
 </head>
 <body>
     <div class="bg-glow"></div>
-    <div class="max-w-6xl mx-auto p-6 pt-12">
-        <div class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-['Cinzel'] text-white uppercase">Área Personal</h1>
-            <button onclick="window.history.back()" class="text-xs font-bold tracking-widest bg-[#111] hover:bg-[#222] transition-colors px-6 py-3 rounded-lg border border-[#333] flex items-center gap-2">
-                <i data-feather="arrow-left" class="w-4 h-4"></i> VOLVER AL PANEL
+    <div class="max-w-5xl mx-auto p-6 pt-12">
+        <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
+            <div class="flex items-center gap-4">
+                <img src="./assets/img/favicon.ico" class="w-14 h-14 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)]">
+                <div>
+                    <h1 class="text-3xl font-bold font-['Cinzel'] tracking-wider text-white uppercase flex items-center gap-3">
+                        Nuevo Proyecto 
+                        <span id="ceo-badge" class="hidden text-[9px] bg-purple-600 text-white px-2 py-1 rounded border border-purple-400 glow-purple tracking-widest font-sans font-bold">MODO CEO</span>
+                    </h1>
+                    <p class="text-xs text-green-500 font-bold uppercase tracking-widest">Infraestructura V0.8 Pro</p>
+                </div>
+            </div>
+            <button onclick="window.location.href='index.html'" class="text-xs text-gray-400 hover:text-white transition-colors uppercase font-bold flex items-center gap-2 bg-[#111] px-4 py-2 rounded-lg border border-[#333]">
+                <i data-feather="arrow-left" class="w-4 h-4"></i> Volver al Panel
             </button>
         </div>
 
-        <form id="profile-form" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-6">
-                <div class="glass">
-                    <h3 class="text-sm font-bold text-gray-400 mb-6 uppercase flex items-center gap-2"><i data-feather="user" class="w-4 h-4"></i> Identidad y Contacto</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Nombre</label><input type="text" id="nombre" class="input-pro"></div>
-                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Apellido(s)</label><input type="text" id="apellido" class="input-pro"></div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Segundo Nombre</label><input type="text" id="sec-nombre" class="input-pro"></div>
-                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Nombre Alternativo / Nickname</label><input type="text" id="alt-nombre" class="input-pro"></div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Correo Electrónico</label><input type="email" id="email" class="input-pro bg-[#111] text-gray-500" disabled title="No se puede cambiar desde aquí"></div>
-                        <div><label class="text-xs text-gray-500 font-bold tracking-wider">Teléfono / WhatsApp</label><input type="text" id="movil" class="input-pro" placeholder="+54 9 ..."></div>
-                    </div>
+        <div id="servers-list-container" class="mb-8"></div>
+
+        <form id="view-create" class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="glass p-8 space-y-6">
+                <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-[#333] pb-3">Identidad</h3>
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-500 uppercase font-bold">Nombre del Proyecto</label>
+                    <input type="text" id="custom-name" class="input-pro" placeholder="Ej: Mi Mundo" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-500 uppercase font-bold">MOTD (Mensaje en el cliente)</label>
+                    <input type="text" id="custom-motd" class="input-pro" placeholder="Ej: ¡Bienvenidos a nuestro server!" required>
+                </div>
+                <div class="space-y-2">
+                    <label class="text-xs text-gray-500 uppercase font-bold">Edición</label>
+                    <select id="server-edition" class="input-pro">
+                        <option value="java">Java Edition (PC)</option>
+                        <option value="bedrock">Bedrock (Consola/Mobile)</option>
+                    </select>
                 </div>
 
-                <div class="glass">
-                    <h3 class="text-sm font-bold text-gray-400 mb-6 uppercase flex items-center gap-2"><i data-feather="map-pin" class="w-4 h-4"></i> Ubicación y Detalles</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold tracking-wider">Ciudad / Localidad</label>
-                            <input type="text" id="ciudad" class="input-pro" placeholder="Ej: Leandro N. Alem, Misiones">
+                <div id="modpack-section" class="pt-4 mt-6 border-t border-[#333]">
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Instalación Inicial</h3>
+                    <select id="install-type" class="input-pro mb-4">
+                        <option value="clean">Instalación Limpia (Solo Motor)</option>
+                        <option value="cf_modpack">Buscar Modpack en CurseForge</option>
+                        <option value="url_modpack">Importar Modpack por URL (MediaFire/Directo)</option>
+                    </select>
+
+                    <div id="modpack-warning-msg" class="hidden bg-red-950/40 border border-red-500 p-6 rounded-xl mb-4 text-center shadow-[0_0_20px_rgba(220,38,38,0.15)]">
+                        <i data-feather="alert-octagon" class="w-10 h-10 text-red-500 mx-auto mb-3"></i>
+                        <p class="text-sm text-white font-bold mb-2">Función Premium Bloqueada</p>
+                        <p class="text-xs text-gray-400">Los Modpacks masivos requieren descompresión profunda y el Gestor de Archivos activado para configurarlos correctamente. Para desbloquear esta función necesitas actualizar al <b class="text-yellow-500">Plan Oro (16GB)</b> o superior.</p>
+                        <button type="button" onclick="window.location.href='planes.html'" class="mt-4 w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg transition-colors uppercase text-xs tracking-wider shadow-lg shadow-red-950/50">
+                            Mejorar a Plan Oro
+                        </button>
+                    </div>
+
+                    <div id="cf-modpack-container" class="hidden space-y-4 bg-[#111] p-4 rounded-lg border border-[#333]">
+                        <div class="flex gap-2">
+                            <input type="text" id="cf-search-input" class="input-pro !py-2" placeholder="Ej: Create Ultimate Selection...">
+                            <button type="button" id="btn-cf-search" onclick="window.buscarModpacksCF()" class="bg-indigo-600 hover:bg-indigo-500 px-4 rounded-lg text-white font-bold transition-colors flex justify-center items-center">
+                                <i data-feather="search" class="w-4 h-4"></i>
+                            </button>
                         </div>
-                        <div>
-                            <label class="text-xs text-gray-500 font-bold tracking-wider">Zona Horaria</label>
-                            <select id="zona" class="input-pro">
-                                <option value="America/Argentina/Buenos_Aires">America/Argentina/Buenos_Aires (GMT-3)</option>
-                                <option value="America/Santiago">America/Santiago (GMT-4)</option>
-                                <option value="America/Mexico_City">America/Mexico_City (GMT-6)</option>
-                                <option value="Europe/Madrid">Europe/Madrid (GMT+1)</option>
+                        <div id="cf-results" class="max-h-48 overflow-y-auto space-y-2 pr-1"></div>
+                        <input type="hidden" id="selected-cf-id" value="">
+                    </div>
+
+                    <div id="url-modpack-container" class="hidden space-y-2 bg-[#111] p-4 rounded-lg border border-[#333]">
+                        <label class="text-xs text-gray-400 font-bold">URL Directa del ZIP (.zip)</label>
+                        <input type="url" id="modpack-url-input" class="input-pro" placeholder="https://www.mediafire.com/file/... o URL directa">
+                        <p class="text-[10px] text-yellow-500"><i data-feather="alert-circle" class="inline w-3 h-3"></i> Se descargará y extraerá en la raíz del servidor automáticamente.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass p-8 space-y-6 flex flex-col justify-between relative">
+                <div>
+                    <h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-[#333] pb-3">Configuración de Motor</h3>
+                    
+                    <div id="config-motor-container">
+                        <div class="space-y-2 mb-6">
+                            <label class="text-xs text-gray-500 uppercase font-bold">Software / Motor</label>
+                            <select id="software-select" class="input-pro"></select>
+                            <div id="software-msg" class="text-[10px] text-yellow-500 flex items-center gap-1 mt-1"></div>
+                        </div>
+
+                        <div id="version-section" class="space-y-2">
+                            <label class="text-xs text-gray-500 uppercase font-bold">Versión</label>
+                            <select id="mc-version-select" class="input-pro">
+                                <option value="LATEST">Última versión disponible (LATEST)</option>
+                                <option value="26.2">26.2 (NUEVA)</option>
+                                <option value="26.1.2">26.1.2</option>
+                                <option value="26.1.1">26.1.1</option>
+                                <option value="26.1">26.1</option>
+                                <option value="1.21.11">1.21.11</option>
+                                <option value="1.21.10">1.21.10</option>
+                                <option value="1.21.9">1.21.9</option>
+                                <option value="1.21.8">1.21.8</option>
+                                <option value="1.21.7">1.21.7</option>
+                                <option value="1.21.6">1.21.6</option>
+                                <option value="1.21.5">1.21.5</option>
+                                <option value="1.21.4">1.21.4</option>
+                                <option value="1.21.3">1.21.3</option>
+                                <option value="1.21.1">1.21.1</option>
+                                <option value="1.21">1.21</option>
+                                <option value="1.20.6">1.20.6</option>
+                                <option value="1.20.4">1.20.4</option>
+                                <option value="1.20.3">1.20.3</option>
+                                <option value="1.20.2">1.20.2</option>
+                                <option value="1.20.1">1.20.1</option>
+                                <option value="1.20">1.20</option>
+                                <option value="1.19.4">1.19.4</option>
+                                <option value="1.19.3">1.19.3</option>
+                                <option value="1.19.2">1.19.2</option>
+                                <option value="1.19.1">1.19.1</option>
+                                <option value="1.19">1.19</option>
+                                <option value="1.18.2">1.18.2</option>
+                                <option value="1.18.1">1.18.1</option>
+                                <option value="1.18">1.18</option>
+                                <option value="1.17.1">1.17.1</option>
+                                <option value="1.16.5">1.16.5</option>
+                                <option value="1.16.4">1.16.4</option>
+                                <option value="1.16.3">1.16.3</option>
+                                <option value="1.16.2">1.16.2</option>
+                                <option value="1.16.1">1.16.1</option>
+                                <option value="1.15.2">1.15.2</option>
+                                <option value="1.15.1">1.15.1</option>
+                                <option value="1.15">1.15</option>
+                                <option value="1.14.4">1.14.4</option>
+                                <option value="1.14.3">1.14.3</option>
+                                <option value="1.14.2">1.14.2</option>
+                                <option value="1.13.2">1.13.2</option>
+                                <option value="1.12.2">1.12.2</option>
+                                <option value="1.12.1">1.12.1</option>
+                                <option value="1.12">1.12</option>
+                                <option value="1.11.2">1.11.2</option>
+                                <option value="1.11">1.11</option>
+                                <option value="1.10.2">1.10.2</option>
+                                <option value="1.10">1.10</option>
+                                <option value="1.9.4">1.9.4</option>
+                                <option value="1.9">1.9</option>
+                                <option value="1.8.9">1.8.9</option>
+                                <option value="1.8.8">1.8.8</option>
+                                <option value="1.8">1.8</option>
+                                <option value="1.7.10">1.7.10</option>
+                                <option value="1.7.10_pre4">1.7.10_pre4</option>
+                                <option value="1.7.2">1.7.2</option>
+                                <option value="1.6.4">1.6.4</option>
+                                <option value="1.6.3">1.6.3</option>
+                                <option value="1.6.2">1.6.2</option>
+                                <option value="1.6.1">1.6.1</option>
+                                <option value="1.5.2">1.5.2</option>
+                                <option value="1.5.1">1.5.1</option>
+                                <option value="1.5">1.5</option>
+                                <option value="1.4.7">1.4.7</option>
+                                <option value="1.4.6">1.4.6</option>
+                                <option value="1.4.5">1.4.5</option>
+                                <option value="1.4.4">1.4.4</option>
+                                <option value="1.4.3">1.4.3</option>
+                                <option value="1.4.2">1.4.2</option>
+                                <option value="1.4.1">1.4.1</option>
+                                <option value="1.4.0">1.4.0</option>
+                                <option value="1.3.2">1.3.2</option>
+                                <option value="1.2.5">1.2.5</option>
+                                <option value="1.2.4">1.2.4</option>
+                                <option value="1.2.3">1.2.3</option>
+                                <option value="1.1">1.1</option>
                             </select>
                         </div>
                     </div>
-                    <div class="mt-4">
-                        <label class="text-xs text-gray-500 font-bold tracking-wider">Dirección (Opcional)</label>
-                        <input type="text" id="dir" class="input-pro">
-                    </div>
-                    <div class="mt-4">
-                        <label class="text-xs text-gray-500 font-bold tracking-wider">Descripción / Bio</label>
-                        <textarea id="desc" class="input-pro h-24" placeholder="Algo sobre ti..."></textarea>
+
+                    <div id="auto-config-msg" class="hidden text-center py-6 bg-[#111] border border-indigo-500/30 rounded-xl">
+                        <i data-feather="cpu" class="w-12 h-12 text-indigo-500 mx-auto mb-3 opacity-80"></i>
+                        <h4 class="text-white font-bold mb-1">Ajuste Automático</h4>
+                        <p class="text-xs text-gray-400 px-4">El servidor se configurará usando el modpack oficial de CurseForge.</p>
                     </div>
                 </div>
 
-                <div class="glass border border-red-900/30">
-                    <h3 class="text-sm font-bold text-red-500 mb-6 uppercase flex items-center gap-2"><i data-feather="shield" class="w-4 h-4"></i> Seguridad de la Cuenta</h3>
-                    <div id="password-section">
-                        <div class="grid grid-cols-1 gap-4">
-                            <div>
-                                <label class="text-xs text-gray-500 font-bold tracking-wider">Contraseña Actual</label>
-                                <input type="password" id="current-password" class="input-pro" placeholder="Requerida para hacer cambios">
-                            </div>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label class="text-xs text-gray-500 font-bold tracking-wider">Nueva Contraseña</label>
-                                    <input type="password" id="new-password" class="input-pro" placeholder="Mínimo 6 caracteres">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500 font-bold tracking-wider">Repetir Nueva Contraseña</label>
-                                    <input type="password" id="confirm-password" class="input-pro" placeholder="Repetí la contraseña">
-                                </div>
-                            </div>
-                        </div>
-                        <p id="pass-msg" class="text-xs mt-3 hidden font-bold"></p>
-                    </div>
-                    <div id="google-auth-msg" class="hidden p-4 bg-[#111] rounded-lg border border-[#333]">
-                        <p class="text-xs text-gray-400 flex items-center gap-2"><i data-feather="info" class="text-blue-400 w-4 h-4"></i> Iniciaste sesión con Google. Las contraseñas se gestionan directamente desde tu cuenta de Google.</p>
-                    </div>
+                <div class="pt-6 mt-6 border-t border-[#333]">
+                    <button type="submit" id="btn-submit-create" class="btn-crear">Desplegar Servidor</button>
+                    <p id="limit-msg" class="text-xs text-red-500 font-bold mt-3 text-center hidden"></p>
                 </div>
-            </div>
-
-            <div class="space-y-6">
-                <div class="glass flex flex-col items-center relative text-center">
-                    <h3 class="text-sm font-bold text-gray-400 mb-6 uppercase w-full text-left flex items-center gap-2"><i data-feather="image" class="w-4 h-4"></i> Avatar</h3>
-                    
-                    <div class="relative avatar-container w-[120px] h-[120px] mb-6">
-                        <img id="avatar-preview" src="./assets/img/default-avatar.png" class="avatar-preview" alt="Tu Avatar">
-                        <div class="upload-overlay" onclick="document.getElementById('file-input').click()">
-                            <i data-feather="upload-cloud" class="text-white w-8 h-8"></i>
-                        </div>
-                        <input type="file" id="file-input" class="hidden" accept="image/png, image/jpeg, image/webp">
-                    </div>
-                    
-                    <p class="text-[10px] text-gray-500 mb-4">Haz clic en la imagen para subir una nueva. Máximo 2MB (JPG, PNG, WEBP).</p>
-                    
-                    <div id="upload-status" class="hidden text-xs text-green-400 font-bold mb-4 flex items-center gap-1 justify-center">
-                        <i data-feather="loader" class="animate-spin w-3 h-3"></i> Subiendo imagen...
-                    </div>
-                </div>
-
-                <button type="submit" id="btn-save" class="btn-pro flex justify-center items-center gap-2">
-                    <i data-feather="save" class="w-5 h-5"></i> GUARDAR CAMBIOS
-                </button>
             </div>
         </form>
+        
+        <div id="loading-overlay" class="loading-overlay">
+            <div id="loading-spinner" class="spinner-ring"></div>
+            <h2 id="loading-title" class="mt-8 text-3xl font-bold font-['Cinzel'] tracking-widest text-green-400 drop-shadow-[0_0_15px_rgba(76,175,80,0.6)]">CONFIGURANDO NODO</h2>
+            <p id="loading-desc" class="text-gray-400 font-mono text-sm mt-3 uppercase tracking-wider">Iniciando secuencia de despliegue...</p>
+            
+            <div class="w-full max-w-md mt-10">
+                <div class="flex justify-between text-[11px] text-gray-500 mb-2 uppercase font-bold tracking-widest">
+                    <span id="loading-step">Procesando...</span>
+                    <span id="loading-pct" class="text-white font-mono">0%</span>
+                </div>
+                <div class="w-full bg-[#111] border border-[#333] rounded-full h-3 overflow-hidden relative shadow-inner">
+                    <div id="loading-bar" class="h-full w-0 bg-gradient-to-r from-green-600 to-green-400 transition-all duration-300 shadow-[0_0_10px_rgba(76,175,80,0.8)]"></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged, updateProfile, updatePassword, EmailAuthProvider, reauthenticateWithCredential } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-storage.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         
-        const firebaseConfig = {
-            apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM",
-            authDomain: "proffesional-server.firebaseapp.com",
-            projectId: "proffesional-server",
-            storageBucket: "proffesional-server.firebasestorage.app",
-            messagingSenderId: "833822850667",
-            appId: "1:833822850667:web:3c03219c6822116edbfb2e"
+        const auth = getAuth(initializeApp({ apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM", authDomain: "proffesional-server.firebaseapp.com", projectId: "proffesional-server", storageBucket: "proffesional-server.firebasestorage.app", messagingSenderId: "833822850667", appId: "1:833822850667:web:3c03219c6822116edbfb2e" }));
+        
+        const API_URL = ''; 
+        
+        window.userPlan = { name: 'Plan Redstone', maxServers: 1, ram: '8GB', ramNum: 8, fileManager: false };
+
+        const getDeployText = () => {
+            const isCEO = auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com';
+            if (isCEO) return 'DESPLEGAR SERVIDOR (MODO DIOS: ∞ RAM)';
+            return `DESPLEGAR SERVIDOR (${window.userPlan?.ram || '8GB'} RAM)`;
         };
+
+        const javaSoftwares = `
+            <optgroup label="Vanilla"><option value="vanilla">Vanilla</option><option value="snapshot">Snapshot</option></optgroup>
+            <optgroup label="Para Plugins"><option value="paper">Paper/Bukkit</option><option value="spigot">Spigot/Bukkit</option><option value="purpur">Purpur/Bukkit</option><option value="glowstone">Glowstone</option></optgroup>
+            <optgroup label="Para Mods y más"><option value="fabric">Fabric</option><option value="quilt">Quilt</option><option value="neoforge">NeoForge</option><option value="forge">Forge</option></optgroup>
+            <optgroup label="Para ambas (Plugins/Mods)"><option value="arclight">Arclight</option></optgroup>
+        `;
+        const bedrockSoftwares = `
+            <optgroup label="Vanilla"><option value="bedrock">Bedrock Oficial</option><option value="preview">Bedrock Preview</option></optgroup>
+            <optgroup label="Para Plugins"><option value="pocketmine">PocketMine</option></optgroup>
+        `;
+
+        const softwareSelect = document.getElementById('software-select');
+        const mcVersion = document.getElementById('mc-version-select');
+        const softwareMsg = document.getElementById('software-msg');
+        const btnSubmit = document.getElementById('btn-submit-create');
+        const installTypeSelect = document.getElementById('install-type');
+        const cfContainer = document.getElementById('cf-modpack-container');
+        const urlContainer = document.getElementById('url-modpack-container');
+        const configMotorContainer = document.getElementById('config-motor-container');
+        const autoConfigMsg = document.getElementById('auto-config-msg');
+        const modpackWarningMsg = document.getElementById('modpack-warning-msg');
+
+        softwareSelect.innerHTML = javaSoftwares;
+
+        installTypeSelect.addEventListener('change', (e) => {
+            cfContainer.classList.add('hidden');
+            urlContainer.classList.add('hidden');
+            modpackWarningMsg.classList.add('hidden');
+            
+            const isModpack = e.target.value === 'cf_modpack' || e.target.value === 'url_modpack';
+            const isCEO = auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com';
+            
+            if (isModpack && !window.userPlan.fileManager && !isCEO) {
+                configMotorContainer.classList.add('hidden');
+                autoConfigMsg.classList.add('hidden');
+                modpackWarningMsg.classList.remove('hidden');
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "REQUIERE PLAN ORO O SUPERIOR";
+                return;
+            }
+
+            if (e.target.value === 'clean') {
+                configMotorContainer.classList.remove('hidden');
+                autoConfigMsg.classList.add('hidden');
+                updateSoftwareMsg();
+            } else if (e.target.value === 'url_modpack') {
+                configMotorContainer.classList.remove('hidden');
+                autoConfigMsg.classList.add('hidden');
+                urlContainer.classList.remove('hidden');
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = getDeployText();
+            } else {
+                configMotorContainer.classList.add('hidden');
+                autoConfigMsg.classList.remove('hidden');
+                cfContainer.classList.remove('hidden');
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "SELECCIONA UN MODPACK ARRIBA";
+            }
+        });
+
+        document.getElementById('server-edition').addEventListener('change', (e) => {
+            const isBedrock = e.target.value === 'bedrock';
+            softwareSelect.innerHTML = isBedrock ? bedrockSoftwares : javaSoftwares;
+            document.getElementById('version-section').style.display = isBedrock ? 'none' : 'block';
+            document.getElementById('modpack-section').style.display = isBedrock ? 'none' : 'block';
+            if(isBedrock) {
+                installTypeSelect.value = 'clean';
+                installTypeSelect.dispatchEvent(new Event('change')); 
+            }
+            updateSoftwareMsg();
+        });
+
+        function updateSoftwareMsg() {
+            if(installTypeSelect.value === 'cf_modpack') return;
+            const val = softwareSelect.value || '';
+            const ver = mcVersion.value || '';
+            const esVersionBloqueada = (ver.startsWith('26.') || ver === 'LATEST');
+            const esMotorDeMods = val && ['forge', 'fabric', 'quilt', 'neoforge', 'arclight'].includes(val);
+
+            if (esVersionBloqueada && esMotorDeMods) {
+                softwareMsg.innerHTML = '<i data-feather="lock"></i> BLOQUEO: Selecciona una versión específica para usar mods.';
+                softwareMsg.className = 'text-[10px] text-red-500 font-bold flex items-center gap-1 mt-1';
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "VERSIÓN NO COMPATIBLE";
+            } else {
+                softwareMsg.innerHTML = '<i data-feather="check"></i> Configuración válida.';
+                softwareMsg.className = 'text-[10px] text-green-400 font-bold flex items-center gap-1 mt-1';
+                btnSubmit.disabled = false;
+                btnSubmit.innerText = getDeployText();
+            }
+            feather.replace();
+        }
         
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const storage = getStorage(app);
-        
-        // Elementos UI
-        const fileInput = document.getElementById('file-input');
-        const avatarPreview = document.getElementById('avatar-preview');
-        const uploadStatus = document.getElementById('upload-status');
-        const btnSave = document.getElementById('btn-save');
-        const passMsg = document.getElementById('pass-msg');
+        softwareSelect.addEventListener('change', updateSoftwareMsg);
+        mcVersion.addEventListener('change', updateSoftwareMsg);
+        updateSoftwareMsg();
 
-        let isGoogleAuth = false;
-        let newAvatarFile = null;
+        window.buscarModpacksCF = async () => {
+            const btn = document.getElementById('btn-cf-search');
+            const input = document.getElementById('cf-search-input').value;
+            const resDiv = document.getElementById('cf-results');
 
-        feather.replace();
+            if(btn) btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i>';
+            feather.replace();
+            resDiv.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Buscando modpacks en CurseForge...</p>';
 
-        // 1. CARGA INICIAL Y AUTO-COMPLETADO DESDE GOOGLE
-        onAuthStateChanged(auth, (user) => {
+            try {
+                const token = await auth.currentUser.getIdToken();
+                let fetchUrl = `${API_URL}/api/curseforge/search?categoryId=4471`;
+                if (input && input.trim() !== '') {
+                    fetchUrl += `&query=${encodeURIComponent(input.trim())}`;
+                }
+
+                const res = await fetch(fetchUrl, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                
+                if (!res.ok) {
+                    const errTxt = await res.text();
+                    throw new Error(`Error en el servidor o CurseForge no responde. (HTTP ${res.status}: ${errTxt})`);
+                }
+                
+                const data = await res.json();
+                
+                resDiv.innerHTML = '';
+                let found = 0;
+                if(data.data && data.data.length > 0) {
+                    data.data.forEach(mod => {
+                        found++;
+                        const icon = (mod.logo && mod.logo.url) ? mod.logo.url : './assets/img/favicon.ico';
+                        
+                        const hasServerPack = mod.latestFiles && mod.latestFiles.some(f => f.serverPackFileId);
+                        
+                        const badgeHtml = hasServerPack 
+                            ? `<span class="text-[9px] bg-green-600/20 text-green-400 border border-green-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="server" class="w-3 h-3"></i> Server Pack Oficial</span>`
+                            : `<span class="text-[9px] bg-red-600/20 text-red-400 border border-red-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="x-circle" class="w-3 h-3"></i> Incompatible (Solo Cliente)</span>`;
+
+                        const clickAttr = hasServerPack ? `onclick="window.seleccionarModpack('${mod.id}', this)"` : `onclick="alert('Este modpack no posee archivos configurados para servidor (Server Pack). Solo puede instalarse en clientes.')"`;
+                        const opacityClass = hasServerPack ? '' : 'opacity-60 grayscale cursor-not-allowed';
+
+                        resDiv.innerHTML += `
+                            <div ${clickAttr} class="modpack-card flex gap-3 p-3 bg-[#161616] border border-[#333] rounded-lg hover:border-indigo-500 transition-colors ${opacityClass} ${hasServerPack ? 'cursor-pointer' : ''}">
+                                <img src="${icon}" class="w-12 h-12 rounded object-cover shadow-md">
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-sm font-bold text-white truncate" title="${mod.name.replace(/'/g, "\\'")}">${mod.name}</h4>
+                                    <div class="flex items-center gap-2 mt-1">
+                                        ${badgeHtml}
+                                        <span class="text-[10px] text-gray-500 font-mono"><i data-feather="download" class="w-3 h-3 inline text-indigo-400"></i> ${mod.downloadCount.toLocaleString()}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+                if(found === 0) {
+                    resDiv.innerHTML = '<div class="text-center py-4"><i data-feather="x-circle" class="w-8 h-8 text-red-400 mx-auto mb-2 opacity-50"></i><p class="text-xs text-red-400">No se encontraron resultados.</p></div>';
+                }
+            } catch(e) {
+                console.error("Error CurseForge:", e);
+                resDiv.innerHTML = `<p class="text-xs text-red-500 text-center py-4">Error al buscar en CurseForge.<br><span class="text-[10px] text-gray-500">${e.message}</span></p>`;
+            }
+            if(btn) btn.innerHTML = '<i data-feather="search" class="w-4 h-4"></i>';
+            feather.replace();
+        };
+
+        window.seleccionarModpack = async (id, el) => {
+            document.querySelectorAll('.modpack-card').forEach(c => {
+                c.classList.remove('border-indigo-500', 'bg-indigo-900/30');
+                if(!c.classList.contains('grayscale')) {
+                    c.classList.add('border-[#333]', 'bg-[#161616]');
+                }
+            });
+            el.classList.remove('border-[#333]', 'bg-[#161616]');
+            el.classList.add('border-indigo-500', 'bg-indigo-900/30');
+            document.getElementById('selected-cf-id').value = id;
+
+            configMotorContainer.classList.remove('hidden');
+            autoConfigMsg.classList.add('hidden');
+            
+            softwareSelect.innerHTML = '<option value="Server Pack">Modpack / Server Pack Oficial</option>';
+            
+            mcVersion.innerHTML = '<option value="">Obteniendo versiones desde CurseForge...</option>';
+            btnSubmit.disabled = true;
+            btnSubmit.innerText = "CARGANDO VERSIONES...";
+
+            try {
+                const token = await auth.currentUser.getIdToken();
+                const res = await fetch(`${API_URL}/api/curseforge/files?modId=${id}`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                
+                if (!res.ok) {
+                    const errTxt = await res.text();
+                    throw new Error(`Fallo al conectar con la base de datos. (HTTP ${res.status}: ${errTxt})`);
+                }
+                
+                const data = await res.json();
+                
+                mcVersion.innerHTML = '';
+                let foundVersions = 0;
+                
+                if(data.data && data.data.length > 0) {
+                    data.data.forEach(f => {
+                        if (f.serverPackFileId) {
+                            foundVersions++;
+                            const type = f.releaseType === 1 ? 'RELEASE' : (f.releaseType === 2 ? 'BETA' : 'ALPHA');
+                            const mcVer = f.gameVersions.find(v => v.match(/^1\.\d/)) || "Auto";
+                            
+                            mcVersion.innerHTML += `<option value="${f.serverPackFileId}" data-mc="${mcVer}">${f.displayName} | MC ${mcVer} (${type})</option>`;
+                        }
+                    });
+                    
+                    if (foundVersions > 0) {
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerText = getDeployText();
+                    } else {
+                        mcVersion.innerHTML = '<option value="">No hay Server Packs en estas versiones.</option>';
+                        btnSubmit.innerText = "SIN VERSIONES COMPATIBLES";
+                    }
+                } else {
+                    mcVersion.innerHTML = '<option value="">No hay versiones disponibles.</option>';
+                    btnSubmit.innerText = "SIN VERSIONES";
+                }
+            } catch(e) {
+                console.error("Error versiones:", e);
+                mcVersion.innerHTML = '<option value="">Error de conexión con la API.</option>';
+                btnSubmit.innerText = "ERROR DE CONEXIÓN";
+            }
+        };
+
+        onAuthStateChanged(auth, async (user) => {
             if (!user) {
                 window.location.href = 'index.html';
                 return;
             }
-
-            // Validar si entró con Google
-            isGoogleAuth = user.providerData.some(p => p.providerId === 'google.com');
-
-            // Autocompletado de datos
-            document.getElementById('email').value = user.email || '';
-            
-            if (user.displayName) {
-                const partes = user.displayName.split(' ');
-                document.getElementById('nombre').value = partes[0] || '';
-                document.getElementById('apellido').value = partes.slice(1).join(' ') || '';
-            }
-
-            if (user.phoneNumber) document.getElementById('movil').value = user.phoneNumber;
-            
-            if (user.photoURL) {
-                avatarPreview.src = user.photoURL;
-            }
-
-            // Ocultar sección de contraseñas si es Google
-            if (isGoogleAuth) {
-                document.getElementById('password-section').style.display = 'none';
-                document.getElementById('google-auth-msg').classList.remove('hidden');
-            }
-        });
-
-        // 2. PREVISUALIZACIÓN DE IMAGEN LOCAL
-        fileInput.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            // Validar tamaño (Máx 2MB)
-            if (file.size > 2 * 1024 * 1024) {
-                alert("La imagen es demasiado grande. El máximo es 2MB.");
-                fileInput.value = '';
-                return;
-            }
-
-            newAvatarFile = file;
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                avatarPreview.src = event.target.result;
-            };
-            reader.readAsDataURL(file);
-        });
-
-        // 3. GUARDADO GENERAL (PERFIL + FOTO + CONTRASEÑA)
-        document.getElementById('profile-form').onsubmit = async (e) => {
-            e.preventDefault();
-            btnSave.disabled = true;
-            btnSave.innerHTML = '<i data-feather="loader" class="animate-spin"></i> GUARDANDO...';
-            feather.replace();
-
-            const user = auth.currentUser;
-            let currentPhotoURL = user.photoURL;
-
             try {
-                // --- A. SUBIDA DE FOTO A FIREBASE STORAGE ---
-                if (newAvatarFile) {
-                    uploadStatus.classList.remove('hidden');
-                    const storageRef = ref(storage, `avatars/${user.uid}_${Date.now()}`);
-                    await uploadBytes(storageRef, newAvatarFile);
-                    currentPhotoURL = await getDownloadURL(storageRef);
-                    uploadStatus.classList.add('hidden');
+                const isCEO = user.email === 'rodasmaximo51@gmail.com';
+                
+                if (isCEO) {
+                    document.getElementById('ceo-badge')?.classList.remove('hidden');
+                    window.userPlan = { name: 'Plan ProServers CEO', maxServers: 'ilimitado', ram: '∞', ramNum: 9999, fileManager: true };
                 }
 
-                // --- B. ACTUALIZACIÓN DE DATOS DEL PERFIL ---
-                const nombre = document.getElementById('nombre').value.trim();
-                const apellido = document.getElementById('apellido').value.trim();
-                const displayNameFinal = `${nombre} ${apellido}`.trim();
+                const token = await user.getIdToken();
 
-                await updateProfile(user, {
-                    displayName: displayNameFinal || user.displayName,
-                    photoURL: currentPhotoURL
+                const verifyRes = await fetch(`${API_URL}/api/user/status?uid=${user.uid}`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
                 });
+                if (!verifyRes.ok) throw new Error("Backend caído al verificar status");
+                const verifyData = await verifyRes.json();
 
-                // --- C. LÓGICA DE CONTRASEÑA E INVIOLABILIDAD ---
-                if (!isGoogleAuth) {
-                    const currentPass = document.getElementById('current-password').value;
-                    const newPass = document.getElementById('new-password').value;
-                    const confPass = document.getElementById('confirm-password').value;
-
-                    if (newPass || confPass || currentPass) {
-                        passMsg.classList.remove('hidden');
-
-                        if (!currentPass) {
-                            throw new Error("pass-missing-current");
-                        }
-                        if (newPass !== confPass) {
-                            throw new Error("pass-mismatch");
-                        }
-                        if (newPass === currentPass) {
-                            throw new Error("pass-same");
-                        }
-
-                        // Reautenticar primero para poder cambiar la contraseña
-                        const credential = EmailAuthProvider.credential(user.email, currentPass);
-                        await reauthenticateWithCredential(user, credential);
-                        
-                        // Si pasa la reautenticación, actualizamos
-                        await updatePassword(user, newPass);
-                        
-                        // Limpiar campos de contraseña tras el éxito
-                        document.getElementById('current-password').value = '';
-                        document.getElementById('new-password').value = '';
-                        document.getElementById('confirm-password').value = '';
-                        
-                        passMsg.innerText = "¡Contraseña actualizada con éxito!";
-                        passMsg.className = "text-xs mt-3 font-bold text-green-400";
+                if (!isCEO) {
+                    if (verifyData.plan) {
+                        window.userPlan = verifyData.plan;
+                        window.userPlan.ramNum = parseInt(window.userPlan.ram.replace(/[^0-9]/g, '')) || 8;
+                    } else if (verifyData.status === 'premium') {
+                        window.userPlan = { name: 'Plan Hierro', maxServers: 2, ram: '12GB', ramNum: 12, fileManager: false };
                     }
                 }
 
-                alert("✅ Todos los cambios se han guardado correctamente.");
+                installTypeSelect.dispatchEvent(new Event('change'));
 
-            } catch (error) {
-                console.error(error);
-                passMsg.classList.remove('hidden');
-                passMsg.className = "text-xs mt-3 font-bold text-red-500";
-                
-                if (error.message === "pass-missing-current") {
-                    passMsg.innerText = "Error: Necesitas ingresar tu contraseña actual para hacer cambios.";
-                } else if (error.message === "pass-mismatch") {
-                    passMsg.innerText = "Error: Las contraseñas nuevas no coinciden.";
-                } else if (error.message === "pass-same") {
-                    passMsg.innerText = "Error de seguridad: La nueva contraseña no puede ser exactamente igual a la actual.";
-                } else if (error.code === "auth/invalid-credential") {
-                    passMsg.innerText = "Error: La contraseña actual ingresada es incorrecta.";
-                } else if (error.code === "auth/weak-password") {
-                    passMsg.innerText = "Error: La nueva contraseña debe tener al menos 6 caracteres.";
-                } else {
-                    alert("Error al guardar: " + error.message);
+                if(btnSubmit && btnSubmit.disabled === false) btnSubmit.innerText = getDeployText();
+
+                await loadUserServers(user.uid, isCEO);
+
+                if (!isCEO && (verifyData.status === 'expired' || verifyData.status === 'suspended' || verifyData.status === 'banned')) {
+                    document.getElementById('servers-list-container').innerHTML = ''; 
+                    const form = document.getElementById('view-create');
+                    form.innerHTML = `
+                        <div class="col-span-1 lg:col-span-2 glass p-10 text-center flex flex-col items-center justify-center border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]">
+                            <i data-feather="slash" class="w-20 h-20 text-red-600 mb-6"></i>
+                            <h2 class="text-3xl font-bold font-['Cinzel'] text-red-500 mb-2">${verifyData.status === 'banned' ? 'ERRADICADO DEL SISTEMA' : 'Suscripción Suspendida'}</h2>
+                            <p class="text-gray-300 mb-6 max-w-lg text-sm">${verifyData.status === 'banned' ? 'El sistema de seguridad ha detectado un intento de evasión de límites (Multicuentas / Abuso de IPs). Todos tus servidores han sido destruidos y tu acceso ha sido revocado permanentemente.' : 'Tu plan actual ha caducado. Renueva tu suscripción para seguir desplegando infraestructura.'}</p>
+                            ${verifyData.status !== 'banned' ? `<button onclick="window.location.href='planes.html'" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 rounded-lg text-white font-bold uppercase tracking-wider transition-colors shadow-[0_0_15px_rgba(79,70,229,0.4)]">Ver Planes de Pago</button>` : `<button onclick="auth.signOut().then(()=>window.location.href='index.html')" class="bg-red-700 hover:bg-red-600 px-8 py-3 rounded-lg text-white font-bold uppercase tracking-wider transition-colors">Salir</button>`}
+                        </div>
+                    `;
+                    feather.replace();
                 }
-                
-                if (newAvatarFile) uploadStatus.classList.add('hidden');
-            } finally {
-                btnSave.disabled = false;
-                btnSave.innerHTML = '<i data-feather="save" class="w-5 h-5"></i> GUARDAR CAMBIOS';
-                feather.replace();
+            } catch (error) { 
+                console.error("Error validando permisos:", error);
             }
+        });
+
+        async function loadUserServers(uid, isCEO) {
+            try {
+                const token = await auth.currentUser.getIdToken();
+                const res = await fetch(`${API_URL}/api/project/check?uid=${uid}`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (!res.ok) throw new Error("Backend caído al cargar servidores");
+                const data = await res.json();
+                
+                const list = document.getElementById('servers-list-container');
+                const limitMsg = document.getElementById('limit-msg');
+
+                let count = data.exists ? data.servers.length : 0;
+                
+                let planName = window.userPlan.name;
+                let maxLimit = window.userPlan.maxServers;
+                let isLimitReached = maxLimit !== 'ilimitado' && count >= maxLimit && !isCEO;
+                let limitLabel = maxLimit === 'ilimitado' || isCEO ? '∞' : maxLimit;
+                
+                if (isLimitReached) {
+                    if(btnSubmit) {
+                        btnSubmit.disabled = true;
+                        btnSubmit.innerHTML = `LÍMITE ALCANZADO (${planName.toUpperCase()})`;
+                    }
+                    if(limitMsg) {
+                        limitMsg.innerText = `Has alcanzado el límite de ${maxLimit} servidor(es) de tu ${planName}.`;
+                        limitMsg.classList.remove('hidden');
+                    }
+                } else {
+                    if(limitMsg) limitMsg.classList.add('hidden');
+                }
+
+                if (data.exists && count > 0) {
+                    let html = `<h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Tus Servidores Activos (${planName}: ${count}/${limitLabel})</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
+                    data.servers.forEach(s => {
+                        const safeEdition = s.edition || 'java';
+                        const versionLabel = safeEdition === 'bedrock' ? (s.software || 'unknown').toUpperCase() : (s.version || 'Auto');
+                        html += `<div class="glass p-5 flex flex-col justify-between border border-[#333]">
+                            <div>
+                                <h4 class="font-bold text-white text-lg">${s.projectName || 'Servidor Sin Nombre'}</h4>
+                                <p class="text-xs text-gray-400 mb-4">${safeEdition.toUpperCase()} - ${versionLabel}</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="window.enterServer('${encodeURIComponent(JSON.stringify(s))}')" class="bg-green-600 hover:bg-green-500 transition-colors px-4 py-2 rounded text-xs font-bold text-white flex-1 shadow-lg">ENTRAR</button>
+                                <button onclick="window.deleteServer('${s.id}')" class="bg-[#222] border border-[#444] hover:border-red-500 hover:bg-red-600/20 hover:text-red-500 transition-colors px-3 py-2 rounded text-xs text-white" title="Borrar Servidor"><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                        </div>`;
+                    });
+                    list.innerHTML = html + '</div><hr class="border-[#333] my-8">';
+                }
+                feather.replace();
+            } catch (e) { console.error("Error cargando servidores:", e); }
+        }
+
+        window.enterServer = (s) => { 
+            sessionStorage.setItem('selectedServer', decodeURIComponent(s)); 
+            window.location.href = 'index.html'; 
         };
+
+        window.deleteServer = async (id) => {
+            if (!confirm('⚠️ ¿Estás seguro? Eliminarás tu servidor y todo tu progreso se perderá permanentemente. Liberará 1 ranura en tu plan.')) return;
+            const token = await auth.currentUser.getIdToken();
+            await fetch(`${API_URL}/api/project/delete`, { 
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, 
+                body: JSON.stringify({ uid: auth.currentUser.uid, serverId: id }) 
+            });
+            window.location.reload();
+        };
+
+        document.getElementById('view-create')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (btnSubmit && btnSubmit.disabled) return;
+            
+            const installType = document.getElementById('install-type').value;
+            const edition = document.getElementById('server-edition').value;
+            const isCEO = auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com';
+            
+            if ((installType === 'cf_modpack' || installType === 'url_modpack') && !window.userPlan.fileManager && !isCEO) {
+                alert("Violación de seguridad: Tu plan actual no soporta Modpacks porque no tiene el Gestor de Archivos activado. Mejora al Plan Oro o superior.");
+                return;
+            }
+
+            if (edition === 'java') {
+                if (installType === 'cf_modpack' && !document.getElementById('selected-cf-id').value) {
+                    alert("Por favor, busca y selecciona un Modpack de la lista.");
+                    return;
+                }
+                if (installType === 'url_modpack' && !document.getElementById('modpack-url-input').value) {
+                    alert("Por favor, ingresa una URL válida del ZIP del Modpack.");
+                    return;
+                }
+            }
+
+            const overlay = document.getElementById('loading-overlay');
+            const loadingTitle = document.getElementById('loading-title');
+            const loadingDesc = document.getElementById('loading-desc');
+            const loadingStep = document.getElementById('loading-step');
+            const loadingBar = document.getElementById('loading-bar');
+            const loadingPct = document.getElementById('loading-pct');
+            const spinner = document.getElementById('loading-spinner');
+
+            overlay.classList.add('active');
+            btnSubmit.disabled = true;
+
+            if (installType === 'cf_modpack') {
+                loadingTitle.innerText = "ACOPLANDO CURSEFORGE";
+                loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)] tracking-widest";
+                loadingDesc.innerText = "Descargando versión específica y construyendo mods...";
+                loadingBar.className = "bg-gradient-to-r from-indigo-600 to-indigo-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(99,102,241,0.8)]";
+                spinner.style.borderTopColor = "#6366f1"; 
+            } else if (installType === 'url_modpack') {
+                loadingTitle.innerText = "IMPORTANDO DESDE LA NUBE";
+                loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] tracking-widest";
+                loadingDesc.innerText = "Extrayendo ZIP remoto en la raíz del servidor...";
+                loadingBar.className = "bg-gradient-to-r from-blue-600 to-blue-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(59,130,246,0.8)]";
+                spinner.style.borderTopColor = "#3b82f6"; 
+            } else {
+                loadingTitle.innerText = "DESPLEGANDO NODO LIMPIO";
+                loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-green-400 drop-shadow-[0_0_15px_rgba(76,175,80,0.6)] tracking-widest";
+                loadingDesc.innerText = "Generando contenedor y asignando recursos...";
+                loadingBar.className = "bg-gradient-to-r from-green-600 to-green-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(76,175,80,0.8)]";
+                spinner.style.borderTopColor = "#4ade80"; 
+            }
+
+            let finalSoftware = softwareSelect.value || 'vanilla';
+            let finalVersion = edition === 'java' ? (mcVersion.value || 'LATEST') : 'LATEST';
+            let curseforgeFileId = null;
+
+            if(installType === 'cf_modpack') {
+                finalSoftware = 'Server Pack'; 
+                curseforgeFileId = mcVersion.value; 
+                
+                const selectedOption = mcVersion.options[mcVersion.selectedIndex];
+                finalVersion = selectedOption ? selectedOption.getAttribute('data-mc') : 'Auto';
+            }
+
+            const payload = {
+                uid: auth.currentUser.uid,
+                email: auth.currentUser.email,
+                projectName: document.getElementById('custom-name').value,
+                motd: document.getElementById('custom-motd').value || "Professional Server",
+                edition: edition,
+                software: finalSoftware,
+                version: finalVersion,
+                curseforgeFileId: curseforgeFileId
+            };
+
+            if (edition === 'java') {
+                if (installType === 'cf_modpack') {
+                    payload.curseforgeModpackId = document.getElementById('selected-cf-id').value;
+                } else if (installType === 'url_modpack') {
+                    payload.modpackUrl = document.getElementById('modpack-url-input').value;
+                }
+            }
+
+            try {
+                const token = await auth.currentUser.getIdToken();
+                
+                const response = await fetch(`${API_URL}/api/project/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                    body: JSON.stringify(payload)
+                });
+                
+                let responseData = null;
+                const contentType = response.headers.get("content-type");
+                
+                if (contentType && contentType.includes("application/json")) {
+                    responseData = await response.json();
+                }
+
+                if (!response.ok) {
+                    let msgError = "El servidor denegó la petición o está en mantenimiento.";
+                    if (responseData && (responseData.message || responseData.error)) {
+                        msgError = responseData.message || responseData.error;
+                    } else if (!contentType || !contentType.includes("application/json")) {
+                        msgError = `Error ${response.status}: El servidor respondió con una página HTML en lugar de datos. (Cloudflare / Nginx o Backend Apagado)`;
+                    }
+                    
+                    if (isCEO) {
+                        alert("⚠️ Error detectado (Modo CEO): " + msgError + "\n\nEvitando bloqueo por ser Administrador.");
+                    } else {
+                        alert("⚠️ Acción denegada: " + msgError);
+                        if (msgError.toLowerCase().includes("expulsado") || response.status === 403) {
+                            window.location.reload(); 
+                        }
+                    }
+                    
+                    overlay.classList.remove('active');
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerText = getDeployText();
+                    return; 
+                }
+
+                if(responseData && responseData.success) {
+                    const serverId = responseData.server.id;
+                    
+                    const statusInterval = setInterval(async () => {
+                        try {
+                            const statRes = await fetch(`${API_URL}/api/project/deploy-status?serverId=${serverId}`, {
+                                headers: { 'Authorization': 'Bearer ' + token }
+                            });
+                            if (!statRes.ok) return;
+                            const statData = await statRes.json();
+                            
+                            loadingStep.innerText = statData.step;
+                            if (statData.pct > 0) {
+                                loadingBar.style.width = statData.pct + '%';
+                                loadingPct.innerText = statData.pct + '%';
+                            }
+
+                            if (statData.done) {
+                                clearInterval(statusInterval);
+                                
+                                if (statData.error) {
+                                    alert("FALLO EN EL SERVIDOR:\n\n" + statData.error);
+                                    overlay.classList.remove('active');
+                                    btnSubmit.disabled = false;
+                                } else {
+                                    loadingBar.style.width = '100%';
+                                    loadingPct.innerText = '100%';
+                                    loadingStep.innerText = "¡Infraestructura Lista!";
+                                    
+                                    setTimeout(() => {
+                                        responseData.server.version = finalVersion;
+                                        sessionStorage.setItem('selectedServer', JSON.stringify(responseData.server));
+                                        window.location.href = 'index.html';
+                                    }, 1200);
+                                }
+                            }
+                        } catch(errStatus) {
+                            console.error("Error leyendo estado del backend:", errStatus);
+                        }
+                    }, 2000);
+
+                } else {
+                    alert("Error: " + (responseData ? responseData.message : "No se pudo desplegar."));
+                    overlay.classList.remove('active');
+                    btnSubmit.disabled = false;
+                }
+            } catch(err) {
+                console.error("Error crítico:", err);
+                alert("Aviso de Sistema: " + err.message);
+                overlay.classList.remove('active');
+                btnSubmit.disabled = false;
+            }
+        });
+
+        feather.replace();
     </script>
 </body>
 </html>

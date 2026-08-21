@@ -35,6 +35,10 @@
         .grupo-input label { display: block; font-size: 12px; color: #888; margin-bottom: 5px; text-transform: uppercase; }
         .grupo-input input, .grupo-input select { width: 100%; padding: 12px; background: #161616; border: 1px solid #222; border-radius: 8px; color: white; outline: none; transition: 0.3s; }
         .grupo-input input:focus, .grupo-input select:focus { border-color: #4CAF50; background: #1a1a1a; }
+        
+        .input-pro { background: #161616; border: 1px solid #333; border-radius: 8px; color: white; padding: 12px; outline: none; transition: 0.3s; width: 100%; font-size: 13px; }
+        .input-pro:focus { border-color: #4CAF50; box-shadow: 0 0 10px rgba(76, 175, 80, 0.2); background: #1a1a1a; }
+
         .fila-doble { display: flex; gap: 10px; width: 100%; }
         .btn-ingresar { width: 100%; padding: 14px; background: #4CAF50; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 10px; text-transform: uppercase; color: white; }
         .btn-ingresar:hover { background: #45a049; transform: scale(1.02); }
@@ -83,46 +87,36 @@
         .cloud-badge { display: flex; align-items: center; gap: 8px; background: #222; border: 1px solid #444; padding: 12px; border-radius: 8px; flex: 1; }
         .glowing-text { text-shadow: 0 0 15px rgba(76, 175, 80, 0.5); }
         
-        /* ==========================================
-           CLASES DINÁMICAS DE TEMAS (PLANES)
-           ========================================== */
         .header-user-avatar { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: 3px solid transparent; transition: 0.3s; }
         .plan-badge-base { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; display: inline-block; margin-top: 5px; }
 
-        /* REDSTONE */
         .theme-border-redstone { border-color: #ef4444; box-shadow: 0 0 15px rgba(239, 68, 68, 0.4); }
         .theme-text-redstone { color: #fff; text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 0 20px rgba(239, 68, 68, 0.4); }
         .theme-badge-redstone { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.5); box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
-
-        /* HIERRO */
         .theme-border-hierro { border-color: #e5e7eb; box-shadow: 0 0 15px rgba(229, 231, 235, 0.4); }
         .theme-text-hierro { color: #fff; text-shadow: 0 0 10px rgba(229, 231, 235, 0.8), 0 0 20px rgba(229, 231, 235, 0.4); }
         .theme-badge-hierro { background: rgba(229, 231, 235, 0.15); color: #e5e7eb; border: 1px solid rgba(229, 231, 235, 0.5); box-shadow: 0 0 10px rgba(229, 231, 235, 0.2); }
-
-        /* ORO */
+        .theme-border-cobre { border-color: #b87333; box-shadow: 0 0 15px rgba(184, 115, 51, 0.4); }
+        .theme-text-cobre { color: #fff; text-shadow: 0 0 10px rgba(184, 115, 51, 0.8), 0 0 20px rgba(184, 115, 51, 0.4); }
+        .theme-badge-cobre { background: rgba(184, 115, 51, 0.15); color: #d97706; border: 1px solid rgba(184, 115, 51, 0.5); box-shadow: 0 0 10px rgba(184, 115, 51, 0.2); }
         .theme-border-oro { border-color: #f59e0b; box-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
         .theme-text-oro { color: #fff; text-shadow: 0 0 10px rgba(245, 158, 11, 0.8), 0 0 20px rgba(245, 158, 11, 0.4); }
         .theme-badge-oro { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.5); box-shadow: 0 0 10px rgba(245, 158, 11, 0.2); }
-
-        /* DIAMANTE */
         .theme-border-diamante { border-color: #06b6d4; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
         .theme-text-diamante { color: #fff; text-shadow: 0 0 10px rgba(6, 182, 212, 0.8), 0 0 20px rgba(6, 182, 212, 0.4); }
         .theme-badge-diamante { background: rgba(6, 182, 212, 0.15); color: #06b6d4; border: 1px solid rgba(6, 182, 212, 0.5); box-shadow: 0 0 10px rgba(6, 182, 212, 0.2); }
-
-        /* NETHERITE */
         .theme-border-netherite { border-color: #a855f7; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
         .theme-text-netherite { color: #fff; text-shadow: 0 0 10px rgba(168, 85, 247, 0.8), 0 0 20px rgba(168, 85, 247, 0.4); }
         .theme-badge-netherite { background: rgba(168, 85, 247, 0.15); color: #a855f7; border: 1px solid rgba(168, 85, 247, 0.5); box-shadow: 0 0 10px rgba(168, 85, 247, 0.2); }
-
-        /* GHOST WARRIOR */
         .theme-border-ghost-warrior { border-color: #3b82f6; box-shadow: 0 0 15px rgba(59, 130, 246, 0.4); }
         .theme-text-ghost-warrior { color: #fff; text-shadow: 0 0 10px rgba(59, 130, 246, 0.8), 0 0 20px rgba(59, 130, 246, 0.4); }
         .theme-badge-ghost-warrior { background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.5); box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
-
-        /* ENTERPRISE */
         .theme-border-enterprise { border-color: #fbbf24; box-shadow: 0 0 15px rgba(251, 191, 36, 0.4); }
         .theme-text-enterprise { color: #fff; text-shadow: 0 0 10px rgba(251, 191, 36, 0.8), 0 0 20px rgba(251, 191, 36, 0.4); }
         .theme-badge-enterprise { background: rgba(251, 191, 36, 0.15); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.5); box-shadow: 0 0 10px rgba(251, 191, 36, 0.2); }
+        .theme-border-ceo { border-color: #9333ea; box-shadow: 0 0 25px rgba(147, 51, 234, 0.6); }
+        .theme-text-ceo { color: #fff; text-shadow: 0 0 15px rgba(147, 51, 234, 0.9), 0 0 30px rgba(147, 51, 234, 0.5); }
+        .theme-badge-ceo { background: rgba(147, 51, 234, 0.2); color: #d8b4fe; border: 1px solid rgba(147, 51, 234, 0.8); box-shadow: 0 0 15px rgba(147, 51, 234, 0.4); text-transform: uppercase; font-weight: 800;}
         
         @media (max-width: 768px) {
             .contenedor-principal { flex-direction: column; position: relative; }
@@ -142,7 +136,12 @@
             .navigation .btn-hub { border-left: none; margin-left: 0; padding-left: 5px; border-top: 1px solid #333; }
         }
 
-        /* Mine AI Chat Estilos */
+        #mod-versions-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); display: flex; justify-content: center; align-items: center; z-index: 2000; }
+        .modal-content-modrinth { background: #1a1a1a; border: 1px solid #333; border-radius: 12px; width: 90%; max-width: 600px; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 15px 30px rgba(0,0,0,0.5); }
+        .modal-header-modrinth { padding: 15px 20px; border-bottom: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .modal-body-modrinth { padding: 20px; overflow-y: auto; flex-grow: 1; }
+
+        /* MINE AI MODAL ORIGINAL */
         .mine-hidden { display: none !important; }
         #mine-chat-modal { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%); width: 350px; max-width: 95%; background-color: #121212; border: 1px solid #4ade80; border-radius: 12px; box-shadow: 0 10px 30px rgba(74, 222, 128, 0.15); z-index: 1000; font-family: 'Poppins', sans-serif; display: flex; flex-direction: column; max-height: 500px; }
         .mine-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; background-color: #18181b; border-top-left-radius: 12px; border-top-right-radius: 12px; border-bottom: 1px solid #27272a; }
@@ -160,34 +159,57 @@
         .mine-footer button:hover { background-color: #22c55e; }
         .mine-footer button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        /* Botón Flotante de Soporte */
-        .support-btn-floating { position: fixed; bottom: 20px; right: 20px; background-color: #4f46e5; color: white; border-radius: 50%; width: 55px; height: 55px; display: flex; justify-content: center; align-items: center; box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4); cursor: pointer; z-index: 1000; transition: 0.3s; border: 2px solid #6366f1; }
-        .support-btn-floating:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6); }
+        /* SOPORTE EN VIVO (WIDGET FLOTANTE) */
+        .support-btn-floating { position: fixed; bottom: 25px; right: 25px; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 1000; transition: 0.3s; border: 2px solid rgba(255,255,255,0.2); box-shadow: 0 5px 20px rgba(147, 51, 234, 0.5); }
+        .support-btn-floating:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(147, 51, 234, 0.8); border-color: rgba(255,255,255,0.5); }
+        
+        .support-window { position: fixed; bottom: 100px; right: 25px; width: 360px; max-width: 90vw; background-color: #121419; border: 1px solid #9333ea; border-radius: 16px; box-shadow: 0 15px 40px rgba(147, 51, 234, 0.25); z-index: 1050; display: flex; flex-direction: column; max-height: 550px; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform: scale(0); opacity: 0; transform-origin: bottom right; pointer-events: none; }
+        .support-window.active { transform: scale(1); opacity: 1; pointer-events: all; }
+        
+        .support-header { background: linear-gradient(135deg, #9333ea, #4f46e5); padding: 15px 20px; border-top-left-radius: 15px; border-top-right-radius: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .support-body { padding: 20px; overflow-y: auto; flex: 1; min-height: 300px; display: flex; flex-direction: column; gap: 12px; background: #0b0c10; }
+        
+        .chat-bubble { max-width: 85%; padding: 12px 16px; border-radius: 14px; font-size: 13px; line-height: 1.5; word-wrap: break-word; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        .chat-ai { align-self: flex-start; background-color: #1f232b; color: #e4e4e7; border-bottom-left-radius: 4px; border-left: 3px solid #9333ea; }
+        .chat-user { align-self: flex-end; background-color: #9333ea; color: white; border-bottom-right-radius: 4px; }
+        
+        .support-footer { padding: 15px; background: #121419; border-bottom-left-radius: 15px; border-bottom-right-radius: 15px; border-top: 1px solid #1f232b; display: flex; gap: 10px; align-items: center; }
+        .support-input { flex: 1; background: #0b0c10; border: 1px solid #333; color: white; padding: 12px 15px; border-radius: 25px; font-size: 13px; outline: none; transition: 0.2s; }
+        .support-input:focus { border-color: #9333ea; box-shadow: 0 0 10px rgba(147, 51, 234, 0.2); }
+        .support-send { background: linear-gradient(135deg, #9333ea, #4f46e5); color: white; border: none; border-radius: 50%; width: 42px; height: 42px; display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s; flex-shrink: 0; box-shadow: 0 4px 10px rgba(147, 51, 234, 0.3); }
+        .support-send:hover { transform: scale(1.1); box-shadow: 0 6px 15px rgba(147, 51, 234, 0.5); }
 
-        /* Estilo para el Modal de Versiones */
-        #mod-versions-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 2000;
-        }
-        .modal-content-modrinth {
-            background: #1a1a1a; border: 1px solid #333;
-            border-radius: 12px; width: 90%; max-width: 600px;
-            max-height: 80vh; display: flex; flex-direction: column;
-            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
-        }
-        .modal-header-modrinth {
-            padding: 15px 20px; border-bottom: 1px solid #333;
-            display: flex; justify-content: space-between; align-items: center;
-        }
-        .modal-body-modrinth {
-            padding: 20px; overflow-y: auto; flex-grow: 1;
-        }
+        /* ZONA DE HIELO (CONGELAMIENTO DE CLIENTE) */
+        .ice-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 20, 30, 0.85); backdrop-filter: blur(12px); z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: all; }
+        .ice-glass { background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(2, 132, 199, 0.2)); border: 1px solid rgba(56, 189, 248, 0.4); box-shadow: 0 0 40px rgba(14, 165, 233, 0.3), inset 0 0 20px rgba(56, 189, 248, 0.2); border-radius: 20px; padding: 40px; text-align: center; max-width: 500px; width: 90%; }
+        .ice-text { color: #e0f2fe; text-shadow: 0 0 15px rgba(56, 189, 248, 0.8), 0 0 30px rgba(14, 165, 233, 0.6); }
+
+        /* BROADCAST GLOBAL VISUAL */
+        .broadcast-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: radial-gradient(circle, rgba(153,27,27,0.85) 0%, rgba(0,0,0,0.95) 100%); backdrop-filter: blur(15px); z-index: 10000; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease, transform 0.4s ease; transform: scale(1.05); }
+        .broadcast-overlay.active { opacity: 1; pointer-events: all; transform: scale(1); }
+        .broadcast-text { font-family: 'Cinzel', serif; text-align: center; line-height: 1.4; color: #fca5a5; text-shadow: 0 0 20px rgba(239, 68, 68, 0.8); }
+
     </style>
 </head>
 <body>
+
+    <!-- ZONA DE HIELO (SUSPENSIÓN) -->
+    <div id="ice-zone" class="ice-overlay hidden">
+        <div class="ice-glass">
+            <i data-feather="loader" class="w-16 h-16 mx-auto mb-4 text-[#38bdf8] animate-spin" style="animation-duration: 3s;"></i>
+            <h2 class="text-3xl font-bold font-['Cinzel'] uppercase tracking-widest ice-text mb-4">NODO CONGELADO</h2>
+            <p class="text-gray-300 text-sm mb-6">Tu servidor ha sido suspendido temporalmente por la administración de la plataforma. Todas las funciones del panel están bloqueadas.</p>
+            <button onclick="window.location.reload()" class="bg-[#0f172a] border border-[#38bdf8] text-[#38bdf8] hover:bg-[#38bdf8] hover:text-black transition-colors px-6 py-2 rounded-lg font-bold uppercase text-xs tracking-wider">Recargar Panel</button>
+        </div>
+    </div>
+
+    <!-- ALERTA GLOBAL (BROADCAST) -->
+    <div id="global-alert" class="broadcast-overlay">
+        <i data-feather="alert-triangle" class="w-24 h-24 text-red-500 mb-8 animate-pulse drop-shadow-[0_0_20px_rgba(239,68,68,1)]"></i>
+        <h1 class="text-white font-bold text-xl md:text-3xl uppercase tracking-widest mb-4">TRANSMISIÓN GLOBAL DEL SISTEMA</h1>
+        <p id="global-alert-text" class="broadcast-text text-lg md:text-2xl max-w-4xl px-6">MENSAJE AQUÍ</p>
+        <button onclick="document.getElementById('global-alert').classList.remove('active')" class="mt-12 border-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-8 py-3 rounded-xl font-bold uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(239,68,68,0.5)]">Entendido</button>
+    </div>
 
     <div id="auth-container" class="contenedor-principal">
         <div class="mitad-video">
@@ -299,12 +321,49 @@
                 </div>
             </div>
             
-            <p style="position: absolute; bottom: 20px; right: 20px; font-size: 10px; color: #333;">PROFESSIONAL SERVERS V0.8 BETA | @MAXPRO</p>
+            <p style="position: absolute; bottom: 20px; right: 20px; font-size: 10px; color: #197e19;">PROFESSIONAL SERVERS V0.9 BETA | BY @MAXPRO</p>
         </div>
     </div>
 
+    <!-- DASHBOARD CLIENTE -->
     <div id="main-dashboard" class="dashboard-body hidden"></div>
 
+    <!-- BOTÓN FLOTANTE SOPORTE (PARA TODOS LOS PLANES) -->
+    <div id="btn-floating-support" class="support-btn-floating bg-gradient-to-r from-purple-600 to-indigo-600 hidden" onclick="window.toggleSupportChat()">
+        <i data-feather="message-circle" class="w-7 h-7"></i>
+    </div>
+
+    <!-- VENTANA DE CHAT DE SOPORTE -->
+    <div id="support-chat-window" class="support-window">
+        <div class="support-header">
+            <div class="flex items-center gap-3 text-white font-bold text-sm">
+                <div class="relative">
+                    <img src="./assets/img/favicon.ico" class="w-9 h-9 rounded-full bg-black/40 p-1 border border-purple-300/30" onerror="this.src='./assets/img/logo-minecraft.ico'">
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-[#4f46e5] rounded-full"></span>
+                </div>
+                <div>
+                    <p class="leading-tight">Soporte en Vivo</p>
+                    <p class="text-[10px] text-purple-200 font-normal">Agentes & Asistencia</p>
+                </div>
+            </div>
+            <button onclick="window.toggleSupportChat()" class="text-white hover:text-red-300 transition-colors bg-white/10 hover:bg-white/20 p-1.5 rounded-lg"><i data-feather="x" class="w-4 h-4"></i></button>
+        </div>
+        
+        <div class="support-body" id="support-chat-body">
+            <div class="chat-bubble chat-ai">
+                <b>👋 ¡Hola!</b> Bienvenido al soporte de Professional Servers.
+                <br><br>
+                ¿En qué podemos ayudarte hoy? Escribe tu consulta y un agente te responderá en breve.
+            </div>
+        </div>
+        
+        <div class="support-footer">
+            <input type="text" id="support-chat-input" class="support-input" placeholder="Escribe tu consulta..." onkeypress="if(event.key === 'Enter') window.sendSupportMessage()">
+            <button onclick="window.sendSupportMessage()" class="support-send"><i data-feather="send" class="w-4 h-4 ml-1"></i></button>
+        </div>
+    </div>
+
+    <!-- MODALS EXTRAS -->
     <div id="mod-versions-modal" class="hidden">
         <div class="modal-content-modrinth">
             <div class="modal-header-modrinth">
@@ -327,7 +386,7 @@
     <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, GithubAuthProvider, OAuthProvider, signInWithPopup, updateProfile, onAuthStateChanged, signOut, linkWithPopup, unlink } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -340,7 +399,7 @@
             measurementId: "G-8SZ528Y5NZ"
         };
 
-        const app = initializeApp(firebaseConfig);
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
         const auth = getAuth(app);
         
         const providerGoogle = new GoogleAuthProvider();
@@ -349,6 +408,7 @@
 
         window.userPlan = { name: 'Plan Redstone', maxServers: 1, ram: '8GB', ramNum: 8, fileManager: false };
         let isSharedServer = false;
+        let clientSocket = null;
 
         document.addEventListener('DOMContentLoaded', () => {
             feather.replace();
@@ -379,11 +439,18 @@
                     checkingStatus.classList.remove('hidden');
                     
                     const selectedServer = sessionStorage.getItem('selectedServer');
+                    const isCEO = user.email === 'rodasmaximo51@gmail.com';
+                    const forceUserMode = sessionStorage.getItem('forceUserMode') === 'true';
+
+                    if (isCEO && !selectedServer && !forceUserMode) {
+                        window.location.href = 'panel-admin.html';
+                        return;
+                    }
                     
                     if (selectedServer) {
                         try {
                             const config = JSON.parse(selectedServer);
-                            isSharedServer = config.isShared === true; // Guardamos si el servidor es de otro usuario
+                            isSharedServer = config.isShared === true; 
                             
                             const token = await user.getIdToken();
                             
@@ -395,6 +462,7 @@
                                 
                                 if (verifyData.plan) {
                                     window.userPlan = verifyData.plan;
+                                    window.userPlan.ramNum = parseInt(window.userPlan.ram.replace(/[^0-9]/g, '')) || 8;
                                 }
                             } catch(e) { console.error("Error leyendo plan:", e); }
                             
@@ -403,67 +471,73 @@
                             });
                             const data = await res.json();
                             
-                            const serverExists = data.exists && data.servers.some(s => s.id === config.id);
+                            const serverExists = isCEO || (data.exists && data.servers.some(s => s.id === config.id));
                             
                             if (serverExists) {
+                                const foundServer = data.servers.find(s => s.id === config.id);
+                                if(foundServer && foundServer.isPaused) {
+                                    config.isPaused = true;
+                                    sessionStorage.setItem('selectedServer', JSON.stringify(config));
+                                }
                                 entrarAlPanel(config);
                             } else {
                                 sessionStorage.removeItem('selectedServer');
-                                window.location.href = 'create.html';
+                                window.location.href = isCEO ? 'create.html' : 'planes.html';
                             }
                         } catch (e) {
                             entrarAlPanel(JSON.parse(selectedServer));
                         }
                     } else {
-                        window.location.href = 'create.html';
+                        try {
+                            const token = await user.getIdToken();
+                            const res = await fetch(`${API_URL}/api/project/check`, { headers: { 'Authorization': 'Bearer ' + token } });
+                            const data = await res.json();
+                            
+                            if (data.exists && data.servers.length > 0) {
+                                sessionStorage.setItem('selectedServer', JSON.stringify(data.servers[0]));
+                                window.location.reload();
+                            } else {
+                                if (isCEO) {
+                                    window.location.href = 'create.html';
+                                } else {
+                                    window.location.href = 'planes.html';
+                                }
+                            }
+                        } catch (e) {
+                            window.location.href = isCEO ? 'create.html' : 'planes.html';
+                        }
                     }
                 } else {
                     authContainer.classList.remove('hidden');
                     dashboard.classList.add('hidden');
                     loginBoxesWrapper.classList.remove('hidden');
                     checkingStatus.classList.add('hidden');
+                    document.getElementById('btn-floating-support')?.classList.add('hidden');
+                    document.getElementById('support-chat-window')?.classList.remove('active');
+                    if(clientSocket) { clientSocket.disconnect(); clientSocket = null; }
                 }
             });
 
             document.getElementById('btn-google').addEventListener('click', async () => {
-                try {
-                    await signInWithPopup(auth, providerGoogle);
-                } catch (e) {
-                    alert("Error al conectar con Google: " + e.message);
-                }
+                try { await signInWithPopup(auth, providerGoogle); } catch (e) { alert("Error: " + e.message); }
             });
-            
             document.getElementById('btn-github').addEventListener('click', async () => {
-                try {
-                    await signInWithPopup(auth, providerGithub);
-                } catch (e) {
-                    alert("Error al conectar con GitHub: " + e.message);
-                }
+                try { await signInWithPopup(auth, providerGithub); } catch (e) { alert("Error: " + e.message); }
             });
-            
             document.getElementById('btn-ms').addEventListener('click', async () => {
-                try {
-                    await signInWithPopup(auth, providerMicrosoft);
-                } catch (e) {
-                    alert("Error al conectar con Microsoft: " + e.message);
-                }
+                try { await signInWithPopup(auth, providerMicrosoft); } catch (e) { alert("Error: " + e.message); }
             });
 
             document.getElementById('register-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 loginBoxesWrapper.classList.add('hidden');
                 checkingStatus.classList.remove('hidden');
-                
                 const f = e.target;
                 let idIngresado = f.email.value.trim();
-                if (!idIngresado.includes('@')) {
-                    idIngresado = idIngresado.replace(/[^0-9+]/g, '') + "@proservers.com";
-                }
-
+                if (!idIngresado.includes('@')) idIngresado = idIngresado.replace(/[^0-9+]/g, '') + "@proservers.com";
                 try {
                     const cred = await createUserWithEmailAndPassword(auth, idIngresado, f.password.value);
                     await updateProfile(cred.user, { displayName: `${f.nombre.value} ${f.apellido.value}` });
-                    window.location.href = 'planes.html';
                 } catch (err) { 
                     loginBoxesWrapper.classList.remove('hidden');
                     checkingStatus.classList.add('hidden');
@@ -475,17 +549,14 @@
                 e.preventDefault();
                 loginBoxesWrapper.classList.add('hidden');
                 checkingStatus.classList.remove('hidden');
-                
                 let idIngresado = e.target.email.value.trim();
-                if (!idIngresado.includes('@')) {
-                    idIngresado = idIngresado.replace(/[^0-9+]/g, '') + "@proservers.com";
-                }
+                if (!idIngresado.includes('@')) idIngresado = idIngresado.replace(/[^0-9+]/g, '') + "@proservers.com";
                 try {
                     await signInWithEmailAndPassword(auth, idIngresado, e.target.password.value);
                 } catch (err) { 
                     loginBoxesWrapper.classList.remove('hidden');
                     checkingStatus.classList.add('hidden');
-                    alert("Credenciales incorrectas. Verifica tu usuario y clave."); 
+                    alert("Credenciales incorrectas."); 
                 }
             });
 
@@ -494,41 +565,18 @@
                 if (!fileInput.files[0]) return;
                 const file = fileInput.files[0];
                 const config = JSON.parse(sessionStorage.getItem('selectedServer'));
-
                 const btn = document.getElementById('btn-upload-local');
-                if(btn) {
-                    btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i> Subiendo...';
-                    btn.disabled = true;
-                    feather.replace();
-                }
-
+                if(btn) { btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i> Subiendo...'; btn.disabled = true; feather.replace(); }
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('serverId', config.id);
-
                 try {
                     const token = await auth.currentUser.getIdToken();
-                    const res = await fetch(`${API_URL}/api/files/upload`, {
-                        method: 'POST',
-                        headers: { 'Authorization': `Bearer ${token}` },
-                        body: formData
-                    });
+                    const res = await fetch(`${API_URL}/api/files/upload`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: formData });
                     const data = await res.json();
-                    if(data.success) {
-                        alert(data.message || "Archivo subido exitosamente.");
-                        window.loadFiles('/');
-                    } else {
-                        alert("Error: " + data.error);
-                    }
-                } catch(e) {
-                    alert("Error al subir el archivo: " + e.message);
-                }
-
-                if(btn) {
-                    btn.innerHTML = '<i data-feather="upload-cloud" class="w-4 h-4"></i> Subir desde PC';
-                    btn.disabled = false;
-                    feather.replace();
-                }
+                    if(data.success) { alert(data.message || "Subido OK."); window.loadFiles('/'); } else { alert("Error: " + data.error); }
+                } catch(e) { alert("Error: " + e.message); }
+                if(btn) { btn.innerHTML = '<i data-feather="upload-cloud" class="w-4 h-4"></i> Subir desde PC'; btn.disabled = false; feather.replace(); }
                 fileInput.value = '';
             };
 
@@ -536,102 +584,169 @@
                 const url = prompt("Pega el enlace directo de descarga de tu Modpack (Google Drive, OneDrive, Mediafire, etc.):");
                 if(!url) return;
                 const config = JSON.parse(sessionStorage.getItem('selectedServer'));
-
-                alert("Iniciando descarga en el servidor... El contenedor lo procesará automáticamente.");
-
+                alert("Iniciando descarga en el servidor...");
                 try {
                     const token = await auth.currentUser.getIdToken();
                     const res = await fetch(`${API_URL}/api/files/upload-url`, {
                         method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${token}`
-                        },
+                        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
                         body: JSON.stringify({ serverId: config.id, downloadUrl: url })
                     });
                     const data = await res.json();
-                    if(data.success) {
-                        alert(data.message || "URL procesada exitosamente.");
-                        window.loadFiles('/');
-                    } else {
-                        alert("Error: " + data.error);
-                    }
-                } catch(e) {
-                    alert("Error al importar el enlace: " + e.message);
-                }
+                    if(data.success) { alert(data.message || "Procesado OK."); window.loadFiles('/'); } else { alert("Error: " + data.error); }
+                } catch(e) { alert("Error: " + e.message); }
             };
 
             window.guardarIP = async () => {
                 const ip = document.getElementById('manual-ip-input').value.trim();
-                if (!ip) {
-                    alert('Por favor, pega la IP que te dio Playit.gg primero.');
-                    return;
-                }
+                if (!ip) { alert('Pega la IP de Playit.gg primero.'); return; }
                 try {
                     const token = await auth.currentUser.getIdToken();
                     await fetch(`${API_URL}/api/project/ip`, { 
                         method: 'POST', 
-                        headers: { 
-                            'Content-Type': 'application/json',
-                            'Authorization': 'Bearer ' + token
-                        }, 
-                        body: JSON.stringify({
-                            serverId: JSON.parse(sessionStorage.getItem('selectedServer')).id,
-                            ip: ip
-                        }) 
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, 
+                        body: JSON.stringify({ serverId: JSON.parse(sessionStorage.getItem('selectedServer')).id, ip: ip }) 
                     });
-                    alert('¡IP Guardada exitosamente!');
-                    
+                    alert('¡IP Guardada!');
                     let config = JSON.parse(sessionStorage.getItem('selectedServer'));
                     config.publicIp = ip;
                     sessionStorage.setItem('selectedServer', JSON.stringify(config));
                     window.showPanel('home-panel');
-                } catch (e) { 
-                    alert('Error al guardar: ' + e.message); 
-                }
+                } catch (e) { alert('Error: ' + e.message); }
             };
 
             function entrarAlPanel(config) {
                 authContainer.classList.add('hidden');
                 dashboard.classList.remove('hidden');
-                populateDashboard(dashboard, config);
+                document.getElementById('btn-floating-support')?.classList.remove('hidden');
                 
+                if (auth.currentUser) {
+                    auth.currentUser.getIdToken().then(token => {
+                        if(clientSocket) clientSocket.disconnect();
+                        clientSocket = io(API_URL, { query: { token: token, serverId: config.id } });
+                        
+                        clientSocket.on('support_reply', (data) => {
+                            const chatBody = document.getElementById('support-chat-body');
+                            chatBody.innerHTML += `<div class="chat-bubble chat-ai">${data.reply.replace(/</g, "&lt;")}</div>`;
+                            chatBody.scrollTop = chatBody.scrollHeight;
+                        });
+
+                        clientSocket.on('global_broadcast', (data) => {
+                            document.getElementById('global-alert-text').innerText = data.message;
+                            document.getElementById('global-alert').classList.add('active');
+                        });
+
+                        clientSocket.on('plan_updated', () => {
+                            alert("🔄 Tu plan de suscripción ha sido modificado por un Administrador. El panel se recargará ahora para aplicar los nuevos límites.");
+                            window.location.reload();
+                        });
+                    });
+                }
+
+                if (config.isPaused) {
+                    document.getElementById('ice-zone').classList.remove('hidden');
+                } else {
+                    document.getElementById('ice-zone').classList.add('hidden');
+                }
+
+                populateDashboard(dashboard, config);
                 setTimeout(() => {
                     const homeBtn = dashboard.querySelector('.navigation a[data-panel="home-panel"]');
-                    if (homeBtn) {
-                        homeBtn.click();
-                    } else {
-                        window.showPanel('home-panel');
-                    }
+                    if (homeBtn) homeBtn.click(); else window.showPanel('home-panel');
                 }, 150);
             }
 
+            window.toggleSupportChat = () => {
+                const chatWindow = document.getElementById('support-chat-window');
+                chatWindow.classList.toggle('active');
+                if(chatWindow.classList.contains('active')) {
+                    document.getElementById('support-chat-input').focus();
+                    const body = document.getElementById('support-chat-body');
+                    body.scrollTop = body.scrollHeight;
+                }
+            };
+
+            window.sendSupportMessage = async () => {
+                const input = document.getElementById('support-chat-input');
+                const msg = input.value.trim();
+                if(!msg) return;
+
+                const chatBody = document.getElementById('support-chat-body');
+                chatBody.innerHTML += `<div class="chat-bubble chat-user">${msg.replace(/</g, "&lt;")}</div>`;
+                input.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                const loadingId = 'loading-' + Date.now();
+                chatBody.innerHTML += `<div id="${loadingId}" class="chat-bubble chat-ai"><i data-feather="more-horizontal" class="animate-pulse w-4 h-4"></i></div>`;
+                feather.replace();
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                    
+                    const res = await fetch(`${API_URL}/api/support/chat`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify({ serverId: config ? config.id : null, message: msg })
+                    });
+                    
+                    if(!res.ok) throw new Error("Error en red");
+                    const data = await res.json();
+                    document.getElementById(loadingId)?.remove();
+                    
+                    if(data.success) {
+                        chatBody.innerHTML += `<div class="chat-bubble chat-ai">${data.reply.replace(/</g, "&lt;")}</div>`;
+                    } else {
+                        chatBody.innerHTML += `<div class="chat-bubble chat-ai text-red-400">Error: ${data.error}</div>`;
+                    }
+                } catch(e) {
+                    document.getElementById(loadingId)?.remove();
+                    chatBody.innerHTML += `<div class="chat-bubble chat-ai">Mensaje enviado al equipo de soporte. Un administrador te responderá a la brevedad.</div>`;
+                }
+                feather.replace();
+                chatBody.scrollTop = chatBody.scrollHeight;
+            };
+
             function populateDashboard(element, config) {
                 const nombreDelServer = config.projectName || "Servidor Local";
-                const versionServer = config.version || "Desconocida";
+                const safeEdition = config.edition ? config.edition.toLowerCase() : 'java';
+                let versionServer = 'Auto';
+                if (safeEdition === 'bedrock') {
+                    versionServer = config.software ? config.software.toUpperCase() : 'UNKNOWN';
+                } else {
+                    versionServer = config.version || 'Auto';
+                }
                 const softwareServer = config.software || "Vanilla";
                 const motdServer = config.motd || "Gestión de infraestructura";
 
                 const queryAuth = `?serverId=${config.id}`;
                 const bodyAuth = { serverId: config.id };
                 
-                let rawName = auth.currentUser ? auth.currentUser.displayName : 'Administrador';
+                let rawName = auth.currentUser ? auth.currentUser.displayName : 'Usuario';
                 const userName = rawName.split(' ')[0]; 
                 const userPhoto = (auth.currentUser && auth.currentUser.photoURL) ? auth.currentUser.photoURL : './assets/img/default-avatar.png';
 
-                // LÓGICA DE TEMAS DINÁMICOS BASADA EN EL PLAN
                 const pName = window.userPlan.name.toLowerCase();
                 let theme = 'hierro'; 
                 if(pName.includes('redstone')) theme = 'redstone';
+                else if(pName.includes('cobre')) theme = 'cobre';
                 else if(pName.includes('oro')) theme = 'oro';
                 else if(pName.includes('diamante')) theme = 'diamante';
                 else if(pName.includes('netherite')) theme = 'netherite';
                 else if(pName.includes('ghost') || pName.includes('warrior')) theme = 'ghost-warrior';
                 else if(pName.includes('enterprise')) theme = 'enterprise';
+                else if(pName.includes('ceo') || pName.includes('god')) theme = 'ceo';
 
-                // Verificamos si el plan permite File Manager y IA
                 const hasPremiumAccess = window.userPlan.fileManager === true;
                 const lockHtml = hasPremiumAccess ? '' : `<div class="absolute -top-1 -right-1 bg-red-500 rounded-full p-0.5 shadow"><i data-feather="lock" class="w-3 h-3 text-white"></i></div>`;
+
+                const isCEO = (auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com');
+                const adminBtnHtml = isCEO ? `
+                    <button class="bg-[#9333ea] hover:bg-[#a855f7] text-white font-bold py-1.5 px-4 rounded-lg transition-colors flex items-center gap-2 text-xs uppercase shadow-[0_0_15px_rgba(147,51,234,0.5)] border border-[#c084fc]" onclick="sessionStorage.removeItem('forceUserMode'); window.location.href='panel-admin.html'">
+                        <i data-feather="shield" class="w-3 h-3"></i> CEO Panel
+                    </button>
+                ` : '';
 
                 element.innerHTML = `
                     <div class="db-bg-overlay"></div>
@@ -665,6 +780,7 @@
                                     <img src="${userPhoto}" alt="Avatar" class="header-user-avatar theme-border-${theme}" onerror="this.src='./assets/img/default-avatar.png'">
                                 </div>
                                 <div class="flex items-center justify-end gap-3 mt-3">
+                                    ${adminBtnHtml}
                                     <span class="plan-badge-base theme-badge-${theme}">${window.userPlan.name}</span>
                                     <button class="btn-planes" onclick="window.location.href='planes.html'">Ver Planes</button>
                                 </div>
@@ -680,6 +796,7 @@
                             <div id="nube-panel" class="content-panel hidden"></div>
                             <div id="settings-panel" class="content-panel hidden"></div>
                             <div id="compartidos-panel" class="content-panel hidden"></div>
+                            <div id="profile-panel" class="content-panel hidden"></div>
                         </main>
                     </div>
 
@@ -720,8 +837,12 @@
                             <a data-panel="settings-panel">
                                 <i data-feather="settings"></i><span class="title">Ajustes</span>
                             </a>
+                            
                             <a onclick="sessionStorage.removeItem('selectedServer'); window.location.href='create.html';" class="btn-hub cursor-pointer">
                                 <i data-feather="list"></i><span class="title">Mis Servers</span>
+                            </a>
+                            <a data-panel="profile-panel" class="cursor-pointer">
+                                <i data-feather="user"></i><span class="title">Perfil</span>
                             </a>
                             <a id="logout-btn" class="cursor-pointer text-red-500 hover:text-red-400">
                                 <i data-feather="log-out"></i><span class="title">Salir</span>
@@ -729,6 +850,7 @@
                         </nav>
                     </div>
 
+                    <!-- MODAL MINE AI -->
                     <div id="mine-chat-modal" class="mine-hidden">
                         <div class="mine-header">
                             <div class="mine-title"><span class="mine-dot"></span> Mine AI - Análisis Técnico</div>
@@ -759,15 +881,14 @@
 
                 if(btnMine && chatModal && btnCloseMine) {
                     btnMine.addEventListener('click', () => {
-                        // PAYWALL DE MINE AI
                         if (!hasPremiumAccess) {
                             chatModal.classList.remove('mine-hidden');
                             document.getElementById('mine-body').innerHTML = `
                                 <div class="text-center py-6 h-full flex flex-col justify-center items-center">
                                     <i data-feather="lock" class="w-12 h-12 text-red-500 mx-auto mb-3"></i>
                                     <h4 class="text-white font-bold text-sm uppercase">Función Premium</h4>
-                                    <p class="text-xs text-gray-400 mt-2 px-4">Mine AI requiere Plan Diamante o superior para analizar logs masivos.</p>
-                                    <button onclick="window.location.href='planes.html'" class="mt-4 bg-indigo-600 hover:bg-indigo-500 transition-colors px-6 py-2 rounded-lg font-bold text-xs text-white uppercase shadow-lg shadow-indigo-900/50">Mejorar Plan</button>
+                                    <p class="text-xs text-gray-400 mt-2 px-4">Mine AI requiere Plan Oro o superior para analizar logs masivos y resolver errores automáticamente.</p>
+                                    <button onclick="window.location.href='planes.html'" class="mt-4 bg-yellow-600 hover:bg-yellow-500 transition-colors px-6 py-2 rounded-lg font-bold text-xs text-white uppercase shadow-lg shadow-yellow-900/50">Mejorar a Plan Oro</button>
                                 </div>`;
                             document.getElementById('mine-send-btn').disabled = true;
                             feather.replace();
@@ -810,12 +931,19 @@
                         const token = await auth.currentUser.getIdToken();
                         const res = await fetch(`${API_URL}/api/server/mine-ai`, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + token
-                            },
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                             body: JSON.stringify({serverId: config.id})
                         });
+                        
+                        if (!res.ok) {
+                            let msg = "Fallo en el servidor";
+                            try {
+                                const errData = await res.json();
+                                msg = errData.error || msg;
+                            } catch(err) {}
+                            throw new Error(msg);
+                        }
+                        
                         const data = await res.json();
                         document.getElementById(loadingId)?.remove();
                         
@@ -859,31 +987,20 @@
 
                 window.confirmarBorradoMine = async (archivo) => {
                     const mineBody = document.getElementById('mine-body');
-                    if(!confirm(`⚠️ ¿Deseas eliminar permanentemente ${archivo}?`)) {
-                        mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-yellow-500"><p class="text-[11px] text-yellow-400 uppercase font-bold">Operación Cancelada</p><p class="text-xs text-gray-300">Tus archivos están a salvo.</p></div>`;
-                        mineBody.scrollTop = mineBody.scrollHeight;
-                        return;
-                    }
-                    
+                    if(!confirm(`⚠️ ¿Deseas eliminar permanentemente ${archivo}?`)) return;
                     try {
                         const token = await auth.currentUser.getIdToken();
                         const res = await fetch(`${API_URL}/api/files/delete`, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': 'Bearer ' + token
-                            },
+                            headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
                             body: JSON.stringify({serverId: config.id, path: `mods/${archivo}`})
                         });
                         const data = await res.json();
-                        
                         if(data.success) {
-                            mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-green-500 bg-[#1a1a1a]"><p class="text-[11px] text-green-400 uppercase font-bold flex items-center gap-1"><i data-feather="check-circle" class="w-3 h-3"></i> Ejecución Exitosa</p><p class="text-xs text-gray-300 mt-1">El archivo <b>${archivo}</b> fue eliminado.</p></div>`;
-                        } else {
-                            throw new Error(data.error || "No se pudo eliminar el archivo.");
-                        }
+                            mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-green-500 bg-[#1a1a1a]"><p class="text-[11px] text-green-400 uppercase font-bold">Éxito</p><p class="text-xs text-gray-300">Eliminado: <b>${archivo}</b></p></div>`;
+                        } else { throw new Error(data.error); }
                     } catch(e) {
-                        mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-red-500"><p class="text-xs text-red-400 font-bold">Error en la ejecución:</p><p class="text-xs text-gray-300">${e.message}</p></div>`;
+                        mineBody.innerHTML += `<div class="mine-message mb-3 border-l-4 border-red-500"><p class="text-xs text-red-400 font-bold">Error:</p><p class="text-xs text-gray-300">${e.message}</p></div>`;
                     }
                     feather.replace();
                     mineBody.scrollTop = mineBody.scrollHeight;
@@ -1087,14 +1204,13 @@
                     }
                     
                     if (id === 'files-panel') {
-                        // PAYWALL DE ARCHIVOS
                         if (!hasPremiumAccess) {
                             panel.innerHTML = `
                                 <div class="content-panel text-center py-16 flex flex-col items-center justify-center border border-red-900/50 bg-[#1a0a0a]">
                                     <i data-feather="lock" class="w-16 h-16 text-red-500 mb-4 opacity-80"></i>
                                     <h3 class="text-2xl font-bold text-white font-['Cinzel'] tracking-widest uppercase">Acceso Denegado</h3>
-                                    <p class="text-gray-400 mt-3 max-w-md">El Gestor de Archivos y la descarga de Modpacks masivos requieren recursos de almacenamiento avanzados. Actualiza al <b class="text-red-400">Plan Diamante</b> o superior para desbloquear esta función.</p>
-                                    <button onclick="window.location.href='planes.html'" class="mt-8 bg-red-600 hover:bg-red-500 text-white font-bold py-3 px-8 rounded-lg transition-colors uppercase text-sm tracking-wider shadow-[0_0_15px_rgba(220,38,38,0.3)]">Mejorar Plan</button>
+                                    <p class="text-gray-400 mt-3 max-w-md">El Gestor de Archivos y la descarga de Modpacks masivos requieren recursos de almacenamiento avanzados. Actualiza al <b class="text-yellow-500">Plan Oro</b> o superior para desbloquear esta función.</p>
+                                    <button onclick="window.location.href='planes.html'" class="mt-8 bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3 px-8 rounded-lg transition-colors uppercase text-sm tracking-wider shadow-[0_0_15px_rgba(202,138,4,0.3)] text-black">Mejorar a Plan Oro</button>
                                 </div>`;
                             feather.replace();
                             return;
@@ -1212,10 +1328,14 @@
 
                         window.buscarMods = async () => {
                             const term = document.getElementById('mod-search').value;
-                            const list = document.getElementById('mods-list');
-                            list.innerHTML = '<div class="col-span-full text-center py-4"><i data-feather="loader" class="animate-spin w-8 h-8 mx-auto mb-2 text-indigo-500"></i><p class="text-gray-400">Buscando en la API de CurseForge...</p></div>';
-                            feather.replace();
+                            const resDiv = document.getElementById('mods-list');
+
+                            const btn = document.querySelector('button[onclick="window.buscarMods()"]');
+                            if(btn) btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i>';
                             
+                            feather.replace();
+                            resDiv.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Buscando en CurseForge...</p>';
+
                             let catId = '6'; // Minecraft Mods
                             if(currentModType === 'plugin') catId = '5'; // Bukkit Plugins
                             if(currentModType === 'datapack') catId = '17'; // Worlds (Datapacks)
@@ -1223,164 +1343,162 @@
 
                             try {
                                 const token = await auth.currentUser.getIdToken();
-                                
                                 let fetchUrl = `${API_URL}/api/curseforge/search?categoryId=${catId}`;
                                 if (term && term.trim() !== '') {
                                     fetchUrl += `&query=${encodeURIComponent(term.trim())}`;
                                 }
 
                                 const response = await fetch(fetchUrl, { headers: { 'Authorization': 'Bearer ' + token } });
-                                const data = await response.json();
-                                list.innerHTML = '';
                                 
-                                if(!data.data || data.data.length === 0) {
-                                    list.innerHTML = '<p class="col-span-full text-center text-gray-400 py-4">No se encontraron resultados.</p>';
-                                    return;
+                                if(!response.ok) {
+                                    const errTxt = await response.text();
+                                    throw new Error(`Error ${response.status}: ${errTxt}`);
                                 }
+                                
+                                const data = await response.json();
 
-                                data.data.forEach(mod => {
-                                    const icon = (mod.logo && mod.logo.url) ? mod.logo.url : './assets/img/favicon.ico';
-                                    list.innerHTML += `
-                                        <div class="mod-item flex justify-between items-center bg-[#1a1a1a] p-4 rounded-lg mb-2 border border-[#333] cursor-pointer hover:border-indigo-500" onclick="window.verVersionesMod('${mod.id}', '${mod.name.replace(/'/g, "\\'")}', '${icon}')">
-                                            <div class="flex gap-4 items-center">
-                                                <img src="${icon}" class="w-10 h-10 rounded shadow-md" onerror="this.src='./assets/img/favicon.ico'">
-                                                <div>
-                                                    <p class="font-bold text-white text-sm">${mod.name}</p>
-                                                    <p class="text-xs text-gray-400 max-w-[200px] truncate" title="${mod.summary.replace(/"/g, '&quot;')}">${mod.summary}</p>
-                                                    <p class="text-[10px] text-indigo-400 mt-1">Haga clic para ver versiones</p>
+                                resDiv.innerHTML = '';
+                                let found = 0;
+
+                                if (data.data && data.data.length > 0) {
+                                    data.data.forEach(mod => {
+                                        found++;
+                                        const icon = (mod.logo && mod.logo.url) ? mod.logo.url : './assets/img/favicon.ico';
+                                        const hasServerPack = mod.latestFiles && mod.latestFiles.some(f => f.serverPackFileId);
+                                        
+                                        let badgeHtml = '';
+                                        let clickAttr = '';
+                                        let opacityClass = '';
+
+                                        if (currentModType === 'modpack') {
+                                            badgeHtml = hasServerPack 
+                                                ? `<span class="text-[9px] bg-green-600/20 text-green-400 border border-green-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="server" class="w-3 h-3"></i> Server Pack Oficial</span>`
+                                                : `<span class="text-[9px] bg-red-600/20 text-red-400 border border-red-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="x-circle" class="w-3 h-3"></i> Incompatible (Solo Cliente)</span>`;
+                                            clickAttr = hasServerPack ? `onclick="alert('Función de instalar modpack desde panel en desarrollo.')"` : `onclick="alert('Este modpack no posee archivos configurados para servidor (Server Pack). Solo puede instalarse en clientes.')"`;
+                                            opacityClass = hasServerPack ? '' : 'opacity-60 grayscale cursor-not-allowed';
+                                        } else {
+                                            badgeHtml = `<span class="text-[9px] bg-blue-600/20 text-blue-400 border border-blue-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="download" class="w-3 h-3"></i> Versiones</span>`;
+                                            clickAttr = `onclick="window.abrirInstaladorMod('${mod.id}', '${mod.name.replace(/'/g, "\\'")}')"`;
+                                        }
+
+                                        resDiv.innerHTML += `
+                                            <div ${clickAttr} class="modpack-card flex gap-3 p-3 bg-[#161616] border border-[#333] rounded-lg hover:border-indigo-500 transition-colors ${opacityClass} cursor-pointer">
+                                                <img src="${icon}" class="w-12 h-12 rounded object-cover shadow-md">
+                                                <div class="flex-1 min-w-0">
+                                                    <h4 class="text-sm font-bold text-white truncate" title="${mod.name.replace(/'/g, "\\'")}">${mod.name}</h4>
+                                                    <div class="flex items-center gap-2 mt-1">
+                                                        ${badgeHtml}
+                                                        <span class="text-[10px] text-gray-500 font-mono"><i data-feather="download" class="w-3 h-3 inline text-indigo-400"></i> ${mod.downloadCount.toLocaleString()}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <i data-feather="chevron-right" class="text-gray-500"></i>
-                                        </div>`;
-                                });
-                                feather.replace();
-                            } catch (e) {
-                                list.innerHTML = '<p class="col-span-full text-center text-red-500 py-4">Error conectando con CurseForge. Intenta nuevamente.</p>';
+                                        `;
+                                    });
+                                }
+
+                                if (found === 0) {
+                                    resDiv.innerHTML = '<div class="text-center py-4"><i data-feather="x-circle" class="w-8 h-8 text-red-400 mx-auto mb-2 opacity-50"></i><p class="text-xs text-red-400">No se encontraron resultados.</p></div>';
+                                }
+                            } catch(e) {
+                                console.error("Error CF:", e);
+                                resDiv.innerHTML = `<p class="text-xs text-red-500 text-center py-4">Error al buscar en CurseForge:<br><span class="text-[10px] text-gray-500">${e.message}</span></p>`;
                             }
+                            if(btn) btn.innerHTML = 'Buscar';
+                            feather.replace();
                         };
 
-                        window.verVersionesMod = async (modId, modName, iconUrl) => {
-                            const config = JSON.parse(sessionStorage.getItem('selectedServer'));
-                            const mcVersion = config.version;
-                            
+                        window.abrirInstaladorMod = async (modId, modName) => {
                             const modal = document.getElementById('mod-versions-modal');
-                            const title = document.getElementById('mod-modal-title');
-                            const body = document.getElementById('mod-modal-body');
+                            const modalTitle = document.getElementById('mod-modal-title');
+                            const modalBody = document.getElementById('mod-modal-body');
                             
                             modal.classList.remove('hidden');
-                            title.innerHTML = `<img src="${iconUrl}" class="w-6 h-6 rounded" onerror="this.src='./assets/img/favicon.ico'"> ${modName} - Versiones`;
-                            body.innerHTML = '<div class="text-center py-8"><i data-feather="loader" class="animate-spin text-indigo-500 mx-auto mb-4 w-8 h-8"></i><p class="text-gray-400">Buscando versiones compatibles...</p></div>';
+                            modalTitle.innerHTML = `<i data-feather="package" class="w-5 h-5 text-indigo-400"></i> Instalar ${modName}`;
+                            modalBody.innerHTML = `
+                                <div class="text-center py-8">
+                                    <i data-feather="loader" class="animate-spin text-indigo-500 mx-auto mb-4 w-8 h-8"></i>
+                                    <p class="text-gray-400">Buscando versiones compatibles...</p>
+                                </div>`;
                             feather.replace();
 
                             try {
                                 const token = await auth.currentUser.getIdToken();
+                                const config = JSON.parse(sessionStorage.getItem('selectedServer'));
+                                const gameVersion = config.version === 'LATEST' || config.version === 'Auto' ? '' : config.version;
                                 
-                                let url = `${API_URL}/api/curseforge/files?modId=${modId}`;
-                                if (mcVersion && mcVersion !== 'Auto') {
-                                    url += `&version=${mcVersion}`;
-                                }
-                                
-                                let res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
-                                let resData = await res.json();
-                                let versions = resData.data;
-
-                                if(!versions || versions.length === 0) {
-                                    body.innerHTML = `<div class="text-center py-8"><i data-feather="alert-circle" class="text-yellow-500 mx-auto mb-4 w-12 h-12"></i><p class="text-gray-400">No hay archivos de este proyecto compatibles con <br><b class="text-white">${mcVersion}</b>.</p></div>`;
-                                    feather.replace();
-                                    return;
-                                }
-
-                                body.innerHTML = '<div class="space-y-3" id="versions-list-container"></div>';
-                                const listContainer = document.getElementById('versions-list-container');
-
-                                versions.slice(0, 10).forEach(file => { 
-                                    const date = new Date(file.fileDate).toLocaleDateString();
-                                    const typeColor = file.releaseType === 1 ? 'text-green-400' : 'text-yellow-400';
-                                    const typeName = file.releaseType === 1 ? 'RELEASE' : (file.releaseType === 2 ? 'BETA' : 'ALPHA');
-                                    
-                                    listContainer.innerHTML += `
-                                        <div class="flex justify-between items-center bg-[#222] p-3 rounded-lg border border-[#333]">
-                                            <div>
-                                                <p class="font-bold text-sm text-white">${file.fileName} <span class="text-[10px] ${typeColor} uppercase ml-2">${typeName}</span></p>
-                                                <p class="text-xs text-gray-400 mt-1">Soporta: ${file.gameVersions.join(', ')} | Fecha: ${date}</p>
-                                            </div>
-                                            <button onclick="window.instalarVersionDirecta('${file.downloadUrl}', '${file.fileName}', event)" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded text-xs font-bold transition-colors">
-                                                Instalar
-                                            </button>
-                                        </div>
-                                    `;
+                                const res = await fetch(`${API_URL}/api/curseforge/files?modId=${modId}&version=${gameVersion}`, {
+                                    headers: { 'Authorization': 'Bearer ' + token }
                                 });
-
-                            } catch (e) {
-                                body.innerHTML = '<p class="text-center text-red-500 py-8">Error al obtener las versiones.</p>';
+                                const data = await res.json();
+                                
+                                modalBody.innerHTML = '';
+                                let count = 0;
+                                if (data.data && data.data.length > 0) {
+                                    let html = '<div class="space-y-2">';
+                                    data.data.forEach(f => {
+                                        if(f.isAvailable && f.downloadUrl) {
+                                            count++;
+                                            const type = f.releaseType === 1 ? 'RELEASE' : (f.releaseType === 2 ? 'BETA' : 'ALPHA');
+                                            const typeColor = f.releaseType === 1 ? 'text-green-400' : 'text-yellow-400';
+                                            const mcVer = f.gameVersions.find(v => v.match(/^1\.\d/)) || "Auto";
+                                            
+                                            html += `
+                                            <div class="flex justify-between items-center bg-[#111] border border-[#333] p-3 rounded-lg hover:border-indigo-500 transition-colors">
+                                                <div>
+                                                    <p class="text-sm font-bold text-white break-all">${f.displayName}</p>
+                                                    <p class="text-xs text-gray-500 mt-1">MC ${mcVer} | <span class="${typeColor} font-bold">${type}</span></p>
+                                                </div>
+                                                <button onclick="window.instalarModDirecto('${f.downloadUrl}', '${f.fileName}', this)" class="bg-indigo-600 hover:bg-indigo-500 transition-colors px-4 py-2 rounded font-bold text-white text-xs flex items-center gap-2 ml-4 flex-shrink-0">
+                                                    <i data-feather="download" class="w-3 h-3"></i> Instalar
+                                                </button>
+                                            </div>`;
+                                        }
+                                    });
+                                    html += '</div>';
+                                    modalBody.innerHTML = html;
+                                    if(count === 0) modalBody.innerHTML = '<p class="text-center text-red-400 py-4">No hay versiones directas disponibles para la versión de tu servidor.</p>';
+                                } else {
+                                    modalBody.innerHTML = '<p class="text-center text-red-400 py-4">No se encontraron archivos.</p>';
+                                }
+                                feather.replace();
+                            } catch(e) {
+                                modalBody.innerHTML = `<p class="text-center text-red-500 py-4">Error al cargar versiones.</p>`;
                             }
                         };
 
-                        window.instalarVersionDirecta = async (downloadUrl, filename, event) => {
-                            if (!hasPremiumAccess) {
-                                alert("ACCESO DENEGADO: La instalación de archivos requiere el Plan Diamante o superior.");
-                                return;
-                            }
-
-                            if(currentModType === 'modpack') {
-                                alert("⚠️ ALERTA DE SISTEMA ⚠️\n\nLos Modpacks de CurseForge requieren descompresión profunda y lectura de manifest.json.\n\nEl autoinstalador de Modpacks estará disponible en la V1.0. Por ahora, descarga el modpack en tu PC y usa el botón 'Subir desde PC' en el Gestor de Archivos.");
-                                event.currentTarget.innerText = 'Requiere V1.0';
-                                event.currentTarget.classList.replace('bg-indigo-600', 'bg-yellow-600');
-                                return;
-                            }
-
-                            if (!downloadUrl || downloadUrl === 'undefined' || downloadUrl === 'null') {
-                                alert("El autor del mod no ha proporcionado un link de descarga directa en CurseForge para esta versión.");
-                                return;
-                            }
-
+                        window.instalarModDirecto = async (url, fileName, btn) => {
                             const config = JSON.parse(sessionStorage.getItem('selectedServer'));
-                            const btn = event.currentTarget;
-                            
-                            btn.innerText = 'Descargando...';
+                            const originalHtml = btn.innerHTML;
                             btn.disabled = true;
-                            btn.classList.add('opacity-50');
-
-                            let folder = 'mods';
-                            if(currentModType === 'plugin') folder = 'plugins';
-                            if(currentModType === 'datapack') folder = 'world/datapacks';
+                            btn.innerHTML = '<i data-feather="loader" class="animate-spin w-3 h-3"></i> Instalando...';
+                            feather.replace();
 
                             try {
                                 const token = await auth.currentUser.getIdToken();
-                                const installRes = await fetch(`${API_URL}/api/server/installmod`, {
+                                const res = await fetch(`${API_URL}/api/files/upload-url`, {
                                     method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Authorization': 'Bearer ' + token
-                                    },
-                                    body: JSON.stringify({
-                                        serverId: config.id,
-                                        downloadUrl: downloadUrl,
-                                        filename: filename,
-                                        folder: folder
-                                    })
+                                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                                    body: JSON.stringify({ serverId: config.id, downloadUrl: url, fileName: fileName })
                                 });
-
-                                const installData = await installRes.json();
-                                if(installData.success) {
-                                    btn.innerText = '¡Listo!';
+                                const data = await res.json();
+                                if(data.success) { 
                                     btn.classList.replace('bg-indigo-600', 'bg-green-600');
-                                    btn.classList.replace('hover:bg-indigo-700', 'hover:bg-green-700');
-                                } else {
-                                    throw new Error(installData.error);
+                                    btn.classList.replace('hover:bg-indigo-500', 'hover:bg-green-500');
+                                    btn.innerHTML = '<i data-feather="check" class="w-3 h-3"></i> Listo';
+                                    feather.replace();
+                                } else { 
+                                    alert("Error al instalar: " + data.error); 
+                                    btn.disabled = false;
+                                    btn.innerHTML = originalHtml;
                                 }
-                            } catch (e) {
-                                alert("Error al instalar: " + e.message);
-                                btn.innerText = 'Error';
-                                btn.classList.replace('bg-indigo-600', 'bg-red-600');
-                                btn.classList.remove('opacity-50');
+                            } catch(e) { 
+                                alert("Error en red: " + e.message); 
+                                btn.disabled = false;
+                                btn.innerHTML = originalHtml;
                             }
                         };
                     }
 
-                    // ==========================================
-                    // PANEL DE NUBE (VISTA Y FUNCIONES HABILITADAS)
-                    // ==========================================
                     if (id === 'nube-panel') {
                         panel.innerHTML = `
                             <div class="content-panel">
@@ -1414,25 +1532,125 @@
                     if (id === 'settings-panel') {
                         panel.innerHTML = `
                             <div class="content-panel">
-                                <h3 class="text-xl mb-6 font-bold text-green-500">Ajustes del Servidor</h3>
-                                <div class="mt-10 border border-red-900 bg-[#1a0505] rounded-xl p-6 relative overflow-hidden shadow-2xl">
+                                <h3 class="text-xl mb-6 font-bold text-green-500">Ajustes Avanzados del Servidor</h3>
+                                
+                                <div class="bg-[#161616] p-6 rounded-xl border border-[#333] mb-6 shadow-lg">
+                                    <h4 class="text-sm font-bold text-white mb-4 uppercase tracking-wider text-blue-400"><i data-feather="sliders" class="inline w-4 h-4 mr-1"></i> Reglas de Juego</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                        <div>
+                                            <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Modo de Juego</label>
+                                            <select id="setting-gamemode" class="input-pro bg-[#0a0a0a]">
+                                                <option value="survival">Supervivencia</option>
+                                                <option value="creative">Creativo</option>
+                                                <option value="adventure">Aventura</option>
+                                                <option value="spectator">Espectador</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Dificultad</label>
+                                            <select id="setting-difficulty" class="input-pro bg-[#0a0a0a]">
+                                                <option value="peaceful">Pacífico</option>
+                                                <option value="easy">Fácil</option>
+                                                <option value="normal">Normal</option>
+                                                <option value="hard">Difícil</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Combate (PVP)</label>
+                                            <select id="setting-pvp" class="input-pro bg-[#0a0a0a]">
+                                                <option value="true">Activado</option>
+                                                <option value="false">Desactivado</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button onclick="window.saveGameSettings()" class="mt-6 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 px-6 rounded-lg text-xs uppercase tracking-wider transition-colors shadow-[0_0_15px_rgba(37,99,235,0.4)]">Guardar y Reiniciar</button>
+                                </div>
+
+                                <div class="bg-[#161616] p-6 rounded-xl border border-[#333] mb-6 shadow-lg">
+                                    <h4 class="text-sm font-bold text-white mb-4 uppercase tracking-wider text-green-400"><i data-feather="map" class="inline w-4 h-4 mr-1"></i> Generación de Mundo</h4>
+                                    <div class="flex flex-col md:flex-row gap-4">
+                                        <div class="flex-1">
+                                            <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Semilla (Seed) Personalizada</label>
+                                            <input type="text" id="setting-seed" class="input-pro bg-[#0a0a0a]" placeholder="Ej: 8483921 (Deja vacío para aleatorio)">
+                                        </div>
+                                        <div class="flex items-end">
+                                            <button onclick="window.regenerateWorld()" class="bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg text-xs uppercase tracking-wider transition-colors shadow-[0_0_15px_rgba(76,175,80,0.4)] w-full md:w-auto"><i data-feather="refresh-cw" class="inline w-3 h-3 mr-1"></i> Crear Nuevo Mundo</button>
+                                        </div>
+                                    </div>
+                                    <p class="text-[10px] text-yellow-500 mt-3 font-bold"><i data-feather="alert-triangle" class="inline w-3 h-3"></i> ADVERTENCIA: Al generar un nuevo mundo, se borrará el progreso actual de forma irreversible.</p>
+                                </div>
+
+                                <div class="border border-red-900 bg-[#1a0505] rounded-xl p-6 relative overflow-hidden shadow-2xl">
                                     <div class="absolute top-0 left-0 w-full h-1 bg-red-600"></div>
-                                    <h4 class="text-red-500 font-bold text-lg mb-2 flex items-center gap-2"><i data-feather="alert-triangle"></i> Zona de Peligro</h4>
-                                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 mt-6 border-b border-red-900/50 pb-6">
+                                    <h4 class="text-red-500 font-bold text-lg mb-4 flex items-center gap-2"><i data-feather="alert-triangle"></i> Zona de Peligro</h4>
+                                    
+                                    <div class="flex flex-col md:flex-row justify-between items-center gap-6 border-b border-red-900/50 pb-6 mb-6">
                                         <div>
                                             <h5 class="text-white font-bold mb-1">Reseteo de Red (Playit.gg)</h5>
                                             <p class="text-xs text-gray-400 max-w-lg">Si perdiste acceso a tu cuenta de Playit o la IP se bugeó, esto destruirá el túnel actual y generará un link de vinculación virgen.</p>
                                         </div>
-                                        <button onclick="window.resetPlayitNetwork()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors whitespace-nowrap text-sm shadow-[0_0_15px_rgba(220,38,38,0.4)]">Resetear Red</button>
+                                        <button onclick="window.resetPlayitNetwork()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 px-6 rounded-lg transition-colors whitespace-nowrap text-xs shadow-[0_0_15px_rgba(220,38,38,0.4)] uppercase">Resetear Red</button>
+                                    </div>
+
+                                    <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                                        <div>
+                                            <h5 class="text-white font-bold mb-1 flex items-center gap-2">Clonar Nodo <span class="bg-purple-600 text-[9px] px-2 py-0.5 rounded font-bold uppercase">PREMIUM</span></h5>
+                                            <p class="text-xs text-gray-400 max-w-lg">Duplica este servidor completo (archivos y mundo) en un nuevo contenedor. Ideal para entornos de pruebas. Requiere ranuras libres en tu plan.</p>
+                                        </div>
+                                        <button onclick="alert('Sistema de clonación en desarrollo para la V0.9 final.')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 px-6 rounded-lg transition-colors whitespace-nowrap text-xs shadow-[0_0_15px_rgba(147,51,234,0.4)] uppercase">Clonar Servidor</button>
                                     </div>
                                 </div>
                             </div>`;
                         feather.replace();
+
+                        const fetchSettings = async () => {
+                            try {
+                                const t = await auth.currentUser.getIdToken();
+                                const res = await fetch(`${API_URL}/api/server/settings${queryAuth}`, { headers: {'Authorization': 'Bearer ' + t} });
+                                const data = await res.json();
+                                document.getElementById('setting-gamemode').value = data.gamemode || 'survival';
+                                document.getElementById('setting-difficulty').value = data.difficulty || 'easy';
+                                document.getElementById('setting-pvp').value = data.pvp || 'true';
+                            } catch(e) {}
+                        };
+                        fetchSettings();
+
+                        window.saveGameSettings = async () => {
+                            const gm = document.getElementById('setting-gamemode').value;
+                            const diff = document.getElementById('setting-difficulty').value;
+                            const pvp = document.getElementById('setting-pvp').value;
+                            
+                            if(!confirm("Guardar estos ajustes reiniciará el servidor para aplicarlos. ¿Continuar?")) return;
+
+                            try {
+                                const t = await auth.currentUser.getIdToken();
+                                await fetch(`${API_URL}/api/server/settings`, { 
+                                    method: 'POST', 
+                                    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t}, 
+                                    body: JSON.stringify({...bodyAuth, gamemode: gm, difficulty: diff, pvp: pvp }) 
+                                });
+                                alert("Ajustes guardados. El servidor se está reiniciando.");
+                                window.showPanel('home-panel');
+                            } catch(e) { alert("Error al guardar."); }
+                        };
+
+                        window.regenerateWorld = async () => {
+                            const seed = document.getElementById('setting-seed').value.trim();
+                            if(!confirm("⚠️ ADVERTENCIA EXTREMA ⚠️\n\nTu mundo actual se ELIMINARÁ POR COMPLETO y se generará uno nuevo desde cero.\n\n¿Estás absolutamente seguro de continuar?")) return;
+                            
+                            try {
+                                const t = await auth.currentUser.getIdToken();
+                                await fetch(`${API_URL}/api/server/regenerate-world`, { 
+                                    method: 'POST', 
+                                    headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + t}, 
+                                    body: JSON.stringify({...bodyAuth, seed: seed }) 
+                                });
+                                alert("¡Mundo destruido y regenerado con éxito! El servidor se está iniciando.");
+                                window.showPanel('home-panel');
+                            } catch(e) { alert("Error al regenerar el mundo."); }
+                        };
                     }
 
-                    // ==========================================
-                    // EL NUEVO PANEL COMPARTIDO (SUB-USUARIOS)
-                    // ==========================================
                     if (id === 'compartidos-panel') {
                         if (isSharedServer) {
                             panel.innerHTML = `
@@ -1493,6 +1711,12 @@
                                     headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
                                     body: JSON.stringify({serverId: config.id, emailToShare: email})
                                 });
+                                
+                                const contentType = res.headers.get("content-type");
+                                if (!contentType || !contentType.includes("application/json")) {
+                                    throw new Error("El servidor está caído o bloqueado por Cloudflare (Error 502/403).");
+                                }
+                                
                                 const data = await res.json();
                                 if(data.success) {
                                     config.sharedWith = data.sharedWith;
@@ -1500,9 +1724,7 @@
                                     emailInput.value = '';
                                     window.showPanel('compartidos-panel');
                                     alert(`¡Excelente! El usuario ${email} ahora tiene acceso a tu servidor.`);
-                                } else { 
-                                    throw new Error(data.error); 
-                                }
+                                } else { throw new Error(data.error); }
                             } catch(e) { 
                                 alert("Error al invitar: " + e.message); 
                                 btn.disabled = false;
@@ -1519,19 +1741,97 @@
                                     headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token},
                                     body: JSON.stringify({serverId: config.id, emailToUnshare: email})
                                 });
+                                
+                                const contentType = res.headers.get("content-type");
+                                if (!contentType || !contentType.includes("application/json")) {
+                                    throw new Error("El servidor está caído o bloqueado por Cloudflare (Error 502/403).");
+                                }
+                                
                                 const data = await res.json();
                                 if(data.success) {
                                     config.sharedWith = data.sharedWith;
                                     sessionStorage.setItem('selectedServer', JSON.stringify(config));
                                     window.showPanel('compartidos-panel');
-                                } else { 
-                                    throw new Error(data.error); 
-                                }
-                            } catch(e) { 
-                                alert("Error al revocar: " + e.message); 
+                                } else { throw new Error(data.error); }
+                            } catch(e) { alert("Error al revocar: " + e.message); }
+                        };
+                    }
+
+                    if (id === 'profile-panel') {
+                        panel.innerHTML = `
+                            <div class="content-panel">
+                                <h3 class="text-xl mb-6 font-bold text-green-500 flex items-center gap-2"><i data-feather="user"></i> Mi Perfil</h3>
+                                <div class="bg-[#161616] p-6 rounded-xl border border-[#333] max-w-2xl mx-auto">
+                                    <form id="profile-form" class="space-y-6">
+                                        <div class="flex flex-col md:flex-row items-center gap-6 mb-6 pb-6 border-b border-[#333]">
+                                            <div class="relative">
+                                                <img src="${userPhoto}" id="preview-avatar" class="w-24 h-24 rounded-full border-4 border-green-500 object-cover shadow-[0_0_15px_rgba(76,175,80,0.3)]">
+                                            </div>
+                                            <div class="flex-1 w-full">
+                                                <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Avatar URL (Imagen)</label>
+                                                <input type="url" id="profile-avatar" class="input-pro text-sm bg-[#0a0a0a]" placeholder="https://..." value="${userPhoto !== './assets/img/default-avatar.png' ? userPhoto : ''}" oninput="document.getElementById('preview-avatar').src = this.value || './assets/img/default-avatar.png'">
+                                            </div>
+                                        </div>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            <div class="space-y-2">
+                                                <label class="text-xs text-gray-500 uppercase font-bold">Nombre de Usuario</label>
+                                                <input type="text" id="profile-name" class="input-pro bg-[#0a0a0a]" value="${rawName}">
+                                            </div>
+                                            <div class="space-y-2">
+                                                <label class="text-xs text-gray-500 uppercase font-bold">Correo Electrónico</label>
+                                                <input type="email" class="input-pro bg-[#0a0a0a] opacity-50 cursor-not-allowed" value="${auth.currentUser.email}" disabled title="No modificable por seguridad">
+                                            </div>
+                                        </div>
+                                        <div class="space-y-2">
+                                            <label class="text-xs text-gray-500 uppercase font-bold">Preferencia de Estilo (Tema de Panel)</label>
+                                            <select id="profile-theme" class="input-pro bg-[#0a0a0a]">
+                                                <option value="default">Por Defecto (Moderno oscuro)</option>
+                                                <option value="hacker">Terminal (Modo Hacker)</option>
+                                                <option value="light">Claro (Próximamente)</option>
+                                            </select>
+                                        </div>
+                                        <div class="pt-4 border-t border-[#333]">
+                                            <button type="submit" class="w-full bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-6 rounded-lg transition-colors uppercase tracking-wider text-sm shadow-[0_0_15px_rgba(76,175,80,0.4)]">Guardar Cambios</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        `;
+                        feather.replace();
+
+                        const savedTheme = localStorage.getItem('proservers_theme') || 'default';
+                        document.getElementById('profile-theme').value = savedTheme;
+
+                        document.getElementById('profile-form').onsubmit = async (e) => {
+                            e.preventDefault();
+                            const btn = e.target.querySelector('button[type="submit"]');
+                            const originalText = btn.innerText;
+                            btn.innerHTML = '<i data-feather="loader" class="animate-spin inline w-4 h-4"></i> Guardando...';
+                            btn.disabled = true;
+                            feather.replace();
+
+                            const newName = document.getElementById('profile-name').value.trim();
+                            const newAvatar = document.getElementById('profile-avatar').value.trim();
+
+                            try {
+                                await updateProfile(auth.currentUser, {
+                                    displayName: newName || null,
+                                    photoURL: newAvatar || null
+                                });
+                                
+                                const theme = document.getElementById('profile-theme').value;
+                                localStorage.setItem('proservers_theme', theme);
+
+                                alert("✅ Perfil actualizado correctamente. Los cambios se verán reflejados en todo el panel.");
+                                window.location.reload(); 
+                            } catch (err) {
+                                alert("❌ Error al actualizar el perfil: " + err.message);
+                                btn.innerHTML = originalText;
+                                btn.disabled = false;
                             }
                         };
                     }
+
                 } // FIN showPanel
 
                 async function checkPlayitLogs() {
@@ -1559,6 +1859,14 @@
                         const t = await auth.currentUser.getIdToken();
                         const res = await fetch(`${API_URL}/api/server/status${queryAuth}`, { headers: {'Authorization': 'Bearer ' + t} });
                         const data = await res.json();
+                        
+                        // ===== CONTROL DE ZONA DE HIELO (ISPAUSED) =====
+                        if (data.isPaused) {
+                            document.getElementById('ice-zone').classList.remove('hidden');
+                        } else {
+                            document.getElementById('ice-zone').classList.add('hidden');
+                        }
+
                         const isOn = data.status === 'on';
                         
                         const sText = document.getElementById('status-text');
@@ -1614,8 +1922,10 @@
                             },
                             body: JSON.stringify(bodyAuth)
                         });
-                        const data = await res.json();
-                        if(data.error) throw new Error(data.error);
+                        if (!res.ok) {
+                            const errTxt = await res.json();
+                            throw new Error(errTxt.error || "Error al ejecutar acción");
+                        }
                     } catch(e) {
                         alert("Error: " + e.message);
                     }
@@ -1824,6 +2134,12 @@
                             },
                             body: JSON.stringify({ token })
                         });
+                        
+                        if (!res.ok) {
+                            const errTxt = await res.json();
+                            throw new Error(errTxt.error || "Error al subir backup");
+                        }
+                        
                         const data = await res.json();
                         
                         clearInterval(interval);
@@ -1883,6 +2199,12 @@
                             },
                             body: JSON.stringify(bodyAuth)
                         });
+                        
+                        if (!res.ok) {
+                            const errTxt = await res.json();
+                            throw new Error(errTxt.error || "Error al resetear la red");
+                        }
+                        
                         const data = await res.json();
                         
                         if (data.success) {

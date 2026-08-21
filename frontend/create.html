@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Desplegar Servidor | Professional Servers V0.8 BETA</title>
+    <title>Desplegar Servidor | Professional Servers V0.9 BETA</title>
     <link rel="icon" type="image/x-icon" href="./assets/img/favicon.ico">
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&family=Press+Start+2P&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/feather-icons"></script>
@@ -24,6 +24,8 @@
         .spinner-ring { width: 80px; height: 80px; border: 4px solid rgba(255, 255, 255, 0.1); border-top-color: currentColor; border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
         
+        .glow-purple { box-shadow: 0 0 10px rgba(147, 51, 234, 0.5); }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #111; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
@@ -35,10 +37,13 @@
     <div class="max-w-5xl mx-auto p-6 pt-12">
         <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-4">
             <div class="flex items-center gap-4">
-                <img src="./assets/img/favicon.ico" class="w-14 h-14 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)]">
+                <img src="./assets/img/favicon.ico" class="w-14 h-14 object-contain drop-shadow-[0_0_12px_rgba(76,175,80,0.5)]" onerror="this.src='./assets/img/logo-minecraft.ico'">
                 <div>
-                    <h1 class="text-3xl font-bold font-['Cinzel'] tracking-wider text-white uppercase">Nuevo Proyecto</h1>
-                    <p class="text-xs text-green-500 font-bold uppercase tracking-widest">Infraestructura V0.8 Pro</p>
+                    <h1 class="text-3xl font-bold font-['Cinzel'] tracking-wider text-white uppercase flex items-center gap-3">
+                        Nuevo Proyecto 
+                        <span id="ceo-badge" class="hidden text-[9px] bg-purple-600 text-white px-2 py-1 rounded border border-purple-400 glow-purple tracking-widest font-sans font-bold">MODO CEO</span>
+                    </h1>
+                    <p class="text-xs text-green-500 font-bold uppercase tracking-widest">Infraestructura V0.9 Pro</p>
                 </div>
             </div>
             <button onclick="window.location.href='index.html'" class="text-xs text-gray-400 hover:text-white transition-colors uppercase font-bold flex items-center gap-2 bg-[#111] px-4 py-2 rounded-lg border border-[#333]">
@@ -75,11 +80,10 @@
                         <option value="url_modpack">Importar Modpack por URL (MediaFire/Directo)</option>
                     </select>
 
-                    <!-- ESCUDO ANTI-CRASHEO (PAYWALL DE MODPACKS) -->
                     <div id="modpack-warning-msg" class="hidden bg-red-950/40 border border-red-500 p-6 rounded-xl mb-4 text-center shadow-[0_0_20px_rgba(220,38,38,0.15)]">
                         <i data-feather="alert-octagon" class="w-10 h-10 text-red-500 mx-auto mb-3"></i>
-                        <p class="text-sm text-white font-bold mb-2">Memoria RAM Insuficiente</p>
-                        <p class="text-xs text-gray-400">Los Modpacks masivos consumen gran cantidad de recursos y causarán que tu servidor se apague repentinamente (OOM). Para desbloquear esta función necesitas actualizar al <b class="text-yellow-500">Plan Oro (16GB)</b> o superior.</p>
+                        <p class="text-sm text-white font-bold mb-2">Función Premium Bloqueada</p>
+                        <p class="text-xs text-gray-400">Los Modpacks masivos requieren descompresión profunda y el Gestor de Archivos activado para configurarlos correctamente. Para desbloquear esta función necesitas actualizar al <b class="text-yellow-500">Plan Oro (16GB)</b> o superior.</p>
                         <button type="button" onclick="window.location.href='planes.html'" class="mt-4 w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg transition-colors uppercase text-xs tracking-wider shadow-lg shadow-red-950/50">
                             Mejorar a Plan Oro
                         </button>
@@ -232,497 +236,606 @@
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { initializeApp, getApps, getApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
         
-        const auth = getAuth(initializeApp({ apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM", authDomain: "proffesional-server.firebaseapp.com", projectId: "proffesional-server", storageBucket: "proffesional-server.firebasestorage.app", messagingSenderId: "833822850667", appId: "1:833822850667:web:3c03219c6822116edbfb2e" }));
+        const firebaseConfig = {
+            apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM",
+            authDomain: "proffesional-server.firebaseapp.com",
+            projectId: "proffesional-server",
+            storageBucket: "proffesional-server.firebasestorage.app",
+            messagingSenderId: "833822850667",
+            appId: "1:833822850667:web:3c03219c6822116edbfb2e",
+            measurementId: "G-8SZ528Y5NZ"
+        };
         
-        const API_URL = ''; // MANTENÉ TU IP ACÁ SI ES NECESARIO O DEJALO VACÍO SEGÚN TU CONFIGURACIÓN DE NGINX
+        // Escudo anti-crasheo de inicialización doble
+        const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+        const auth = getAuth(app);
         
-        window.userPlan = { name: 'Plan Redstone', maxServers: 1, ram: '8GB', ramNum: 8 };
+        const API_URL = ''; 
+        
+        window.userPlan = { name: 'Plan Redstone', maxServers: 1, ram: '8GB', ramNum: 8, fileManager: false };
 
-        const getDeployText = () => `DESPLEGAR SERVIDOR (${window.userPlan?.ram || '8GB'} RAM)`;
+        const getDeployText = () => {
+            const isCEO = auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com';
+            if (isCEO) return 'DESPLEGAR SERVIDOR (MODO DIOS: ∞ RAM)';
+            return `DESPLEGAR SERVIDOR (${window.userPlan?.ram || '8GB'} RAM)`;
+        };
 
         const javaSoftwares = `
-            <optgroup label="Vanilla"><option value="vanilla">Vanilla</option><option value="snapshot">Snapshot</option></optgroup>
-            <optgroup label="Para Plugins"><option value="paper">Paper/Bukkit</option><option value="spigot">Spigot/Bukkit</option><option value="purpur">Purpur/Bukkit</option><option value="glowstone">Glowstone</option></optgroup>
-            <optgroup label="Para Mods y más"><option value="fabric">Fabric</option><option value="quilt">Quilt</option><option value="neoforge">NeoForge</option><option value="forge">Forge</option></optgroup>
-            <optgroup label="Para ambas (Plugins/Mods)"><option value="arclight">Arclight</option></optgroup>
+            <optgroup label="Vanilla Oficial">
+                <option value="vanilla">Vanilla</option>
+                <option value="snapshot">Snapshot</option>
+            </optgroup>
+            <optgroup label="Para Plugins">
+                <option value="paper">Paper/Bukkit</option>
+                <option value="spigot">Spigot/Bukkit</option>
+                <option value="purpur">Purpur/Bukkit</option>
+            </optgroup>
+            <optgroup label="Para Mods">
+                <option value="fabric">Fabric</option>
+                <option value="quilt">Quilt</option>
+                <option value="neoforge">NeoForge</option>
+                <option value="forge">Forge</option>
+            </optgroup>
+            <optgroup label="Híbrido (Mods + Plugins)">
+                <option value="arclight">Arclight</option>
+            </optgroup>
         `;
-        const bedrockSoftwares = `
-            <optgroup label="Vanilla"><option value="bedrock">Bedrock Oficial</option><option value="preview">Bedrock Preview</option></optgroup>
-            <optgroup label="Para Plugins"><option value="pocketmine">PocketMine</option></optgroup>
-        `;
-
-        const softwareSelect = document.getElementById('software-select');
-        const mcVersion = document.getElementById('mc-version-select');
-        const softwareMsg = document.getElementById('software-msg');
-        const btnSubmit = document.getElementById('btn-submit-create');
-        const installTypeSelect = document.getElementById('install-type');
-        const cfContainer = document.getElementById('cf-modpack-container');
-        const urlContainer = document.getElementById('url-modpack-container');
-        const configMotorContainer = document.getElementById('config-motor-container');
-        const autoConfigMsg = document.getElementById('auto-config-msg');
-        const modpackWarningMsg = document.getElementById('modpack-warning-msg');
-
-        softwareSelect.innerHTML = javaSoftwares;
-
-        // LÓGICA DE BLOQUEO DE MODPACKS EN EL FRONTEND
-        installTypeSelect.addEventListener('change', (e) => {
-            cfContainer.classList.add('hidden');
-            urlContainer.classList.add('hidden');
-            modpackWarningMsg.classList.add('hidden');
-            
-            const isModpack = e.target.value === 'cf_modpack' || e.target.value === 'url_modpack';
-            
-            // Si elige modpack y tiene Redstone (8GB) o Hierro (12GB)
-            if (isModpack && window.userPlan.ramNum < 16) {
-                configMotorContainer.classList.add('hidden');
-                autoConfigMsg.classList.add('hidden');
-                modpackWarningMsg.classList.remove('hidden');
-                btnSubmit.disabled = true;
-                btnSubmit.innerText = "REQUIERE PLAN ORO O SUPERIOR";
-                return;
-            }
-
-            if (e.target.value === 'clean') {
-                configMotorContainer.classList.remove('hidden');
-                autoConfigMsg.classList.add('hidden');
-                updateSoftwareMsg();
-            } else if (e.target.value === 'url_modpack') {
-                configMotorContainer.classList.remove('hidden');
-                autoConfigMsg.classList.add('hidden');
-                urlContainer.classList.remove('hidden');
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = getDeployText();
-            } else {
-                configMotorContainer.classList.add('hidden');
-                autoConfigMsg.classList.remove('hidden');
-                cfContainer.classList.remove('hidden');
-                btnSubmit.disabled = true;
-                btnSubmit.innerText = "SELECCIONA UN MODPACK ARRIBA";
-            }
-        });
-
-        document.getElementById('server-edition').addEventListener('change', (e) => {
-            const isBedrock = e.target.value === 'bedrock';
-            softwareSelect.innerHTML = isBedrock ? bedrockSoftwares : javaSoftwares;
-            document.getElementById('version-section').style.display = isBedrock ? 'none' : 'block';
-            document.getElementById('modpack-section').style.display = isBedrock ? 'none' : 'block';
-            if(isBedrock) {
-                installTypeSelect.value = 'clean';
-                installTypeSelect.dispatchEvent(new Event('change')); 
-            }
-            updateSoftwareMsg();
-        });
-
-        function updateSoftwareMsg() {
-            if(installTypeSelect.value === 'cf_modpack') return;
-            const val = softwareSelect.value;
-            const ver = mcVersion.value;
-            const esVersionBloqueada = (ver.startsWith('26.') || ver === 'LATEST');
-            const esMotorDeMods = ['forge', 'fabric', 'quilt', 'neoforge', 'arclight'].includes(val);
-
-            if (esVersionBloqueada && esMotorDeMods) {
-                softwareMsg.innerHTML = '<i data-feather="lock"></i> BLOQUEO: Selecciona una versión específica para usar mods.';
-                softwareMsg.className = 'text-[10px] text-red-500 font-bold flex items-center gap-1 mt-1';
-                btnSubmit.disabled = true;
-                btnSubmit.innerText = "VERSIÓN NO COMPATIBLE";
-            } else {
-                softwareMsg.innerHTML = '<i data-feather="check"></i> Configuración válida.';
-                softwareMsg.className = 'text-[10px] text-green-400 font-bold flex items-center gap-1 mt-1';
-                btnSubmit.disabled = false;
-                btnSubmit.innerText = getDeployText();
-            }
-            feather.replace();
-        }
         
-        softwareSelect.addEventListener('change', updateSoftwareMsg);
-        mcVersion.addEventListener('change', updateSoftwareMsg);
-        updateSoftwareMsg();
+        const bedrockSoftwares = `
+            <optgroup label="Bedrock Oficial">
+                <option value="bedrock">Bedrock Oficial (LATEST)</option>
+                <option value="preview">Bedrock Preview</option>
+            </optgroup>
+            <optgroup label="Para Plugins">
+                <option value="pocketmine">PocketMine-MP</option>
+            </optgroup>
+        `;
 
-        window.buscarModpacksCF = async () => {
-            const btn = document.getElementById('btn-cf-search');
-            const input = document.getElementById('cf-search-input').value;
-            const resDiv = document.getElementById('cf-results');
+        // Envolvemos la carga del DOM para asegurar que el HTML existe antes de inyectar
+        document.addEventListener('DOMContentLoaded', () => {
+            const softwareSelect = document.getElementById('software-select');
+            const mcVersion = document.getElementById('mc-version-select');
+            const softwareMsg = document.getElementById('software-msg');
+            const btnSubmit = document.getElementById('btn-submit-create');
+            const installTypeSelect = document.getElementById('install-type');
+            const cfContainer = document.getElementById('cf-modpack-container');
+            const urlContainer = document.getElementById('url-modpack-container');
+            const configMotorContainer = document.getElementById('config-motor-container');
+            const autoConfigMsg = document.getElementById('auto-config-msg');
+            const modpackWarningMsg = document.getElementById('modpack-warning-msg');
 
-            btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i>';
-            feather.replace();
-            resDiv.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Buscando modpacks en CurseForge...</p>';
+            softwareSelect.innerHTML = javaSoftwares;
 
-            try {
-                const token = await auth.currentUser.getIdToken();
-                let fetchUrl = `${API_URL}/api/curseforge/search?categoryId=4471`;
-                if (input && input.trim() !== '') {
-                    fetchUrl += `&query=${encodeURIComponent(input.trim())}`;
-                }
-
-                const res = await fetch(fetchUrl, {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await res.json();
+            installTypeSelect.addEventListener('change', (e) => {
+                cfContainer.classList.add('hidden');
+                urlContainer.classList.add('hidden');
+                modpackWarningMsg.classList.add('hidden');
                 
-                resDiv.innerHTML = '';
-                let found = 0;
-                if(data.data) {
-                    data.data.forEach(mod => {
-                        found++;
-                        const icon = (mod.logo && mod.logo.url) ? mod.logo.url : './assets/img/favicon.ico';
-                        
-                        const hasServerPack = mod.latestFiles && mod.latestFiles.some(f => f.serverPackFileId);
-                        
-                        const badgeHtml = hasServerPack 
-                            ? `<span class="text-[9px] bg-green-600/20 text-green-400 border border-green-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="server" class="w-3 h-3"></i> Server Pack Oficial</span>`
-                            : `<span class="text-[9px] bg-red-600/20 text-red-400 border border-red-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="x-circle" class="w-3 h-3"></i> Incompatible (Solo Cliente)</span>`;
-
-                        const clickAttr = hasServerPack ? `onclick="window.seleccionarModpack('${mod.id}', this)"` : `onclick="alert('Este modpack no posee archivos configurados para servidor (Server Pack). Solo puede instalarse en clientes.')"`;
-                        const opacityClass = hasServerPack ? '' : 'opacity-60 grayscale cursor-not-allowed';
-
-                        resDiv.innerHTML += `
-                            <div ${clickAttr} class="modpack-card flex gap-3 p-3 bg-[#161616] border border-[#333] rounded-lg hover:border-indigo-500 transition-colors ${opacityClass} ${hasServerPack ? 'cursor-pointer' : ''}">
-                                <img src="${icon}" class="w-12 h-12 rounded object-cover shadow-md">
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="text-sm font-bold text-white truncate" title="${mod.name.replace(/'/g, "\\'")}">${mod.name}</h4>
-                                    <div class="flex items-center gap-2 mt-1">
-                                        ${badgeHtml}
-                                        <span class="text-[10px] text-gray-500 font-mono"><i data-feather="download" class="w-3 h-3 inline text-indigo-400"></i> ${mod.downloadCount.toLocaleString()}</span>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
+                const isModpack = e.target.value === 'cf_modpack' || e.target.value === 'url_modpack';
+                const isCEO = auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com';
+                
+                if (isModpack && !window.userPlan.fileManager && !isCEO) {
+                    configMotorContainer.classList.add('hidden');
+                    autoConfigMsg.classList.add('hidden');
+                    modpackWarningMsg.classList.remove('hidden');
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerText = "REQUIERE PLAN ORO O SUPERIOR";
+                    return;
                 }
-                if(found === 0) {
-                    resDiv.innerHTML = '<div class="text-center py-4"><i data-feather="x-circle" class="w-8 h-8 text-red-400 mx-auto mb-2 opacity-50"></i><p class="text-xs text-red-400">No se encontraron resultados.</p></div>';
-                }
-                feather.replace();
-            } catch(e) {
-                resDiv.innerHTML = '<p class="text-xs text-red-500 text-center py-4">Error al buscar en CurseForge.</p>';
-            }
-            btn.innerHTML = '<i data-feather="search" class="w-4 h-4"></i>';
-            feather.replace();
-        };
 
-        window.seleccionarModpack = async (id, el) => {
-            document.querySelectorAll('.modpack-card').forEach(c => {
-                c.classList.remove('border-indigo-500', 'bg-indigo-900/30');
-                if(!c.classList.contains('grayscale')) {
-                    c.classList.add('border-[#333]', 'bg-[#161616]');
+                if (e.target.value === 'clean') {
+                    configMotorContainer.classList.remove('hidden');
+                    autoConfigMsg.classList.add('hidden');
+                    updateSoftwareMsg();
+                } else if (e.target.value === 'url_modpack') {
+                    configMotorContainer.classList.remove('hidden');
+                    autoConfigMsg.classList.add('hidden');
+                    urlContainer.classList.remove('hidden');
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerText = getDeployText();
+                } else {
+                    configMotorContainer.classList.add('hidden');
+                    autoConfigMsg.classList.remove('hidden');
+                    cfContainer.classList.remove('hidden');
+                    btnSubmit.disabled = true;
+                    btnSubmit.innerText = "SELECCIONA UN MODPACK ARRIBA";
                 }
             });
-            el.classList.remove('border-[#333]', 'bg-[#161616]');
-            el.classList.add('border-indigo-500', 'bg-indigo-900/30');
-            document.getElementById('selected-cf-id').value = id;
 
-            configMotorContainer.classList.remove('hidden');
-            autoConfigMsg.classList.add('hidden');
-            
-            softwareSelect.innerHTML = '<option value="Server Pack">Modpack / Server Pack Oficial</option>';
-            
-            mcVersion.innerHTML = '<option value="">Obteniendo versiones desde CurseForge...</option>';
-            btnSubmit.disabled = true;
-            btnSubmit.innerText = "CARGANDO VERSIONES...";
+            document.getElementById('server-edition').addEventListener('change', (e) => {
+                const isBedrock = e.target.value === 'bedrock';
+                softwareSelect.innerHTML = isBedrock ? bedrockSoftwares : javaSoftwares;
+                document.getElementById('version-section').style.display = isBedrock ? 'none' : 'block';
+                document.getElementById('modpack-section').style.display = isBedrock ? 'none' : 'block';
+                if(isBedrock) {
+                    installTypeSelect.value = 'clean';
+                    installTypeSelect.dispatchEvent(new Event('change')); 
+                }
+                updateSoftwareMsg();
+            });
 
-            try {
-                const token = await auth.currentUser.getIdToken();
-                const res = await fetch(`${API_URL}/api/curseforge/files?modId=${id}`, {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await res.json();
-                
-                mcVersion.innerHTML = '';
-                let foundVersions = 0;
-                
-                if(data.data && data.data.length > 0) {
-                    data.data.forEach(f => {
-                        if (f.serverPackFileId) {
-                            foundVersions++;
-                            const type = f.releaseType === 1 ? 'RELEASE' : (f.releaseType === 2 ? 'BETA' : 'ALPHA');
-                            const mcVer = f.gameVersions.find(v => v.match(/^1\.\d/)) || "Auto";
-                            
-                            mcVersion.innerHTML += `<option value="${f.serverPackFileId}" data-mc="${mcVer}">${f.displayName} | MC ${mcVer} (${type})</option>`;
-                        }
-                    });
-                    
-                    if (foundVersions > 0) {
+            function updateSoftwareMsg() {
+                if(installTypeSelect.value === 'cf_modpack') return;
+                const val = softwareSelect.value || '';
+                const ver = mcVersion.value || '';
+                const isBedrock = document.getElementById('server-edition').value === 'bedrock';
+
+                if (isBedrock) {
+                    softwareMsg.innerHTML = '<i data-feather="check"></i> Configuración lista para Bedrock.';
+                    softwareMsg.className = 'text-[10px] text-green-400 font-bold flex items-center gap-1 mt-1';
+                    btnSubmit.disabled = false;
+                    btnSubmit.innerText = getDeployText();
+                } else {
+                    const esVersionBloqueada = (ver.startsWith('26.') || ver === 'LATEST');
+                    const esMotorDeMods = val && ['forge', 'fabric', 'quilt', 'neoforge', 'arclight'].includes(val);
+
+                    if (esVersionBloqueada && esMotorDeMods) {
+                        softwareMsg.innerHTML = '<i data-feather="lock"></i> BLOQUEO: Selecciona una versión específica para usar mods.';
+                        softwareMsg.className = 'text-[10px] text-red-500 font-bold flex items-center gap-1 mt-1';
+                        btnSubmit.disabled = true;
+                        btnSubmit.innerText = "VERSIÓN NO COMPATIBLE";
+                    } else {
+                        softwareMsg.innerHTML = '<i data-feather="check"></i> Configuración válida.';
+                        softwareMsg.className = 'text-[10px] text-green-400 font-bold flex items-center gap-1 mt-1';
                         btnSubmit.disabled = false;
                         btnSubmit.innerText = getDeployText();
-                    } else {
-                        mcVersion.innerHTML = '<option value="">No hay Server Packs en estas versiones.</option>';
-                        btnSubmit.innerText = "SIN VERSIONES COMPATIBLES";
                     }
-                } else {
-                    mcVersion.innerHTML = '<option value="">No hay versiones disponibles.</option>';
-                    btnSubmit.innerText = "SIN VERSIONES";
-                }
-            } catch(e) {
-                mcVersion.innerHTML = '<option value="">Error de conexión con la API.</option>';
-                btnSubmit.innerText = "ERROR DE CONEXIÓN";
-            }
-        };
-
-        onAuthStateChanged(auth, async (user) => {
-            if (!user) {
-                window.location.href = 'index.html';
-                return;
-            }
-            try {
-                const token = await user.getIdToken();
-                const verifyRes = await fetch(`${API_URL}/api/user/status?uid=${user.uid}`, {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const verifyData = await verifyRes.json();
-
-                if (verifyData.plan) {
-                    window.userPlan = verifyData.plan;
-                    window.userPlan.ramNum = parseInt(window.userPlan.ram.replace(/[^0-9]/g, '')) || 8;
-                } else if (verifyData.status === 'premium') {
-                    window.userPlan = { name: 'Plan Hierro', maxServers: 2, ram: '12GB', ramNum: 12 };
-                }
-
-                // Refrescar dropdown por si el usuario tiene plan menor a 16gb
-                installTypeSelect.dispatchEvent(new Event('change'));
-
-                if(btnSubmit && btnSubmit.disabled === false) btnSubmit.innerText = getDeployText();
-
-                await loadUserServers(user.uid);
-
-                if (verifyData.status === 'expired' || verifyData.status === 'suspended') {
-                    const form = document.getElementById('view-create');
-                    form.innerHTML = `
-                        <div class="col-span-1 lg:col-span-2 glass p-10 text-center flex flex-col items-center justify-center border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.1)]">
-                            <i data-feather="lock" class="w-16 h-16 text-red-500 mb-4"></i>
-                            <h2 class="text-2xl font-bold font-['Cinzel'] text-white mb-2">Suscripción Suspendida</h2>
-                            <p class="text-gray-400 mb-6 max-w-md">Tu plan actual ha caducado. Renueva tu suscripción para seguir desplegando infraestructura.</p>
-                            <button onclick="window.location.href='planes.html'" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 rounded-lg text-white font-bold uppercase tracking-wider transition-colors shadow-[0_0_15px_rgba(79,70,229,0.4)]">
-                                Ver Planes de Pago
-                            </button>
-                        </div>
-                    `;
-                    feather.replace();
-                }
-            } catch (error) { console.error("Error validando permisos:", error); }
-        });
-
-        async function loadUserServers(uid) {
-            try {
-                const token = await auth.currentUser.getIdToken();
-                const res = await fetch(`${API_URL}/api/project/check?uid=${uid}`, {
-                    headers: { 'Authorization': 'Bearer ' + token }
-                });
-                const data = await res.json();
-                
-                const list = document.getElementById('servers-list-container');
-                const limitMsg = document.getElementById('limit-msg');
-
-                let count = data.exists ? data.servers.length : 0;
-                
-                let planName = window.userPlan.name;
-                let maxLimit = window.userPlan.maxServers;
-                let isLimitReached = maxLimit !== 'ilimitado' && count >= maxLimit;
-                let limitLabel = maxLimit === 'ilimitado' ? '∞' : maxLimit;
-                
-                if (isLimitReached) {
-                    if(btnSubmit) {
-                        btnSubmit.disabled = true;
-                        btnSubmit.innerHTML = `LÍMITE ALCANZADO (${planName.toUpperCase()})`;
-                    }
-                    if(limitMsg) {
-                        limitMsg.innerText = `Has alcanzado el límite de ${maxLimit} servidor(es) de tu ${planName}.`;
-                        limitMsg.classList.remove('hidden');
-                    }
-                } else {
-                    if(limitMsg) limitMsg.classList.add('hidden');
-                }
-
-                if (data.exists && count > 0) {
-                    let html = `<h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Tus Servidores Activos (${planName}: ${count}/${limitLabel})</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
-                    data.servers.forEach(s => {
-                        const versionLabel = s.edition === 'bedrock' ? s.software.toUpperCase() : s.version;
-                        html += `<div class="glass p-5 flex flex-col justify-between border border-[#333]">
-                            <div>
-                                <h4 class="font-bold text-white text-lg">${s.projectName}</h4>
-                                <p class="text-xs text-gray-400 mb-4">${s.edition.toUpperCase()} - ${versionLabel}</p>
-                            </div>
-                            <div class="flex gap-2">
-                                <button onclick="window.enterServer('${encodeURIComponent(JSON.stringify(s))}')" class="bg-green-600 hover:bg-green-500 transition-colors px-4 py-2 rounded text-xs font-bold text-white flex-1 shadow-lg">ENTRAR</button>
-                                <button onclick="window.deleteServer('${s.id}')" class="bg-[#222] border border-[#444] hover:border-red-500 hover:bg-red-600/20 hover:text-red-500 transition-colors px-3 py-2 rounded text-xs text-white" title="Borrar Servidor"><i data-feather="trash-2" class="w-4 h-4"></i></button>
-                            </div>
-                        </div>`;
-                    });
-                    list.innerHTML = html + '</div><hr class="border-[#333] my-8">';
                 }
                 feather.replace();
-            } catch (e) { console.error(e); }
-        }
-
-        window.enterServer = (s) => { 
-            sessionStorage.setItem('selectedServer', decodeURIComponent(s)); 
-            window.location.href = 'index.html'; 
-        };
-
-        window.deleteServer = async (id) => {
-            if (!confirm('⚠️ ¿Estás seguro? Eliminarás tu servidor y todo tu progreso se perderá permanentemente. Liberará 1 ranura en tu plan.')) return;
-            const token = await auth.currentUser.getIdToken();
-            await fetch(`${API_URL}/api/project/delete`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, 
-                body: JSON.stringify({ uid: auth.currentUser.uid, serverId: id }) 
-            });
-            window.location.reload();
-        };
-
-        document.getElementById('view-create')?.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (btnSubmit && btnSubmit.disabled) return;
+            }
             
-            const installType = document.getElementById('install-type').value;
-            const edition = document.getElementById('server-edition').value;
-            
-            // Doble Verificación Anti-Trampas (Postman / Inspeccionar Elemento)
-            if ((installType === 'cf_modpack' || installType === 'url_modpack') && window.userPlan.ramNum < 16) {
-                alert("Violación de seguridad: Tu plan actual no soporta Modpacks. Mejora al Plan Oro o superior.");
-                return;
-            }
+            softwareSelect.addEventListener('change', updateSoftwareMsg);
+            mcVersion.addEventListener('change', updateSoftwareMsg);
+            updateSoftwareMsg();
 
-            if (edition === 'java') {
-                if (installType === 'cf_modpack' && !document.getElementById('selected-cf-id').value) {
-                    alert("Por favor, busca y selecciona un Modpack de la lista.");
-                    return;
+            window.buscarModpacksCF = async () => {
+                const btn = document.getElementById('btn-cf-search');
+                const input = document.getElementById('cf-search-input').value;
+                const resDiv = document.getElementById('cf-results');
+
+                if(btn) btn.innerHTML = '<i data-feather="loader" class="animate-spin w-4 h-4"></i>';
+                feather.replace();
+                resDiv.innerHTML = '<p class="text-xs text-gray-400 text-center py-4">Buscando modpacks en CurseForge...</p>';
+
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    let fetchUrl = `${API_URL}/api/curseforge/search?categoryId=4471`;
+                    if (input && input.trim() !== '') {
+                        fetchUrl += `&query=${encodeURIComponent(input.trim())}`;
+                    }
+
+                    const res = await fetch(fetchUrl, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    
+                    if (!res.ok) {
+                        const errTxt = await res.text();
+                        throw new Error(`Error en el servidor o CurseForge no responde. (HTTP ${res.status}: ${errTxt})`);
+                    }
+                    
+                    const data = await res.json();
+                    
+                    resDiv.innerHTML = '';
+                    let found = 0;
+                    if(data.data && data.data.length > 0) {
+                        data.data.forEach(mod => {
+                            found++;
+                            const icon = (mod.logo && mod.logo.url) ? mod.logo.url : './assets/img/favicon.ico';
+                            
+                            const hasServerPack = mod.latestFiles && mod.latestFiles.some(f => f.serverPackFileId);
+                            
+                            const badgeHtml = hasServerPack 
+                                ? `<span class="text-[9px] bg-green-600/20 text-green-400 border border-green-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="server" class="w-3 h-3"></i> Server Pack Oficial</span>`
+                                : `<span class="text-[9px] bg-red-600/20 text-red-400 border border-red-600/50 px-2 py-0.5 rounded font-bold uppercase flex items-center gap-1 shadow-sm"><i data-feather="x-circle" class="w-3 h-3"></i> Incompatible (Solo Cliente)</span>`;
+
+                            const clickAttr = hasServerPack ? `onclick="window.seleccionarModpack('${mod.id}', this)"` : `onclick="alert('Este modpack no posee archivos configurados para servidor (Server Pack). Solo puede instalarse en clientes.')"`;
+                            const opacityClass = hasServerPack ? '' : 'opacity-60 grayscale cursor-not-allowed';
+
+                            resDiv.innerHTML += `
+                                <div ${clickAttr} class="modpack-card flex gap-3 p-3 bg-[#161616] border border-[#333] rounded-lg hover:border-indigo-500 transition-colors ${opacityClass} ${hasServerPack ? 'cursor-pointer' : ''}">
+                                    <img src="${icon}" class="w-12 h-12 rounded object-cover shadow-md">
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="text-sm font-bold text-white truncate" title="${mod.name.replace(/'/g, "\\'")}">${mod.name}</h4>
+                                        <div class="flex items-center gap-2 mt-1">
+                                            ${badgeHtml}
+                                            <span class="text-[10px] text-gray-500 font-mono"><i data-feather="download" class="w-3 h-3 inline text-indigo-400"></i> ${mod.downloadCount.toLocaleString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    }
+                    if(found === 0) {
+                        resDiv.innerHTML = '<div class="text-center py-4"><i data-feather="x-circle" class="w-8 h-8 text-red-400 mx-auto mb-2 opacity-50"></i><p class="text-xs text-red-400">No se encontraron resultados.</p></div>';
+                    }
+                } catch(e) {
+                    console.error("Error CurseForge:", e);
+                    resDiv.innerHTML = `<p class="text-xs text-red-500 text-center py-4">Error al buscar en CurseForge.<br><span class="text-[10px] text-gray-500">${e.message}</span></p>`;
                 }
-                if (installType === 'url_modpack' && !document.getElementById('modpack-url-input').value) {
-                    alert("Por favor, ingresa una URL válida del ZIP del Modpack.");
-                    return;
-                }
-            }
-
-            const overlay = document.getElementById('loading-overlay');
-            const loadingTitle = document.getElementById('loading-title');
-            const loadingDesc = document.getElementById('loading-desc');
-            const loadingStep = document.getElementById('loading-step');
-            const loadingBar = document.getElementById('loading-bar');
-            const loadingPct = document.getElementById('loading-pct');
-            const spinner = document.getElementById('loading-spinner');
-
-            overlay.classList.add('active');
-            btnSubmit.disabled = true;
-
-            if (installType === 'cf_modpack') {
-                loadingTitle.innerText = "ACOPLANDO CURSEFORGE";
-                loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)] tracking-widest";
-                loadingDesc.innerText = "Descargando versión específica y construyendo mods...";
-                loadingBar.className = "bg-gradient-to-r from-indigo-600 to-indigo-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(99,102,241,0.8)]";
-                spinner.style.borderTopColor = "#6366f1"; 
-            } else if (installType === 'url_modpack') {
-                loadingTitle.innerText = "IMPORTANDO DESDE LA NUBE";
-                loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] tracking-widest";
-                loadingDesc.innerText = "Extrayendo ZIP remoto en la raíz del servidor...";
-                loadingBar.className = "bg-gradient-to-r from-blue-600 to-blue-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(59,130,246,0.8)]";
-                spinner.style.borderTopColor = "#3b82f6"; 
-            } else {
-                loadingTitle.innerText = "DESPLEGANDO NODO LIMPIO";
-                loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-green-400 drop-shadow-[0_0_15px_rgba(76,175,80,0.6)] tracking-widest";
-                loadingDesc.innerText = "Generando contenedor y asignando recursos...";
-                loadingBar.className = "bg-gradient-to-r from-green-600 to-green-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(76,175,80,0.8)]";
-                spinner.style.borderTopColor = "#4ade80"; 
-            }
-
-            let finalSoftware = softwareSelect.value;
-            let finalVersion = edition === 'java' ? mcVersion.value : 'LATEST';
-            let curseforgeFileId = null;
-
-            if(installType === 'cf_modpack') {
-                finalSoftware = 'Server Pack'; 
-                curseforgeFileId = mcVersion.value; 
-                
-                const selectedOption = mcVersion.options[mcVersion.selectedIndex];
-                finalVersion = selectedOption ? selectedOption.getAttribute('data-mc') : 'Auto';
-            }
-
-            const payload = {
-                uid: auth.currentUser.uid,
-                email: auth.currentUser.email,
-                projectName: document.getElementById('custom-name').value,
-                motd: document.getElementById('custom-motd').value || "Professional Server",
-                edition: edition,
-                software: finalSoftware,
-                version: finalVersion,
-                curseforgeFileId: curseforgeFileId
+                if(btn) btn.innerHTML = '<i data-feather="search" class="w-4 h-4"></i>';
+                feather.replace();
             };
 
-            if (edition === 'java') {
-                if (installType === 'cf_modpack') {
-                    payload.curseforgeModpackId = document.getElementById('selected-cf-id').value;
-                } else if (installType === 'url_modpack') {
-                    payload.modpackUrl = document.getElementById('modpack-url-input').value;
+            window.seleccionarModpack = async (id, el) => {
+                document.querySelectorAll('.modpack-card').forEach(c => {
+                    c.classList.remove('border-indigo-500', 'bg-indigo-900/30');
+                    if(!c.classList.contains('grayscale')) {
+                        c.classList.add('border-[#333]', 'bg-[#161616]');
+                    }
+                });
+                el.classList.remove('border-[#333]', 'bg-[#161616]');
+                el.classList.add('border-indigo-500', 'bg-indigo-900/30');
+                document.getElementById('selected-cf-id').value = id;
+
+                configMotorContainer.classList.remove('hidden');
+                autoConfigMsg.classList.add('hidden');
+                
+                softwareSelect.innerHTML = '<option value="Server Pack">Modpack / Server Pack Oficial</option>';
+                
+                mcVersion.innerHTML = '<option value="">Obteniendo versiones desde CurseForge...</option>';
+                btnSubmit.disabled = true;
+                btnSubmit.innerText = "CARGANDO VERSIONES...";
+
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    const res = await fetch(`${API_URL}/api/curseforge/files?modId=${id}`, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    
+                    if (!res.ok) {
+                        const errTxt = await res.text();
+                        throw new Error(`Fallo al conectar con la base de datos. (HTTP ${res.status}: ${errTxt})`);
+                    }
+                    
+                    const data = await res.json();
+                    
+                    mcVersion.innerHTML = '';
+                    let foundVersions = 0;
+                    
+                    if(data.data && data.data.length > 0) {
+                        data.data.forEach(f => {
+                            if (f.serverPackFileId) {
+                                foundVersions++;
+                                const type = f.releaseType === 1 ? 'RELEASE' : (f.releaseType === 2 ? 'BETA' : 'ALPHA');
+                                const mcVer = f.gameVersions.find(v => v.match(/^1\.\d/)) || "Auto";
+                                
+                                mcVersion.innerHTML += `<option value="${f.serverPackFileId}" data-mc="${mcVer}">${f.displayName} | MC ${mcVer} (${type})</option>`;
+                            }
+                        });
+                        
+                        if (foundVersions > 0) {
+                            btnSubmit.disabled = false;
+                            btnSubmit.innerText = getDeployText();
+                        } else {
+                            mcVersion.innerHTML = '<option value="">No hay Server Packs en estas versiones.</option>';
+                            btnSubmit.innerText = "SIN VERSIONES COMPATIBLES";
+                        }
+                    } else {
+                        mcVersion.innerHTML = '<option value="">No hay versiones disponibles.</option>';
+                        btnSubmit.innerText = "SIN VERSIONES";
+                    }
+                } catch(e) {
+                    console.error("Error versiones:", e);
+                    mcVersion.innerHTML = '<option value="">Error de conexión con la API.</option>';
+                    btnSubmit.innerText = "ERROR DE CONEXIÓN";
                 }
+            };
+
+            onAuthStateChanged(auth, async (user) => {
+                if (!user) {
+                    window.location.href = 'index.html';
+                    return;
+                }
+                try {
+                    const isCEO = user.email === 'rodasmaximo51@gmail.com';
+                    
+                    if (isCEO) {
+                        document.getElementById('ceo-badge')?.classList.remove('hidden');
+                        window.userPlan = { name: 'Plan ProServers CEO', maxServers: 'ilimitado', ram: '∞', ramNum: 9999, fileManager: true };
+                    }
+
+                    const token = await user.getIdToken();
+
+                    const verifyRes = await fetch(`${API_URL}/api/user/status?uid=${user.uid}`, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (!verifyRes.ok) throw new Error("Backend caído al verificar status");
+                    const verifyData = await verifyRes.json();
+
+                    if (!isCEO) {
+                        if (verifyData.plan) {
+                            window.userPlan = verifyData.plan;
+                            window.userPlan.ramNum = parseInt(window.userPlan.ram.replace(/[^0-9]/g, '')) || 8;
+                        } else if (verifyData.status === 'premium') {
+                            window.userPlan = { name: 'Plan Hierro', maxServers: 2, ram: '12GB', ramNum: 12, fileManager: false };
+                        }
+                    }
+
+                    installTypeSelect.dispatchEvent(new Event('change'));
+
+                    if(btnSubmit && btnSubmit.disabled === false) btnSubmit.innerText = getDeployText();
+
+                    await loadUserServers(user.uid, isCEO);
+
+                    if (!isCEO && (verifyData.status === 'expired' || verifyData.status === 'suspended' || verifyData.status === 'banned')) {
+                        document.getElementById('servers-list-container').innerHTML = ''; 
+                        const form = document.getElementById('view-create');
+                        form.innerHTML = `
+                            <div class="col-span-1 lg:col-span-2 glass p-10 text-center flex flex-col items-center justify-center border-red-500/50 shadow-[0_0_30px_rgba(220,38,38,0.2)]">
+                                <i data-feather="slash" class="w-20 h-20 text-red-600 mb-6"></i>
+                                <h2 class="text-3xl font-bold font-['Cinzel'] text-red-500 mb-2">${verifyData.status === 'banned' ? 'ERRADICADO DEL SISTEMA' : 'Suscripción Suspendida'}</h2>
+                                <p class="text-gray-300 mb-6 max-w-lg text-sm">${verifyData.status === 'banned' ? 'El sistema de seguridad ha detectado un intento de evasión de límites (Multicuentas / Abuso de IPs). Todos tus servidores han sido destruidos y tu acceso ha sido revocado permanentemente.' : 'Tu plan actual ha caducado. Renueva tu suscripción para seguir desplegando infraestructura.'}</p>
+                                ${verifyData.status !== 'banned' ? `<button onclick="window.location.href='planes.html'" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-3 rounded-lg text-white font-bold uppercase tracking-wider transition-colors shadow-[0_0_15px_rgba(79,70,229,0.4)]">Ver Planes de Pago</button>` : `<button onclick="auth.signOut().then(()=>window.location.href='index.html')" class="bg-red-700 hover:bg-red-600 px-8 py-3 rounded-lg text-white font-bold uppercase tracking-wider transition-colors">Salir</button>`}
+                            </div>
+                        `;
+                        feather.replace();
+                    }
+                } catch (error) { 
+                    console.error("Error validando permisos:", error);
+                }
+            });
+
+            async function loadUserServers(uid, isCEO) {
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    const res = await fetch(`${API_URL}/api/project/check?uid=${uid}`, {
+                        headers: { 'Authorization': 'Bearer ' + token }
+                    });
+                    if (!res.ok) throw new Error("Backend caído al cargar servidores");
+                    const data = await res.json();
+                    
+                    const list = document.getElementById('servers-list-container');
+                    const limitMsg = document.getElementById('limit-msg');
+
+                    let count = data.exists ? data.servers.length : 0;
+                    
+                    let planName = window.userPlan.name;
+                    let maxLimit = window.userPlan.maxServers;
+                    let isLimitReached = maxLimit !== 'ilimitado' && count >= maxLimit && !isCEO;
+                    let limitLabel = maxLimit === 'ilimitado' || isCEO ? '∞' : maxLimit;
+                    
+                    if (isLimitReached) {
+                        if(btnSubmit) {
+                            btnSubmit.disabled = true;
+                            btnSubmit.innerHTML = `LÍMITE ALCANZADO (${planName.toUpperCase()})`;
+                        }
+                        if(limitMsg) {
+                            limitMsg.innerText = `Has alcanzado el límite de ${maxLimit} servidor(es) de tu ${planName}.`;
+                            limitMsg.classList.remove('hidden');
+                        }
+                    } else {
+                        if(limitMsg) limitMsg.classList.add('hidden');
+                    }
+
+                    if (data.exists && count > 0) {
+                        let html = `<h3 class="text-sm font-bold text-gray-400 uppercase tracking-widest mb-4">Tus Servidores Activos (${planName}: ${count}/${limitLabel})</h3><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">`;
+                        data.servers.forEach(s => {
+                            const safeEdition = s.edition ? s.edition.toLowerCase() : 'java';
+                            let versionLabel = 'Auto';
+                            if (safeEdition === 'bedrock') {
+                                versionLabel = s.software ? s.software.toUpperCase() : 'UNKNOWN';
+                            } else {
+                                versionLabel = s.version || 'Auto';
+                            }
+                            const projName = s.projectName || 'Servidor Sin Nombre';
+
+                            html += `<div class="glass p-5 flex flex-col justify-between border border-[#333]">
+                                <div>
+                                    <h4 class="font-bold text-white text-lg">${projName}</h4>
+                                    <p class="text-xs text-gray-400 mb-4">${safeEdition.toUpperCase()} - ${versionLabel}</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="window.enterServer('${encodeURIComponent(JSON.stringify(s))}')" class="bg-green-600 hover:bg-green-500 transition-colors px-4 py-2 rounded text-xs font-bold text-white flex-1 shadow-lg">ENTRAR</button>
+                                    <button onclick="window.deleteServer('${s.id}')" class="bg-[#222] border border-[#444] hover:border-red-500 hover:bg-red-600/20 hover:text-red-500 transition-colors px-3 py-2 rounded text-xs text-white" title="Borrar Servidor"><i data-feather="trash-2" class="w-4 h-4"></i></button>
+                                </div>
+                            </div>`;
+                        });
+                        list.innerHTML = html + '</div><hr class="border-[#333] my-8">';
+                    }
+                    feather.replace();
+                } catch (e) { console.error("Error cargando servidores:", e); }
             }
 
-            try {
+            window.enterServer = (s) => { 
+                sessionStorage.setItem('selectedServer', decodeURIComponent(s)); 
+                window.location.href = 'index.html'; 
+            };
+
+            window.deleteServer = async (id) => {
+                if (!confirm('⚠️ ¿Estás seguro? Eliminarás tu servidor y todo tu progreso se perderá permanentemente. Liberará 1 ranura en tu plan.')) return;
                 const token = await auth.currentUser.getIdToken();
-                
-                const response = await fetch(`${API_URL}/api/project/create`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
-                    body: JSON.stringify(payload)
+                await fetch(`${API_URL}/api/project/delete`, { 
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token }, 
+                    body: JSON.stringify({ uid: auth.currentUser.uid, serverId: id }) 
                 });
-                
-                const responseData = await response.json();
-                
-                if(response.ok && responseData.success) {
-                    const serverId = responseData.server.id;
-                    
-                    const statusInterval = setInterval(async () => {
-                        try {
-                            const statRes = await fetch(`${API_URL}/api/project/deploy-status?serverId=${serverId}`, {
-                                headers: { 'Authorization': 'Bearer ' + token }
-                            });
-                            const statData = await statRes.json();
-                            
-                            loadingStep.innerText = statData.step;
-                            if (statData.pct > 0) {
-                                loadingBar.style.width = statData.pct + '%';
-                                loadingPct.innerText = statData.pct + '%';
-                            }
+                window.location.reload();
+            };
 
-                            if (statData.done) {
-                                clearInterval(statusInterval);
-                                
-                                if (statData.error) {
-                                    alert("FALLO EN EL SERVIDOR:\n\n" + statData.error);
-                                    overlay.classList.remove('active');
-                                    btnSubmit.disabled = false;
-                                } else {
-                                    loadingBar.style.width = '100%';
-                                    loadingPct.innerText = '100%';
-                                    loadingStep.innerText = "¡Infraestructura Lista!";
-                                    
-                                    setTimeout(() => {
-                                        responseData.server.version = finalVersion;
-                                        sessionStorage.setItem('selectedServer', JSON.stringify(responseData.server));
-                                        window.location.href = 'index.html';
-                                    }, 1200);
-                                }
-                            }
-                        } catch(errStatus) {
-                            console.error("Error leyendo estado del backend:", errStatus);
-                        }
-                    }, 2000);
+            document.getElementById('view-create')?.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (btnSubmit && btnSubmit.disabled) return;
+                
+                const installType = document.getElementById('install-type').value;
+                const edition = document.getElementById('server-edition').value;
+                const isCEO = auth.currentUser && auth.currentUser.email === 'rodasmaximo51@gmail.com';
+                
+                if ((installType === 'cf_modpack' || installType === 'url_modpack') && !window.userPlan.fileManager && !isCEO) {
+                    alert("Violación de seguridad: Tu plan actual no soporta Modpacks porque no tiene el Gestor de Archivos activado. Mejora al Plan Oro o superior.");
+                    return;
+                }
 
+                if (edition === 'java') {
+                    if (installType === 'cf_modpack' && !document.getElementById('selected-cf-id').value) {
+                        alert("Por favor, busca y selecciona un Modpack de la lista.");
+                        return;
+                    }
+                    if (installType === 'url_modpack' && !document.getElementById('modpack-url-input').value) {
+                        alert("Por favor, ingresa una URL válida del ZIP del Modpack.");
+                        return;
+                    }
+                }
+
+                const overlay = document.getElementById('loading-overlay');
+                const loadingTitle = document.getElementById('loading-title');
+                const loadingDesc = document.getElementById('loading-desc');
+                const loadingStep = document.getElementById('loading-step');
+                const loadingBar = document.getElementById('loading-bar');
+                const loadingPct = document.getElementById('loading-pct');
+                const spinner = document.getElementById('loading-spinner');
+
+                overlay.classList.add('active');
+                btnSubmit.disabled = true;
+
+                if (installType === 'cf_modpack') {
+                    loadingTitle.innerText = "ACOPLANDO CURSEFORGE";
+                    loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-indigo-400 drop-shadow-[0_0_15px_rgba(99,102,241,0.6)] tracking-widest";
+                    loadingDesc.innerText = "Descargando versión específica y construyendo mods...";
+                    loadingBar.className = "bg-gradient-to-r from-indigo-600 to-indigo-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(99,102,241,0.8)]";
+                    spinner.style.borderTopColor = "#6366f1"; 
+                } else if (installType === 'url_modpack') {
+                    loadingTitle.innerText = "IMPORTANDO DESDE LA NUBE";
+                    loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-blue-400 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)] tracking-widest";
+                    loadingDesc.innerText = "Extrayendo ZIP remoto en la raíz del servidor...";
+                    loadingBar.className = "bg-gradient-to-r from-blue-600 to-blue-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(59,130,246,0.8)]";
+                    spinner.style.borderTopColor = "#3b82f6"; 
                 } else {
-                    alert("Error: " + (responseData.message || "No se pudo desplegar."));
+                    loadingTitle.innerText = "DESPLEGANDO NODO LIMPIO";
+                    loadingTitle.className = "mt-8 text-3xl font-bold font-['Cinzel'] text-green-400 drop-shadow-[0_0_15px_rgba(76,175,80,0.6)] tracking-widest";
+                    loadingDesc.innerText = "Generando contenedor y asignando recursos...";
+                    loadingBar.className = "bg-gradient-to-r from-green-600 to-green-400 h-full w-0 transition-all duration-300 shadow-[0_0_10px_rgba(76,175,80,0.8)]";
+                    spinner.style.borderTopColor = "#4ade80"; 
+                }
+
+                let finalSoftware = softwareSelect.value || 'vanilla';
+                let finalVersion = edition === 'java' ? (mcVersion.value || 'LATEST') : 'LATEST';
+                let curseforgeFileId = null;
+
+                if(installType === 'cf_modpack') {
+                    finalSoftware = 'Server Pack'; 
+                    curseforgeFileId = mcVersion.value; 
+                    
+                    const selectedOption = mcVersion.options[mcVersion.selectedIndex];
+                    finalVersion = selectedOption ? selectedOption.getAttribute('data-mc') : 'Auto';
+                }
+
+                const payload = {
+                    uid: auth.currentUser.uid,
+                    email: auth.currentUser.email,
+                    projectName: document.getElementById('custom-name').value,
+                    motd: document.getElementById('custom-motd').value || "Professional Server",
+                    edition: edition,
+                    software: finalSoftware,
+                    version: finalVersion,
+                    curseforgeFileId: curseforgeFileId
+                };
+
+                if (edition === 'java') {
+                    if (installType === 'cf_modpack') {
+                        payload.curseforgeModpackId = document.getElementById('selected-cf-id').value;
+                    } else if (installType === 'url_modpack') {
+                        payload.modpackUrl = document.getElementById('modpack-url-input').value;
+                    }
+                }
+
+                try {
+                    const token = await auth.currentUser.getIdToken();
+                    
+                    const response = await fetch(`${API_URL}/api/project/create`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    let responseData = null;
+                    const contentType = response.headers.get("content-type");
+                    
+                    if (contentType && contentType.includes("application/json")) {
+                        responseData = await response.json();
+                    }
+
+                    if (!response.ok) {
+                        let msgError = "El servidor denegó la petición o está en mantenimiento.";
+                        if (responseData && (responseData.message || responseData.error)) {
+                            msgError = responseData.message || responseData.error;
+                        } else if (!contentType || !contentType.includes("application/json")) {
+                            msgError = `Error ${response.status}: El servidor respondió con HTML en lugar de datos (Fallo de Red/502).`;
+                        }
+                        
+                        if (isCEO) {
+                            alert("⚠️ Error detectado (Modo CEO): " + msgError + "\n\nEvitando bloqueo por ser Administrador.");
+                        } else {
+                            alert("⚠️ Acción denegada: " + msgError);
+                            if (msgError.toLowerCase().includes("expulsado") || response.status === 403) {
+                                window.location.reload(); 
+                            }
+                        }
+                        
+                        overlay.classList.remove('active');
+                        btnSubmit.disabled = false;
+                        btnSubmit.innerText = getDeployText();
+                        return; 
+                    }
+
+                    if(responseData && responseData.success) {
+                        const serverId = responseData.server.id;
+                        
+                        const statusInterval = setInterval(async () => {
+                            try {
+                                const statRes = await fetch(`${API_URL}/api/project/deploy-status?serverId=${serverId}`, {
+                                    headers: { 'Authorization': 'Bearer ' + token }
+                                });
+                                if (!statRes.ok) return;
+                                const statData = await statRes.json();
+                                
+                                loadingStep.innerText = statData.step;
+                                if (statData.pct > 0) {
+                                    loadingBar.style.width = statData.pct + '%';
+                                    loadingPct.innerText = statData.pct + '%';
+                                }
+
+                                if (statData.done) {
+                                    clearInterval(statusInterval);
+                                    
+                                    if (statData.error) {
+                                        alert("FALLO EN EL SERVIDOR:\n\n" + statData.error);
+                                        overlay.classList.remove('active');
+                                        btnSubmit.disabled = false;
+                                    } else {
+                                        loadingBar.style.width = '100%';
+                                        loadingPct.innerText = '100%';
+                                        loadingStep.innerText = "¡Infraestructura Lista!";
+                                        
+                                        setTimeout(() => {
+                                            responseData.server.version = finalVersion;
+                                            sessionStorage.setItem('selectedServer', JSON.stringify(responseData.server));
+                                            window.location.href = 'index.html';
+                                        }, 1200);
+                                    }
+                                }
+                            } catch(errStatus) {
+                                console.error("Error leyendo estado del backend:", errStatus);
+                            }
+                        }, 2000);
+
+                    } else {
+                        alert("Error: " + (responseData ? responseData.message : "No se pudo desplegar."));
+                        overlay.classList.remove('active');
+                        btnSubmit.disabled = false;
+                    }
+                } catch(err) {
+                    console.error("Error crítico:", err);
+                    alert("Aviso de Sistema: " + err.message);
                     overlay.classList.remove('active');
                     btnSubmit.disabled = false;
                 }
-            } catch(err) {
-                console.error("Error crítico:", err);
-                alert("Error crítico al conectar con el servidor.");
-                overlay.classList.remove('active');
-                btnSubmit.disabled = false;
-            }
-        });
+            });
 
-        feather.replace();
+            feather.replace();
+        }); // FIN DOMContentLoaded
     </script>
 </body>
 </html>

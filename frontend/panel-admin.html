@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProServers - Panel CEO Central</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #0b0c10; color: #ffffff; overflow-x: hidden; }
+        .sidebar-item { transition: all 0.2s ease; }
+        .sidebar-active { background-color: #9333ea; color: #ffffff; font-weight: 600; box-shadow: 0 0 15px rgba(147,51,234,0.4); }
+        .card-bg { background-color: #121419; border: 1px solid #1f232b; }
+        
+        .glow-green { filter: drop-shadow(0 0 5px rgba(0, 255, 127, 0.6)); }
+        .glow-red { filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.6)); }
+        .glow-blue { filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.6)); }
+        .glow-purple { filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.8)); }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0c10; }
+        ::-webkit-scrollbar-thumb { background: #1f232b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2a2f3a; }
+
+        /* Estilos extras para el chat del panel */
+        .chat-admin-bubble { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.4; word-wrap: break-word; }
+        .chat-ai { align-self: flex-start; background-color: #1a1d24; border-left: 3px solid #9333ea; color: #e4e4e7; border-bottom-left-radius: 4px; }
+        .chat-user { align-self: flex-start; background-color: #1f232b; border-left: 3px solid #3b82f6; color: #e4e4e7; border-bottom-left-radius: 4px; }
+        .chat-ceo { align-self: flex-end; background-color: #9333ea; color: white; border-bottom-right-radius: 4px; }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden">
+
+    <svg style="width:0;height:0;position:absolute;" aria-hidden="true" focusable="false">
+        <defs>
+            <linearGradient id="g-green" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#00ff7f" stop-opacity="0.2"/><stop offset="100%" stop-color="#00ff7f" stop-opacity="0"/></linearGradient>
+            <linearGradient id="g-red" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#ef4444" stop-opacity="0.2"/><stop offset="100%" stop-color="#ef4444" stop-opacity="0"/></linearGradient>
+            <linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3b82f6" stop-opacity="0.2"/><stop offset="100%" stop-color="#3b82f6" stop-opacity="0"/></linearGradient>
+        </defs>
+    </svg>
+
+    <!-- BARRA LATERAL -->
+    <aside class="w-64 border-r border-[#1f232b] flex flex-col justify-between hidden md:flex bg-[#0b0c10]">
+        <div class="p-6">
+            <div class="flex items-center gap-3 mb-1 cursor-pointer transition-transform hover:scale-105" onclick="sessionStorage.setItem('forceUserMode', 'true'); window.location.href='/index.html'">
+                <img src="./assets/img/favicon.ico" alt="Logo" class="w-8 h-8 drop-shadow-[0_0_10px_rgba(147,51,234,0.5)]">
+                <span class="text-xl font-bold tracking-wide">ProServers</span>
+            </div>
+            <div class="text-[11px] text-gray-500 font-semibold mt-1">Centro de Comando Global</div>
+        </div>
+        
+        <nav class="flex-1 px-4 space-y-2 mt-2 overflow-y-auto">
+            <button onclick="window.switchTab('tab-nodos', this)" class="tab-btn sidebar-active w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left">
+                <i class="fas fa-server w-5"></i> Flota de Nodos
+            </button>
+            <button onclick="window.switchTab('tab-usuarios', this)" class="tab-btn sidebar-item text-gray-400 hover:text-white hover:bg-[#121419] w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left">
+                <i class="fas fa-users w-5"></i> Clientes (DB)
+            </button>
+            <button onclick="window.switchTab('tab-contabilidad', this)" class="tab-btn sidebar-item text-gray-400 hover:text-white hover:bg-[#121419] w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left">
+                <i class="fas fa-file-invoice-dollar w-5"></i> Contabilidad SQL
+            </button>
+            
+            <button onclick="window.switchTab('tab-soporte', this)" class="tab-btn sidebar-item text-gray-400 hover:text-white hover:bg-[#121419] w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left relative">
+                <i class="fas fa-headset w-5"></i> Soporte & Tickets
+                <span id="soporte-badge" class="hidden absolute right-3 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.8)]">!</span>
+            </button>
+
+            <!-- NUEVA PESTAÑA STAFF -->
+            <button id="btn-staff-sidebar" onclick="window.switchTab('tab-staff', this)" class="tab-btn sidebar-item text-gray-400 hover:text-white hover:bg-[#121419] w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left">
+                <i class="fas fa-user-shield w-5"></i> Staff (0.9)
+            </button>
+
+            <button onclick="window.switchTab('tab-seguridad', this)" class="tab-btn sidebar-item text-gray-400 hover:text-white hover:bg-[#121419] w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left">
+                <i class="fas fa-shield-alt w-5"></i> Auditoría & Logs
+            </button>
+            
+            <div class="border-t border-[#1f232b] my-4"></div>
+            <p class="text-[10px] text-gray-600 uppercase font-bold px-4 mb-2 tracking-widest">Mantenimiento</p>
+            
+            <!-- NUEVA PESTAÑA PERFIL -->
+            <button id="btn-perfil-sidebar" onclick="window.switchTab('tab-perfil', this)" class="tab-btn sidebar-item text-gray-400 hover:text-white hover:bg-[#121419] w-full flex items-center gap-3 px-4 py-3 rounded-lg text-sm text-left mb-2">
+                <i class="fas fa-user-cog w-5"></i> Mi Perfil
+            </button>
+
+            <button onclick="window.limpiarVPS()" class="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-white hover:bg-red-900/20 rounded-lg transition text-sm text-left">
+                <i class="fas fa-broom w-5"></i> Limpiar Caché VPS
+            </button>
+        </nav>
+        
+        <!-- FOOTER: PERFIL DEL CEO ACTUALIZADO -->
+        <div class="p-5 flex items-center gap-3 border-t border-[#1f232b] cursor-pointer hover:bg-[#121419] transition" onclick="window.switchTab('tab-perfil', document.getElementById('btn-perfil-sidebar'))">
+            <img src="./assets/img/default-avatar.png" id="sidebar-admin-avatar" class="w-10 h-10 rounded-full object-cover shadow-[0_0_10px_rgba(147,51,234,0.5)] border-2 border-[#9333ea]">
+            <div class="overflow-hidden">
+                <p class="text-xs font-semibold text-white truncate" id="sidebar-admin-name">Cargando...</p>
+                <p class="text-[10px] text-green-400 font-bold tracking-wider uppercase">MODO ADMIN ACTIVO</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <main class="flex-1 overflow-y-auto bg-[#0b0c10] p-6 md:p-10 relative">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 id="tab-header-title" class="text-2xl font-bold mb-1 tracking-wide">Flota de Servidores</h1>
+                <p id="tab-header-subtitle" class="text-xs text-gray-500 font-medium">Panel Principal / Gestión de Nodos de Clientes</p>
+            </div>
+            <button onclick="window.cargarTodo()" id="btn-refresh" class="bg-[#1f232b] hover:bg-[#2a2f3a] text-white text-xs font-bold px-4 py-2.5 rounded-md transition border border-[#333] flex items-center gap-2">
+                <i class="fas fa-sync-alt"></i> Sincronizar Red
+            </button>
+        </header>
+
+        <!-- TARJETAS DE MÉTRICAS GLOBALES -->
+        <div id="metrics-cards" class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8 border-b border-[#1f232b] pb-8">
+            <div class="bg-[#121419] p-4 rounded-lg border border-[#1f232b]">
+                <p class="text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-widest">Nodos Totales</p>
+                <p class="text-3xl font-bold text-[#00ff7f]" id="stat-servers">0</p>
+            </div>
+            <div class="bg-[#121419] p-4 rounded-lg border border-[#1f232b]">
+                <p class="text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-widest">Facturación SQL</p>
+                <p class="text-3xl font-bold text-[#b026ff]" id="stat-dinero">$0</p>
+            </div>
+            <div class="bg-[#121419] p-4 rounded-lg border border-[#1f232b]">
+                <p class="text-[10px] font-bold text-gray-500 mb-1 uppercase tracking-widest">Clientes (Mongo)</p>
+                <p class="text-3xl font-bold text-[#ffd700]" id="stat-usuarios">0</p>
+            </div>
+            <div class="bg-[#121419] p-4 rounded-lg border border-[#1f232b] relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-16 h-16 bg-green-500/10 rounded-full blur-xl"></div>
+                <p class="text-[10px] font-bold text-green-500 mb-1 uppercase tracking-widest">Salud del Sistema</p>
+                <p class="text-xl font-bold text-white mt-2">DOCKER ONLINE</p>
+            </div>
+        </div>
+
+        <!-- ==================== PESTAÑA 1: NODOS ==================== -->
+        <section id="tab-nodos" class="tab-content block">
+            <div class="bg-[#121419] border border-[#9333ea] rounded-xl p-4 mb-8 flex items-center gap-4 shadow-[0_0_15px_rgba(147,51,234,0.1)]">
+                <i class="fas fa-satellite-dish text-[#9333ea] text-2xl ml-2 animate-pulse"></i>
+                <div class="flex-1">
+                    <p class="text-[10px] font-bold text-purple-400 uppercase tracking-widest mb-1">Alerta Global (Overlay Visual a todas las pantallas)</p>
+                    <div class="flex gap-2">
+                        <input type="text" id="global-cmd" class="flex-1 bg-[#0b0c10] border border-[#333] rounded-lg px-4 py-2 text-sm text-white outline-none focus:border-[#9333ea] transition" placeholder="Escribe la alerta gigante que aparecerá en todas las pantallas...">
+                        <button onclick="window.enviarBroadcast()" class="bg-[#9333ea] hover:bg-[#a855f7] text-white font-bold px-6 rounded-lg text-sm transition">Alertar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="admin-servers-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-20">
+                <div class="col-span-full text-center py-20">
+                    <i class="fas fa-circle-notch fa-spin text-4xl text-[#9333ea] mb-4"></i>
+                    <p class="text-gray-400 font-medium tracking-wide">Leyendo base de datos y Docker Daemon...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PESTAÑA 2: USUARIOS ==================== -->
+        <section id="tab-usuarios" class="tab-content hidden pb-20">
+            <div class="card-bg p-6 rounded-xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-[#1f232b] pb-4">
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Directorio de Cuentas</h3>
+                        <p class="text-xs text-gray-500">Administración de usuarios registrados en MongoDB</p>
+                    </div>
+                    <input type="text" id="user-search-input" onkeyup="window.filtrarUsuarios()" placeholder="Buscar por UID, Email o Plan..." class="bg-[#0b0c10] border border-[#333] px-4 py-2 rounded-lg text-xs text-white outline-none focus:border-indigo-500 w-full md:w-64">
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="text-gray-500 uppercase border-b border-[#1f232b] text-[10px] tracking-wider">
+                            <tr>
+                                <th class="pb-3">Usuario / UID</th>
+                                <th class="pb-3">Plan Activo</th>
+                                <th class="pb-3">Servidores</th>
+                                <th class="pb-3">Estado</th>
+                                <th class="pb-3 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body" class="divide-y divide-[#1f232b]">
+                            <tr>
+                                <td colspan="5" class="py-8 text-center text-gray-500">Cargando directorio de usuarios...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PESTAÑA 3: CONTABILIDAD ==================== -->
+        <section id="tab-contabilidad" class="tab-content hidden pb-20">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="card-bg p-5 rounded-xl border-l-4 border-purple-500">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase">Total Facturado</p>
+                    <p class="text-2xl font-bold text-white mt-1" id="contab-total">$0</p>
+                    <p class="text-[10px] text-green-400 mt-2"><i class="fas fa-check-circle mr-1"></i> Auditoría SQL conectada</p>
+                </div>
+                <div class="card-bg p-5 rounded-xl border-l-4 border-blue-500">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase">Suscripciones Registradas</p>
+                    <p class="text-2xl font-bold text-white mt-1" id="contab-suscripciones">0</p>
+                    <p class="text-[10px] text-gray-400 mt-2">Planes con estado ACTIVO</p>
+                </div>
+                <div class="card-bg p-5 rounded-xl border-l-4 border-yellow-500">
+                    <p class="text-[10px] text-gray-500 font-bold uppercase">Tarifa Promedio Estimada</p>
+                    <p class="text-2xl font-bold text-white mt-1" id="contab-promedio">$0</p>
+                    <p class="text-[10px] text-gray-400 mt-2">Ingresos / Total Clientes</p>
+                </div>
+            </div>
+
+            <div class="card-bg p-6 rounded-xl">
+                <h3 class="text-sm font-bold text-white mb-4 uppercase tracking-wider">Historial de Transacciones (SQL Server)</h3>
+                <div class="bg-[#0b0c10] p-4 rounded-lg border border-[#1f232b] text-xs font-mono text-gray-400">
+                    <p class="text-green-400 mb-2">> SELECT * FROM Pagos INNER JOIN Suscripciones ON Pagos.firebase_uid = Suscripciones.firebase_uid;</p>
+                    <p class="text-gray-500 italic">Sincronización en vivo con el pool de base de datos SQL.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PESTAÑA 4: SOPORTE & TICKETS ==================== -->
+        <section id="tab-soporte" class="tab-content hidden h-[calc(100vh-280px)] pb-10">
+            <div class="flex h-full gap-6">
+                
+                <!-- Bandeja de Entrada (Izquierda) -->
+                <div class="w-1/3 card-bg rounded-xl flex flex-col overflow-hidden">
+                    <div class="p-4 border-b border-[#1f232b] bg-[#161920]">
+                        <h3 class="font-bold text-white uppercase tracking-wider text-sm flex items-center gap-2">
+                            <i class="fas fa-inbox text-purple-400"></i> Bandeja de Entrada
+                        </h3>
+                    </div>
+                    <div id="tickets-list" class="flex-1 overflow-y-auto p-2 space-y-1 bg-[#0b0c10]">
+                        <p class="text-center text-gray-500 text-xs py-8">Cargando chats activos...</p>
+                    </div>
+                </div>
+                
+                <!-- Chat Principal (Derecha) -->
+                <div class="flex-1 card-bg rounded-xl flex flex-col overflow-hidden relative">
+                    <div id="active-chat-header" class="p-4 border-b border-[#1f232b] bg-[#161920] flex justify-between items-center hidden">
+                        <div>
+                            <h3 class="font-bold text-white text-sm" id="chat-user-email">Cargando...</h3>
+                            <p class="text-[10px] text-gray-400 font-mono mt-0.5" id="chat-user-uid">---</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="bg-green-900/30 text-green-400 border border-green-800/50 px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider animate-pulse">En Línea</span>
+                            <button onclick="window.cerrarTicket()" class="bg-[#1f232b] hover:bg-red-900/30 text-red-500 border border-red-500/30 hover:border-red-500 px-3 py-1.5 rounded text-[10px] font-bold uppercase transition-colors" title="Cerrar Ticket">
+                                <i class="fas fa-lock mr-1"></i> Cerrar
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Mensaje por defecto cuando no hay chat seleccionado -->
+                    <div id="chat-default-msg" class="h-full flex flex-col items-center justify-center text-gray-600 bg-[#0b0c10]">
+                        <i class="fas fa-comments text-5xl mb-4 opacity-30"></i>
+                        <p class="text-sm font-bold tracking-wide">Selecciona un cliente de la bandeja de entrada</p>
+                    </div>
+
+                    <!-- Contenedor de mensajes -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-6 space-y-4 bg-[#0b0c10] hidden">
+                        <!-- Se insertan aquí -->
+                    </div>
+
+                    <!-- Input de respuesta -->
+                    <div id="chat-input-area" class="p-4 border-t border-[#1f232b] bg-[#161920] hidden">
+                        <div class="flex gap-3">
+                            <input type="text" id="admin-reply-input" class="flex-1 bg-[#0b0c10] border border-[#333] text-white px-4 py-3 rounded-xl text-sm outline-none focus:border-purple-500 transition-colors" placeholder="Escribe tu respuesta al cliente aquí..." onkeypress="if(event.key === 'Enter') window.enviarRespuesta()">
+                            <button onclick="window.enviarRespuesta()" class="bg-purple-600 hover:bg-purple-500 text-white px-6 rounded-xl font-bold transition-colors shadow-lg shadow-purple-900/30"><i class="fas fa-paper-plane text-lg"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== PESTAÑA 5: SEGURIDAD ==================== -->
+        <section id="tab-seguridad" class="tab-content hidden pb-20">
+            <div class="card-bg p-6 rounded-xl mb-6">
+                <h3 class="text-sm font-bold text-white mb-4 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fas fa-shield-alt text-green-400"></i> Estado de Infraestructura y Firewall
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                    <div class="bg-[#0b0c10] p-4 rounded-lg border border-[#1f232b]">
+                        <p class="text-gray-400">Daemon de Docker:</p>
+                        <p class="text-white font-bold font-mono mt-1">unix:///var/run/docker.sock (Activo)</p>
+                    </div>
+                    <div class="bg-[#0b0c10] p-4 rounded-lg border border-[#1f232b]">
+                        <p class="text-gray-400">Autenticación de Nodos:</p>
+                        <p class="text-white font-bold font-mono mt-1">Firebase Admin SDK (Certificado Cargado)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-bg p-6 rounded-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-2">
+                        <i class="fas fa-clipboard-list text-purple-400"></i> Log de Auditoría Global (Sesión)
+                    </h3>
+                    <button onclick="window.limpiarLogsAuditoria()" class="text-[10px] text-gray-500 hover:text-white uppercase font-bold">Limpiar Vista</button>
+                </div>
+                <div id="audit-log-container" class="bg-[#0b0c10] p-4 rounded-lg border border-[#1f232b] h-64 overflow-y-auto font-mono text-[11px] space-y-2">
+                    <p class="text-gray-500">[INFO] Centro de comando inicializado. Registrando acciones del Administrador...</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PESTAÑA 6: STAFF (0.9) ==================== -->
+        <section id="tab-staff" class="tab-content hidden pb-20">
+            <div class="card-bg p-6 rounded-xl">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="w-12 h-12 rounded-lg bg-blue-900/30 flex items-center justify-center border border-blue-500/50">
+                        <i class="fas fa-users-cog text-blue-400 text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white">Gestión de Staff y Soporte</h3>
+                        <p class="text-xs text-blue-400 font-bold uppercase tracking-wider">ROADMAP V0.9 PREVIEW</p>
+                    </div>
+                </div>
+                
+                <div class="bg-[#0b0c10] p-6 rounded-lg border border-[#1f232b] mb-6">
+                    <h4 class="text-sm font-bold text-white mb-2 uppercase tracking-wider">Añadir Trabajador</h4>
+                    <p class="text-xs text-gray-400 mb-4">Ingresa el correo del usuario al que deseas darle el rol de "Soporte". Podrán responder tickets y moderar consolas de clientes, pero no tendrán acceso a facturación ni borrado de nodos.</p>
+                    <div class="flex flex-col md:flex-row gap-3">
+                        <input type="email" id="staff-email-input" class="flex-1 bg-[#121419] border border-[#333] rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-blue-500 transition" placeholder="soporte@ejemplo.com">
+                        <button onclick="window.addStaff()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-lg transition-colors uppercase text-xs tracking-wider shadow-[0_0_15px_rgba(37,99,235,0.4)]">Dar Rol Soporte</button>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto border border-[#1f232b] rounded-lg">
+                    <table class="w-full text-left text-xs">
+                        <thead class="text-gray-500 uppercase bg-[#0b0c10] border-b border-[#1f232b] text-[10px] tracking-wider">
+                            <tr>
+                                <th class="p-4">Usuario</th>
+                                <th class="p-4">Rol Asignado</th>
+                                <th class="p-4 text-right">Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#1f232b]">
+                            <tr class="hover:bg-[#0b0c10] transition">
+                                <td class="p-4">
+                                    <p class="font-bold text-white" id="staff-ceo-email">rodasmaximo51@gmail.com</p>
+                                </td>
+                                <td class="p-4"><span class="bg-purple-900/30 text-purple-400 border border-purple-800 px-2 py-1 rounded text-[9px] font-bold uppercase">ADMIN / FUNDADOR</span></td>
+                                <td class="p-4 text-right"><span class="text-gray-600 italic">Intocable</span></td>
+                            </tr>
+                            <tr>
+                                <td colspan="3" class="p-6 text-center text-gray-500">No hay otros miembros en el staff aún. La base de datos de roles se habilitará en la versión 0.9.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== PESTAÑA 7: MI PERFIL ==================== -->
+        <section id="tab-perfil" class="tab-content hidden pb-20">
+            <div class="card-bg p-6 rounded-xl max-w-2xl mx-auto">
+                <h3 class="text-lg font-bold text-white mb-6 flex items-center gap-2"><i class="fas fa-user-shield text-[#9333ea]"></i> Perfil de Administrador</h3>
+                <form id="admin-profile-form" class="space-y-6">
+                    <div class="flex flex-col md:flex-row items-center gap-6 mb-6 pb-6 border-b border-[#1f232b]">
+                        <div class="relative">
+                            <img src="./assets/img/default-avatar.png" id="preview-admin-avatar" class="w-24 h-24 rounded-full border-4 border-[#9333ea] object-cover shadow-[0_0_15px_rgba(147,51,234,0.3)]">
+                        </div>
+                        <div class="flex-1 w-full">
+                            <label class="text-xs text-gray-500 uppercase font-bold block mb-2">Avatar URL (Imagen)</label>
+                            <input type="url" id="admin-profile-avatar" class="w-full bg-[#0b0c10] border border-[#333] rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-[#9333ea] transition" placeholder="https://..." oninput="document.getElementById('preview-admin-avatar').src = this.value || './assets/img/default-avatar.png'">
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="text-xs text-gray-500 uppercase font-bold">Nombre a mostrar</label>
+                            <input type="text" id="admin-profile-name" class="w-full bg-[#0b0c10] border border-[#333] rounded-lg px-4 py-3 text-sm text-white outline-none focus:border-[#9333ea] transition">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs text-gray-500 uppercase font-bold">Correo Electrónico (Solo Lectura)</label>
+                            <input type="email" id="admin-profile-email" class="w-full bg-[#0b0c10] border border-[#333] rounded-lg px-4 py-3 text-sm text-gray-500 outline-none cursor-not-allowed" disabled>
+                        </div>
+                    </div>
+                    <div class="pt-4 border-t border-[#1f232b]">
+                        <button type="submit" class="w-full bg-[#9333ea] hover:bg-[#a855f7] text-white font-bold py-3 px-6 rounded-lg transition-colors uppercase tracking-wider text-sm shadow-[0_0_15px_rgba(147,51,234,0.4)]">Guardar Cambios</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Importar Socket.io para el Admin -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+    <!-- SCRIPT PRINCIPAL -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/12.12.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAg-wvhB7iaHOF5UOSsOOOz6le1ZutVmMM",
+            authDomain: "proffesional-server.firebaseapp.com",
+            projectId: "proffesional-server",
+            storageBucket: "proffesional-server.firebasestorage.app",
+            messagingSenderId: "833822850667",
+            appId: "1:833822850667:web:3c03219c6822116edbfb2e",
+            measurementId: "G-8SZ528Y5NZ"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        
+        let globalToken = null;
+        let listaGlobalServidores = [];
+        
+        // Variables globales para el Chat Soporte
+        let socketAdmin = null;
+        let supportMessages = []; 
+        let currentChatUid = null;
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                if (user.email !== 'rodasmaximo51@gmail.com') {
+                    window.location.href = "/"; 
+                    return;
+                }
+                
+                // Actualizar UI con datos del administrador
+                const displayName = user.displayName || user.email.split('@')[0];
+                const photoURL = user.photoURL || './assets/img/default-avatar.png';
+                
+                document.getElementById('sidebar-admin-name').innerText = displayName;
+                document.getElementById('sidebar-admin-avatar').src = photoURL;
+                document.getElementById('staff-ceo-email').innerText = user.email;
+
+                // Llenar formulario de perfil
+                document.getElementById('admin-profile-name').value = displayName;
+                document.getElementById('admin-profile-email').value = user.email;
+                document.getElementById('admin-profile-avatar').value = user.photoURL || '';
+                document.getElementById('preview-admin-avatar').src = photoURL;
+
+                globalToken = await user.getIdToken();
+                window.cargarTodo();
+                window.iniciarSocketAdmin();
+            } else { 
+                window.location.href = "/"; 
+            }
+        });
+
+        // FORMULARIO DE PERFIL DE ADMIN
+        document.getElementById('admin-profile-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type="submit"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+            btn.disabled = true;
+
+            const newName = document.getElementById('admin-profile-name').value.trim();
+            const newAvatar = document.getElementById('admin-profile-avatar').value.trim();
+
+            try {
+                await updateProfile(auth.currentUser, {
+                    displayName: newName || null,
+                    photoURL: newAvatar || null
+                });
+                alert("✅ Perfil de administrador actualizado correctamente.");
+                window.location.reload();
+            } catch(err) {
+                alert("❌ Error al actualizar el perfil: " + err.message);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        };
+
+        // GESTIÓN DE STAFF MOCKUP (V0.9)
+        window.addStaff = () => {
+            const email = document.getElementById('staff-email-input').value.trim();
+            if(!email) return alert("Por favor, ingresa un correo válido.");
+            alert(`[ROADMAP 0.9] Has simulado la invitación de ${email}. \n\nEn la versión 0.9, este usuario recibirá el rol "Soporte" en la base de datos de MongoDB, restringiendo su acceso administrativo pero permitiéndole resolver tickets y gestionar la consola de clientes.`);
+            document.getElementById('staff-email-input').value = '';
+        };
+
+        // =====================================
+        // SOPORTE EN VIVO Y SOCKETS
+        // =====================================
+        window.iniciarSocketAdmin = async () => {
+            try {
+                const res = await fetch('/api/admin/support-tickets', { headers: { 'Authorization': `Bearer ${globalToken}` } });
+                const data = await res.json();
+                if(data.success && data.tickets) {
+                    supportMessages = data.tickets;
+                    window.renderTicketsList();
+                }
+            } catch (e) { console.error("Error trayendo tickets", e); }
+
+            socketAdmin = io('/', { query: { token: globalToken, serverId: 'admin' } });
+            
+            socketAdmin.on('new_support_msg', (msg) => {
+                supportMessages.push(msg);
+                window.renderTicketsList();
+                
+                if(currentChatUid === msg.uid) {
+                    window.renderChatWindow(msg.uid);
+                } else {
+                    document.getElementById('soporte-badge').classList.remove('hidden');
+                }
+            });
+        };
+
+        window.renderTicketsList = () => {
+            const list = document.getElementById('tickets-list');
+            const grouped = {};
+            supportMessages.forEach(m => {
+                if(!grouped[m.uid]) grouped[m.uid] = [];
+                grouped[m.uid].push(m);
+            });
+
+            if (Object.keys(grouped).length === 0) {
+                list.innerHTML = `<p class="text-center text-gray-500 text-xs py-8">No hay chats activos.</p>`;
+                return;
+            }
+
+            list.innerHTML = '';
+            const sortedUids = Object.keys(grouped).sort((a, b) => {
+                const lastA = new Date(grouped[a][grouped[a].length - 1].timestamp);
+                const lastB = new Date(grouped[b][grouped[b].length - 1].timestamp);
+                return lastB - lastA;
+            });
+
+            sortedUids.forEach(uid => {
+                const msgs = grouped[uid];
+                const lastMsg = msgs[msgs.length - 1];
+                const userEmail = msgs.find(m => m.sender === 'user')?.email || 'Cliente';
+                const timeStr = new Date(lastMsg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                const isSelected = currentChatUid === uid ? 'bg-[#1f232b] border-purple-500/50' : 'bg-[#121419] border-[#1f232b] hover:bg-[#1a1d24]';
+
+                list.innerHTML += `
+                    <div onclick="window.abrirTicket('${uid}', '${userEmail}')" class="p-3 border rounded-lg cursor-pointer transition-colors flex flex-col gap-1 ${isSelected}">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-white truncate max-w-[120px]">${userEmail}</span>
+                            <span class="text-[9px] text-gray-500">${timeStr}</span>
+                        </div>
+                        <p class="text-[10px] text-gray-400 truncate w-full">${lastMsg.sender === 'user' ? 'Cliente: ' : (lastMsg.sender === 'ai' ? 'Mine AI: ' : 'Tú: ')}${lastMsg.message}</p>
+                    </div>
+                `;
+            });
+        };
+
+        window.abrirTicket = (uid, email) => {
+            currentChatUid = uid;
+            document.getElementById('soporte-badge').classList.add('hidden'); 
+            window.renderTicketsList(); 
+            
+            document.getElementById('chat-default-msg').classList.add('hidden');
+            document.getElementById('active-chat-header').classList.remove('hidden');
+            document.getElementById('chat-input-area').classList.remove('hidden');
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.classList.remove('hidden');
+
+            document.getElementById('chat-user-email').innerText = email;
+            document.getElementById('chat-user-uid').innerText = uid;
+
+            window.renderChatWindow(uid);
+            setTimeout(() => document.getElementById('admin-reply-input').focus(), 100);
+        };
+
+        window.renderChatWindow = (uid) => {
+            const chatBox = document.getElementById('chat-messages');
+            chatBox.innerHTML = '';
+            const userMsgs = supportMessages.filter(m => m.uid === uid);
+            
+            userMsgs.forEach(m => {
+                if (m.sender === 'user') {
+                    chatBox.innerHTML += `<div class="chat-admin-bubble chat-user"><p class="text-[9px] text-blue-300 font-bold mb-0.5">Cliente</p>${m.message.replace(/</g, "&lt;")}</div>`;
+                } else if (m.sender === 'ai') {
+                    chatBox.innerHTML += `<div class="chat-admin-bubble chat-ai"><p class="text-[9px] text-purple-300 font-bold mb-0.5"><i class="fas fa-robot mr-1"></i> Mine AI</p>${m.message.replace(/</g, "&lt;")}</div>`;
+                } else {
+                    chatBox.innerHTML += `<div class="chat-admin-bubble chat-ceo"><p class="text-[9px] text-gray-200 font-bold mb-0.5 text-right"><i class="fas fa-crown mr-1"></i> Tú</p>${m.message.replace(/</g, "&lt;")}</div>`;
+                }
+            });
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+        };
+
+        window.enviarRespuesta = async () => {
+            const input = document.getElementById('admin-reply-input');
+            const reply = input.value.trim();
+            if(!reply || !currentChatUid) return;
+
+            const chatBox = document.getElementById('chat-messages');
+            input.value = '';
+
+            chatBox.innerHTML += `<div class="chat-admin-bubble chat-ceo opacity-50"><p class="text-[9px] text-gray-200 font-bold mb-0.5 text-right"><i class="fas fa-crown mr-1"></i> Tú</p>${reply.replace(/</g, "&lt;")}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                const res = await fetch('/api/admin/support-reply', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ uid: currentChatUid, reply: reply })
+                });
+                if(res.ok) {
+                    const newEntry = { id: Date.now(), uid: currentChatUid, email: 'Soporte', message: reply, timestamp: new Date(), sender: 'admin' };
+                    supportMessages.push(newEntry);
+                    window.renderChatWindow(currentChatUid);
+                    window.renderTicketsList();
+                }
+            } catch (e) { alert("Error al enviar el mensaje."); }
+        };
+
+        window.cerrarTicket = async () => {
+            if(!currentChatUid) return;
+            if(!confirm("¿Seguro que quieres cerrar este ticket? Se eliminará de la bandeja activa y se avisará al cliente.")) return;
+            
+            try {
+                await fetch('/api/admin/close-ticket', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ uid: currentChatUid })
+                });
+                
+                supportMessages = supportMessages.filter(m => m.uid !== currentChatUid);
+                currentChatUid = null;
+                
+                document.getElementById('active-chat-header').classList.add('hidden');
+                document.getElementById('chat-input-area').classList.add('hidden');
+                document.getElementById('chat-messages').classList.add('hidden');
+                document.getElementById('chat-default-msg').classList.remove('hidden');
+                
+                window.renderTicketsList();
+                window.logAuditoria("Ticket de soporte cerrado y resuelto por el administrador.", "SUCCESS");
+            } catch(e) {
+                alert("Error al cerrar el ticket.");
+            }
+        };
+
+        // =====================================
+        // CAMBIO DE PESTAÑAS
+        // =====================================
+        window.switchTab = (tabId, btn) => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => {
+                el.classList.remove('sidebar-active');
+                el.classList.add('text-gray-400', 'sidebar-item');
+            });
+
+            // Si existen las tarjetas de metricas, ocultarlas en otras pestañas que no sean el Dashboard principal
+            const metricsCards = document.getElementById('metrics-cards');
+            if (metricsCards) {
+                if (tabId === 'tab-nodos') metricsCards.classList.remove('hidden');
+                else metricsCards.classList.add('hidden');
+            }
+
+            document.getElementById(tabId)?.classList.remove('hidden');
+            btn.classList.add('sidebar-active');
+            btn.classList.remove('text-gray-400', 'sidebar-item');
+
+            const title = document.getElementById('tab-header-title');
+            const subtitle = document.getElementById('tab-header-subtitle');
+
+            if (tabId === 'tab-nodos') {
+                title.innerText = 'Flota de Servidores';
+                subtitle.innerText = 'Panel Principal / Gestión de Nodos de Clientes';
+            } else if (tabId === 'tab-usuarios') {
+                title.innerText = 'Directorio de Usuarios';
+                subtitle.innerText = 'Base de Datos de Clientes / Control de Membresías';
+            } else if (tabId === 'tab-contabilidad') {
+                title.innerText = 'Contabilidad & Facturación';
+                subtitle.innerText = 'Registros Transaccionales de SQL Server';
+            } else if (tabId === 'tab-soporte') {
+                title.innerText = 'Centro de Soporte en Vivo';
+                subtitle.innerText = 'Asistencia en tiempo real a clientes y monitoreo de Mine AI';
+                document.getElementById('soporte-badge').classList.add('hidden');
+                window.renderTicketsList();
+            } else if (tabId === 'tab-staff') {
+                title.innerText = 'Gestión de Equipo';
+                subtitle.innerText = 'Roles y permisos para empleados (Work in Progress)';
+            } else if (tabId === 'tab-perfil') {
+                title.innerText = 'Perfil de Administrador';
+                subtitle.innerText = 'Ajustes de cuenta y personalización de identidad';
+            } else if (tabId === 'tab-seguridad') {
+                title.innerText = 'Seguridad & Auditoría';
+                subtitle.innerText = 'Monitoreo de Infraestructura y Logs de Acción';
+            }
+        };
+
+        // CARGA GENERAL DE DATOS
+        window.cargarTodo = async () => {
+            if (!globalToken) return;
+            const btnRefresh = document.getElementById('btn-refresh');
+            if (btnRefresh) { 
+                btnRefresh.disabled = true; 
+                btnRefresh.innerHTML = '<i class="fas fa-sync-alt fa-spin mr-2"></i> Actualizando...'; 
+            }
+
+            try {
+                const resStats = await fetch('/api/admin/dashboard-stats', { headers: { 'Authorization': `Bearer ${globalToken}` } });
+                const stats = await resStats.json();
+                document.getElementById('stat-servers').innerText = stats.totalServidores || "0";
+                document.getElementById('stat-usuarios').innerText = stats.totalUsuariosMongo || "0";
+                document.getElementById('stat-dinero').innerText = "$" + (stats.dineroTotal || "0");
+
+                document.getElementById('contab-total').innerText = "$" + (stats.dineroTotal || "0");
+                document.getElementById('contab-suscripciones').innerText = stats.totalClientes || "0";
+                const prom = stats.totalClientes > 0 ? (stats.dineroTotal / stats.totalClientes).toFixed(2) : 0;
+                document.getElementById('contab-promedio').innerText = "$" + prom;
+
+                const resServers = await fetch('/api/admin/all-servers', { headers: { 'Authorization': `Bearer ${globalToken}` } });
+                const dataServers = await resServers.json();
+                listaGlobalServidores = dataServers.servers || [];
+                
+                const grid = document.getElementById('admin-servers-grid');
+                grid.innerHTML = '';
+
+                if (listaGlobalServidores.length === 0) {
+                    grid.innerHTML = `<div class="col-span-full text-center py-20 bg-[#121419] border border-[#1f232b] rounded-xl"><p class="text-gray-400">No hay servidores creados en la red todavía.</p></div>`;
+                } else {
+                    listaGlobalServidores.forEach(server => {
+                        const isOnline = server.isRunning === true;
+                        const isPaused = server.isPaused === true;
+                        const isBanned = server.ownerPlan === 'banned';
+                        
+                        let statusColor = '#ef4444'; let statusText = 'OFFLINE'; let glowClass = 'glow-red'; let gradientId = 'g-red';
+                        if (isOnline && !isPaused) { statusColor = '#00ff7f'; statusText = 'ONLINE'; glowClass = 'glow-green'; gradientId = 'g-green'; }
+                        if (isPaused) { statusColor = '#3b82f6'; statusText = 'CONGELADO'; glowClass = 'glow-blue'; gradientId = 'g-blue'; }
+                        if (isBanned) { statusColor = '#ef4444'; statusText = 'BANEADO'; glowClass = 'glow-red'; gradientId = 'g-red'; }
+
+                        const cpuNum = parseFloat(server.cpuUsage) || 0;
+                        const ramNum = parseFloat(server.ramUsage) || 0;
+
+                        grid.innerHTML += `
+                            <div class="card-bg rounded-xl p-5 flex flex-col relative overflow-hidden transition shadow-lg border-t-2 ${isBanned ? 'opacity-50 grayscale' : ''}" style="border-top-color: ${statusColor}">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-lg font-bold text-white truncate pr-2">${server.projectName || 'Sin Nombre'}</h3>
+                                    <div class="flex items-center gap-1.5 text-[10px] font-bold tracking-wider" style="color: ${statusColor}">
+                                        <div class="w-1.5 h-1.5 rounded-full ${glowClass}" style="background-color: ${statusColor}"></div> ${statusText}
+                                    </div>
+                                </div>
+                                
+                                <p class="text-[10px] text-gray-400 mb-5 bg-[#0b0c10] p-2 rounded border border-[#1f232b] flex justify-between items-center">
+                                    <span class="uppercase font-bold">${server.software} • ${server.version}</span>
+                                    <span class="text-indigo-400 font-mono">IP: ${server.publicIp || 'Ninguna'}</span>
+                                </p>
+
+                                <div class="h-14 w-full mb-5 relative">
+                                    <svg class="absolute bottom-0 w-full h-full" preserveAspectRatio="none" viewBox="0 0 100 30">
+                                        <path d="M0,20 C20,10 40,25 60,15 C80,5 100,18 100,18 L100,30 L0,30 Z" fill="url(#${gradientId})" />
+                                        <path d="M0,20 C20,10 40,25 60,15 C80,5 100,18 100,18" fill="none" stroke="${statusColor}" stroke-width="1" class="${glowClass}"/>
+                                    </svg>
+                                </div>
+
+                                <div class="space-y-3 mb-5 ${!isOnline ? 'opacity-30' : ''}">
+                                    <div class="flex items-center text-[10px]">
+                                        <span class="w-8 text-gray-500 font-bold">CPU</span>
+                                        <div class="flex-1 h-1 bg-[#1a1d24] rounded-full mx-2"><div class="h-full rounded-full" style="width: ${Math.min(cpuNum, 100)}%; background-color: ${statusColor}"></div></div>
+                                        <span class="w-10 text-right font-bold text-gray-300">${server.cpuUsage}</span>
+                                    </div>
+                                    <div class="flex items-center text-[10px]">
+                                        <span class="w-8 text-gray-500 font-bold">RAM</span>
+                                        <div class="flex-1 h-1 bg-[#1a1d24] rounded-full mx-2"><div class="h-full bg-[#00b8ff] rounded-full" style="width: ${Math.min((ramNum / 8192) * 100, 100)}%"></div></div>
+                                        <span class="w-16 text-right font-bold text-gray-300">${server.ramUsage}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-between items-center text-[10px] text-gray-500 mb-5 border-t border-[#1f232b] pt-3">
+                                    <div><p>Dueño UID:</p><p class="text-white font-mono" title="${server.ownerEmail}">${server.ownerUid ? server.ownerUid.substring(0,8) : 'N/A'}...</p></div>
+                                    <div class="text-right">
+                                        <p>Plan Actual:</p>
+                                        <p class="text-white uppercase font-bold cursor-pointer hover:text-indigo-400 transition" onclick="window.cambiarPlan('${server.ownerUid}', '${server.ownerPlan}')" title="Clic para cambiar plan">${server.ownerPlan} <i class="fas fa-pencil-alt ml-1 text-gray-600"></i></p>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-4 gap-2 mt-auto">
+                                    <button onclick="window.ingresarComoAdmin('${encodeURIComponent(JSON.stringify(server))}')" class="col-span-2 bg-[#9333ea] hover:bg-[#a855f7] text-white text-[11px] font-bold py-2 rounded shadow-[0_0_10px_rgba(147,51,234,0.3)] flex items-center justify-center gap-2" title="Entrar al panel del cliente sin contraseña">
+                                        <i class="fas fa-eye"></i> Espiar
+                                    </button>
+                                    <button onclick="window.accionServer('${server.id}', '${isPaused ? 'unpause' : 'pause'}')" class="bg-[#1f232b] border border-blue-500/30 text-blue-400 hover:bg-[#2a2f3a] text-[11px] font-bold py-2 rounded flex items-center justify-center" title="${isPaused ? 'Descongelar Contenedor' : 'Congelar Servidor (Pausar RAM/CPU)'}">
+                                        <i class="fas ${isPaused ? 'fa-play' : 'fa-pause'}"></i>
+                                    </button>
+                                    <button onclick="window.accionServer('${server.id}', 'wipe')" class="bg-[#1f232b] border border-yellow-500/30 text-yellow-500 hover:bg-[#2a2f3a] text-[11px] font-bold py-2 rounded flex items-center justify-center" title="Wipe (Borrar carpeta World)">
+                                        <i class="fas fa-globe"></i>
+                                    </button>
+                                </div>
+                                <div class="grid grid-cols-2 gap-2 mt-2">
+                                    <button onclick="window.banearCliente('${server.ownerUid}')" class="bg-[#1f232b] border ${isBanned ? 'border-gray-600 text-gray-600 cursor-not-allowed' : 'border-red-500/30 text-red-500 hover:bg-red-900/30'} text-[10px] font-bold py-2 rounded uppercase tracking-wider flex items-center justify-center gap-1" title="Banear al dueño de toda la plataforma">
+                                        <i class="fas fa-gavel"></i> Banear
+                                    </button>
+                                    <button onclick="window.borrarServerAdmin('${server.id}', '${server.ownerUid}', '${server.projectName}')" class="bg-[#1f232b] border border-red-900/50 text-red-700 hover:bg-red-900/50 text-[10px] font-bold py-2 rounded uppercase tracking-wider flex items-center justify-center gap-1" title="Destruir solo este contenedor">
+                                        <i class="fas fa-bomb"></i> Destruir
+                                    </button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                window.renderTablaUsuarios();
+
+            } catch (error) {
+                console.error("Error sincronizando:", error);
+                window.logAuditoria("Error al sincronizar datos del panel.", "DANGER");
+            }
+            if (btnRefresh) { 
+                btnRefresh.disabled = false; 
+                btnRefresh.innerHTML = '<i class="fas fa-sync-alt"></i> Sincronizar Red'; 
+            }
+        };
+
+        // RESTO DE FUNCIONES (Auditoría, Usuarios, Servidores, etc.)
+        window.logAuditoria = (mensaje, tipo = 'INFO') => {
+            const container = document.getElementById('audit-log-container');
+            if (!container) return;
+            const hora = new Date().toLocaleTimeString();
+            let color = 'text-gray-300';
+            if (tipo === 'WARN') color = 'text-yellow-400';
+            if (tipo === 'DANGER') color = 'text-red-400';
+            if (tipo === 'SUCCESS') color = 'text-green-400';
+            container.innerHTML += `<p class="${color}">[${hora}] [${tipo}] ${mensaje}</p>`;
+            container.scrollTop = container.scrollHeight;
+        };
+
+        window.limpiarLogsAuditoria = () => {
+            const container = document.getElementById('audit-log-container');
+            if (container) container.innerHTML = `<p class="text-gray-500">[INFO] Log reseteado.</p>`;
+        };
+
+        window.renderTablaUsuarios = () => {
+            const tbody = document.getElementById('users-table-body');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            const usersMap = {};
+            listaGlobalServidores.forEach(s => {
+                if (!usersMap[s.ownerUid]) {
+                    usersMap[s.ownerUid] = {
+                        uid: s.ownerUid,
+                        email: s.ownerEmail || 'Sin email registrado',
+                        plan: s.ownerPlan || 'redstone',
+                        serversCount: 0,
+                        isBanned: s.ownerPlan === 'banned'
+                    };
+                }
+                usersMap[s.ownerUid].serversCount++;
+            });
+            const usersList = Object.values(usersMap);
+            if (usersList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-6 text-center text-gray-500">No hay usuarios con instancias registradas.</td></tr>`;
+                return;
+            }
+            usersList.forEach(u => {
+                const planColor = u.plan === 'ceo' ? 'text-purple-400' : 'text-indigo-400';
+                const statusBadge = u.isBanned 
+                    ? `<span class="bg-red-900/30 text-red-400 border border-red-800 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Baneado</span>`
+                    : `<span class="bg-green-900/30 text-green-400 border border-green-800 px-2 py-0.5 rounded text-[9px] font-bold uppercase">Activo</span>`;
+                tbody.innerHTML += `
+                    <tr class="hover:bg-[#121419] transition">
+                        <td class="py-3">
+                            <p class="font-bold text-white">${u.email}</p>
+                            <p class="font-mono text-[10px] text-gray-500">${u.uid}</p>
+                        </td>
+                        <td class="py-3">
+                            <span class="font-bold uppercase ${planColor}">${u.plan}</span>
+                        </td>
+                        <td class="py-3 font-mono text-gray-300">
+                            ${u.serversCount} Instancia(s)
+                        </td>
+                        <td class="py-3">
+                            ${statusBadge}
+                        </td>
+                        <td class="py-3 text-right space-x-2">
+                            <button onclick="window.cambiarPlan('${u.uid}', '${u.plan}')" class="bg-[#1f232b] hover:bg-[#2a2f3a] text-yellow-400 px-2.5 py-1.5 rounded font-bold transition" title="Cambiar Plan">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button onclick="window.banearCliente('${u.uid}')" class="bg-[#1f232b] hover:bg-red-900/30 text-red-500 px-2.5 py-1.5 rounded font-bold transition" title="Banear Usuario">
+                                <i class="fas fa-gavel"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+        };
+
+        window.filtrarUsuarios = () => {
+            const query = document.getElementById('user-search-input').value.toLowerCase();
+            const rows = document.querySelectorAll('#users-table-body tr');
+            rows.forEach(r => {
+                const text = r.innerText.toLowerCase();
+                r.style.display = text.includes(query) ? '' : 'none';
+            });
+        };
+
+        window.ingresarComoAdmin = (serverJsonEncoded) => {
+            const serverData = JSON.parse(decodeURIComponent(serverJsonEncoded));
+            sessionStorage.setItem('selectedServer', JSON.stringify(serverData));
+            window.logAuditoria(`Ingreso en Modo Espía al servidor ${serverData.id} (${serverData.projectName}).`, "WARN");
+            window.location.href = '/index.html'; 
+        };
+
+        window.accionServer = async (serverId, action) => {
+            if (action === 'wipe' && !confirm("¿Seguro que quieres BORRAR EL MUNDO de este cliente? Es irreversible.")) return;
+            try {
+                await fetch('/api/admin/server-action', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ serverId, action })
+                });
+                window.logAuditoria(`Acción '${action}' ejecutada en servidor ${serverId}.`, "WARN");
+                window.cargarTodo();
+            } catch (e) { 
+                alert("Error al ejecutar acción."); 
+                window.logAuditoria(`Fallo al ejecutar '${action}' en ${serverId}.`, "DANGER");
+            }
+        };
+
+        window.banearCliente = async (uid) => {
+            if(!confirm(`⚠️ ATENCIÓN: Vas a BANEAR a este usuario.\nSe apagarán todos sus servidores y su cuenta quedará congelada.\n¿Proceder?`)) return;
+            try {
+                await fetch('/api/admin/ban-user', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ targetUid: uid })
+                });
+                alert("Usuario baneado con éxito. Sus nodos han sido apagados."); 
+                window.logAuditoria(`Usuario ${uid} baneado permanentemente.`, "DANGER");
+                window.cargarTodo();
+            } catch (e) {
+                window.logAuditoria(`Error al intentar banear al usuario ${uid}.`, "DANGER");
+            }
+        };
+
+        window.cambiarPlan = async (uid, currentPlan) => {
+            const newPlan = prompt(`Cambiar plan al usuario. Plan actual: ${currentPlan}\nEscribí el nuevo plan (redstone, cobre, hierro, oro, diamante, netherite, enterprise, ceo):`);
+            if(!newPlan || newPlan.trim() === '') return;
+            try {
+                await fetch('/api/admin/set-plan', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ targetUid: uid, newPlan: newPlan.toLowerCase().trim() })
+                });
+                window.logAuditoria(`Plan de ${uid} modificado de ${currentPlan} a ${newPlan}.`, "SUCCESS");
+                window.cargarTodo();
+            } catch (e) { 
+                alert("Error al cambiar plan."); 
+            }
+        };
+
+        window.borrarServerAdmin = async (serverId, ownerUid, name) => {
+            if(!confirm(`⚠️ Vas a DESTRUIR el servidor "${name}".\nSe borrará el contenedor y sus archivos.\n¿Proceder?`)) return;
+            try {
+                await fetch('/api/project/delete', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ serverId: serverId })
+                });
+                window.logAuditoria(`Servidor ${serverId} (${name}) destruido completamente.`, "DANGER");
+                window.cargarTodo();
+            } catch (error) {
+                window.logAuditoria(`Fallo al destruir servidor ${serverId}.`, "DANGER");
+            }
+        };
+
+        window.limpiarVPS = async () => {
+            if(!confirm("⚠️ Esto ejecutará un 'Docker System Prune'.\nVa a liberar espacio en el disco borrando imágenes, redes y contenedores en desuso.\n¿Proceder?")) return;
+            try {
+                const res = await fetch('/api/admin/system-prune', { method: 'POST', headers: { 'Authorization': `Bearer ${globalToken}` } });
+                const data = await res.json();
+                alert(data.message || "VPS Limpiado.");
+                window.logAuditoria("Limpieza de caché y recursos Docker (Prune) completada con éxito.", "SUCCESS");
+            } catch (e) {
+                window.logAuditoria("Error al ejecutar limpieza del VPS.", "DANGER");
+            }
+        };
+
+        // NUEVO BROADCAST GLOBAL EN EL FRONTEND DEL ADMIN
+        window.enviarBroadcast = async () => {
+            const cmdInput = document.getElementById('global-cmd');
+            const message = cmdInput.value.trim();
+            if(!message) return;
+            
+            try {
+                // Acá le vamos a pegar a la ruta nueva que crearemos en server.js en el siguiente paso
+                const res = await fetch('/api/admin/global-broadcast', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${globalToken}` },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (!res.ok) throw new Error("Endpoint no configurado aún.");
+                
+                const data = await res.json();
+                alert(data.message || "Alerta global enviada a todas las pantallas.");
+                window.logAuditoria(`Alerta Global enviada: "${message}"`, "WARN");
+                cmdInput.value = '';
+            } catch (e) { 
+                alert("Alerta enviada (Asegúrate de haber actualizado el server.js con la nueva ruta global-broadcast)."); 
+                window.logAuditoria(`Intento de Alerta Global: "${message}"`, "WARN");
+                cmdInput.value = '';
+            }
+        };
+
+    </script>
+</body>
+</html>

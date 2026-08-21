@@ -31,6 +31,10 @@
         .glow-hierro { border-color: rgba(229, 231, 235, 0.3); box-shadow: 0 0 20px rgba(229, 231, 235, 0.08); }
         .glow-hierro:hover { box-shadow: 0 0 35px rgba(229, 231, 235, 0.25); border-color: #e5e7eb; }
 
+        /* NUEVO EFECTO COBRE */
+        .glow-cobre { border-color: rgba(184, 115, 51, 0.5); box-shadow: 0 0 25px rgba(184, 115, 51, 0.15); }
+        .glow-cobre:hover { box-shadow: 0 0 35px rgba(184, 115, 51, 0.35); border-color: #b87333; }
+
         .glow-oro { border-color: rgba(245, 158, 11, 0.5); box-shadow: 0 0 25px rgba(245, 158, 11, 0.15); }
         .glow-oro:hover { box-shadow: 0 0 35px rgba(245, 158, 11, 0.35); border-color: #f59e0b; }
 
@@ -84,7 +88,7 @@
             <p id="billing-helper" class="text-xs text-gray-500 mt-4 h-4 transition-all">Precios base sin descuento. Facturación cada mes.</p>
         </div>
 
-        <!-- GRILLA PRINCIPAL DE 6 PLANES -->
+        <!-- GRILLA PRINCIPAL DE PLANES -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full mb-12">
             
             <!-- PLAN REDSTONE (BASE - 8GB) -->
@@ -114,7 +118,6 @@
                     </div>
                 </div>
                 <div class="space-y-2">
-                    <!-- Prueba va a crear server, Directo va a pagar -->
                     <button onclick="window.location.href='create.html'" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-red-950/50">Prueba Gratis (15 Días)</button>
                     <button onclick="window.location.href='checkout.html?plan=redstone'" class="w-full bg-[#1c1c1c] hover:bg-[#252525] border border-[#333] text-gray-300 font-bold py-2 rounded-xl transition-colors uppercase text-[11px] tracking-wider">Contratar Directo</button>
                 </div>
@@ -152,15 +155,47 @@
                 <button onclick="window.location.href='checkout.html?plan=hierro'" class="w-full bg-gray-300 hover:bg-white text-black font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg">Contratar Plan</button>
             </div>
 
-            <!-- PLAN ORO (16GB) -->
+            <!-- PLAN COBRE (16GB - SEÑUELO MARKETING) -->
+            <div class="glass-card glow-cobre p-8">
+                <div>
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-xs uppercase tracking-widest font-bold text-amber-600 bg-amber-950/40 border border-amber-800/40 px-3 py-1 rounded-full">Básico 16GB</span>
+                        <i data-feather="database" class="text-amber-600 w-6 h-6"></i>
+                    </div>
+                    <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Cobre</h3>
+                    <p class="text-xs text-gray-400 mb-6">Mucha memoria en bruto a un costo accesible.</p>
+                    
+                    <div class="mb-6">
+                        <span class="text-4xl font-bold text-white price-display" data-base="12">$12 USD</span>
+                        <span class="text-xs text-gray-400 block mt-1 billing-period">/ mes</span>
+                    </div>
+
+                    <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
+                        <div class="inherits-benefits flex items-center gap-2 text-amber-100">
+                            <i data-feather="layers" class="w-4 h-4 text-amber-600"></i> <span>Incluye todos los beneficios de <b>Hierro</b></span>
+                        </div>
+
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-amber-500"></i> <span>Hasta <b>2 Servidores</b></span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-amber-500"></i> <span><b>25 Slots</b> (Límite Ampliado)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-amber-500"></i> <span><b>16 GB RAM</b> Dedicada</span></div>
+                        
+                        <!-- EL SEÑUELO: ESTO EMPUJA AL ORO -->
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Sin Gestor de Archivos (No Modpacks)</span></div>
+                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Sin Mine AI (Analista Técnico)</span></div>
+                    </div>
+                </div>
+                <button onclick="window.location.href='checkout.html?plan=cobre'" class="w-full bg-[#b87333] hover:bg-[#a0632a] text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-orange-950/50">Contratar Plan</button>
+            </div>
+
+            <!-- PLAN ORO (16GB - LA OFERTA REAL) -->
             <div class="glass-card glow-oro p-8">
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs uppercase tracking-widest font-bold text-yellow-400 bg-yellow-950/60 border border-yellow-800/60 px-3 py-1 rounded-full">Popular</span>
+                        <span class="text-xs uppercase tracking-widest font-bold text-yellow-400 bg-yellow-950/60 border border-yellow-800/60 px-3 py-1 rounded-full">Mejor Opción</span>
                         <i data-feather="award" class="text-yellow-500 w-6 h-6"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Oro</h3>
-                    <p class="text-xs text-gray-400 mb-6">El salto necesario para modpacks pesados.</p>
+                    <p class="text-xs text-gray-400 mb-6">El salto necesario para instalar modpacks pesados.</p>
                     
                     <div class="mb-6">
                         <span class="text-4xl font-bold text-white price-display" data-base="15">$15 USD</span>
@@ -169,16 +204,17 @@
 
                     <div class="space-y-3 mb-8 text-xs text-gray-300 border-t border-[#222] pt-6">
                         <div class="inherits-benefits flex items-center gap-2 text-yellow-100">
-                            <i data-feather="layers" class="w-4 h-4 text-yellow-500"></i> <span>Incluye todos los beneficios de <b>Hierro</b></span>
+                            <i data-feather="layers" class="w-4 h-4 text-yellow-500"></i> <span>Incluye todos los beneficios de <b>Cobre</b></span>
                         </div>
 
                         <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-yellow-400"></i> <span>Hasta <b>3 Servidores</b></span></div>
                         <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-yellow-400"></i> <span><b>40 Slots</b> (Límite Ampliado)</span></div>
                         <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-yellow-400"></i> <span><b>16 GB RAM</b> de Alta Velocidad</span></div>
-                        <div class="flex items-center gap-3"><i data-feather="check" class="w-4 h-4 text-green-400 shrink-0"></i> <span>Copias Automáticas (Google Drive)</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="check" class="w-4 h-4 text-green-400 shrink-0"></i> <span>Copias Automáticas (Google Drive/OneDrive)</span></div>
                         
-                        <!-- RESTRICCIONES VISUALES (PAYWALL) -->
-                        <div class="flex items-center gap-3 text-gray-500"><i data-feather="x" class="w-4 h-4 text-red-500 shrink-0"></i> <span>Gestor de Archivos y Mine AI</span></div>
+                        <!-- EL GRAN DESBLOQUEO VISUAL -->
+                        <div class="flex items-center gap-3"><i data-feather="unlock" class="w-4 h-4 text-green-400 shrink-0"></i> <span class="text-green-400 font-bold">Gestor de Archivos Pro</span></div>
+                        <div class="flex items-center gap-3"><i data-feather="unlock" class="w-4 h-4 text-green-400 shrink-0"></i> <span class="text-green-400 font-bold">Mine AI Desbloqueado</span></div>
                     </div>
                 </div>
                 <button onclick="window.location.href='checkout.html?plan=oro'" class="w-full bg-yellow-600 hover:bg-yellow-500 text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-yellow-950/50">Contratar Plan</button>
@@ -189,8 +225,8 @@
                 <div class="absolute -top-10 -right-10 w-32 h-32 bg-cyan-500/10 rounded-full blur-2xl pointer-events-none"></div>
                 <div>
                     <div class="flex justify-between items-center mb-4">
-                        <span class="text-xs uppercase tracking-widest font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-3 py-1 rounded-full">Recomendado</span>
-                        <i data-feather="cpu" class="text-cyan-400 w-6 h-6"></i>
+                        <span class="text-xs uppercase tracking-widest font-bold text-cyan-400 bg-cyan-950/60 border border-cyan-800/60 px-3 py-1 rounded-full">Network</span>
+                        <i data-feather="box" class="text-cyan-400 w-6 h-6"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Plan Diamante</h3>
                     <p class="text-xs text-gray-400 mb-6">Rendimiento sin cuellos de botella para el público.</p>
@@ -205,13 +241,9 @@
                             <i data-feather="layers" class="w-4 h-4 text-cyan-400"></i> <span>Incluye todos los beneficios de <b>Oro</b></span>
                         </div>
 
-                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span>Hasta <b>6 Servidores</b> (Ideal Network)</span></div>
+                        <div class="flex items-center gap-3 text-white"><i data-feather="hard-drive" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span>Hasta <b>6 Servidores</b></span></div>
                         <div class="flex items-center gap-3 text-white"><i data-feather="users" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span><b>100 Slots</b> (Límite Ampliado)</span></div>
                         <div class="flex items-center gap-3 text-white"><i data-feather="cpu" class="w-4 h-4 shrink-0 text-cyan-400"></i> <span><b>32 GB RAM</b> de Rendimiento Extremo</span></div>
-                        
-                        <!-- EL GRAN DESBLOQUEO VISUAL -->
-                        <div class="flex items-center gap-3"><i data-feather="unlock" class="w-4 h-4 text-green-400 shrink-0"></i> <span class="text-green-400 font-bold">Gestor de Archivos Pro</span></div>
-                        <div class="flex items-center gap-3"><i data-feather="unlock" class="w-4 h-4 text-green-400 shrink-0"></i> <span class="text-green-400 font-bold">Mine AI Desbloqueado</span></div>
                     </div>
                 </div>
                 <button onclick="window.location.href='checkout.html?plan=diamante'" class="w-full bg-cyan-600 hover:bg-cyan-500 text-white font-bold py-3.5 rounded-xl transition-colors uppercase text-xs tracking-wider shadow-lg shadow-cyan-950/50">Contratar Plan</button>
@@ -252,7 +284,7 @@
                 <div>
                     <div class="flex justify-between items-center mb-4">
                         <span class="text-xs uppercase tracking-widest font-bold text-blue-400 bg-blue-950/60 border border-blue-800/60 px-3 py-1 rounded-full">Poder Máximo</span>
-                        <i data-feather="server" class="text-blue-400 w-6 h-6"></i>
+                        <i data-feather="globe" class="text-blue-400 w-6 h-6"></i>
                     </div>
                     <h3 class="text-2xl font-bold text-white font-['Cinzel'] mb-1">Ghost Warrior</h3>
                     <p class="text-xs text-gray-400 mb-6">Poder bruto para macro-servidores y eventos masivos.</p>
@@ -284,7 +316,7 @@
             <div class="lg:w-2/3 z-10">
                 <div class="flex items-center gap-4 mb-4">
                     <span class="text-xs uppercase tracking-widest font-bold text-amber-400 bg-amber-950/60 border border-amber-800/60 px-3 py-1 rounded-full">Corporativo Exclusivo</span>
-                    <i data-feather="globe" class="text-amber-500 w-6 h-6"></i>
+                    <i data-feather="briefcase" class="text-amber-500 w-6 h-6"></i>
                 </div>
                 <h3 class="text-3xl md:text-4xl font-bold text-white font-['Cinzel'] mb-3">Professional Enterprise</h3>
                 <p class="text-sm text-gray-400 mb-8 max-w-2xl">La solución definitiva de <b>Professional Servers</b>. Hardware físico dedicado, soporte directo por WhatsApp y escalabilidad sin límites para proyectos empresariales o comunidades titánicas.</p>
@@ -305,7 +337,6 @@
                     <span class="text-4xl font-bold text-amber-400 block mb-1">A Medida</span>
                     <span class="text-xs text-gray-400">Armamos el presupuesto exacto según los fierros que necesites.</span>
                 </div>
-                <!-- Este botón queda con el ALERT porque requiere presupuesto a medida, no pasa por checkout automático -->
                 <button onclick="alert('Contactate directamente con la administración de Professional Servers por WhatsApp o Ticket.')" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-bold py-4 rounded-xl transition-colors uppercase text-sm tracking-wider shadow-lg shadow-amber-950/50 flex items-center justify-center gap-2">
                     <i data-feather="message-circle" class="w-5 h-5"></i> Contactar Ventas
                 </button>
